@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metamodel", "Metamodel.csproj", "{20C04CA6-72A9-4C0C-A4F8-5173BBC91687}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{20C04CA6-72A9-4C0C-A4F8-5173BBC91687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20C04CA6-72A9-4C0C-A4F8-5173BBC91687}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{20C04CA6-72A9-4C0C-A4F8-5173BBC91687}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20C04CA6-72A9-4C0C-A4F8-5173BBC91687}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20C04CA6-72A9-4C0C-A4F8-5173BBC91687}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{20C04CA6-72A9-4C0C-A4F8-5173BBC91687}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
