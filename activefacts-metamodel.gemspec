@@ -18,13 +18,11 @@ This gem provides the core representations for the Fact Modeling tools of Active
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.10.a"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec"
+  spec.add_runtime_dependency "activefacts-api"
 
-  spec.add_runtime_dependency(%q<activefacts-api>, [">= 1.8.1", "~> 1.8"])
 end
