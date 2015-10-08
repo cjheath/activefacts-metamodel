@@ -23,6 +23,6 @@ This gem provides the core representations for the Fact Modeling tools of Active
   spec.add_development_dependency "bundler", "~> 1.10.a"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec"
-  spec.add_runtime_dependency "activefacts-api"
 
+  spec.add_runtime_dependency "activefacts-api"
 end
