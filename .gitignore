@@ -9,3 +9,7 @@
 /tmp/
 bin
 *.swp
+.DS_Store
+*.rej
+*.orig
+*.diff
