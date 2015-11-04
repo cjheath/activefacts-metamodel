@@ -232,27 +232,10 @@ module ActiveFacts
         end.flatten.compact.uniq
       end
 
-      def implicit_boolean_type vocabulary
-        @constellation.ImplicitBooleanValueType[[vocabulary.identifying_role_values, "_ImplicitBooleanValueType"]] or
-        @constellation.ImplicitBooleanValueType(vocabulary.identifying_role_values, "_ImplicitBooleanValueType", :concept => [:new, :implication_rule => 'unary'])
-      end
-
-      # This entity type has just objectified a fact type. Create the necessary ImplicitFactTypes with phantom roles
-      def create_implicit_fact_type_for_unary
-        role = all_role.single
-        return if role.link_fact_type     # Already exists
-        # NORMA doesn't create an implicit fact type here, rather the fact type has an implicit extra role, so looks like a binary
-        # We only do it when the unary fact type is not objectified
-        link_fact_type = @constellation.LinkFactType(:new, :implying_role => role)
-        link_fact_type.concept.implication_rule = 'unary'
-        entity_type = @entity_type || implicit_boolean_type(role.object_type.vocabulary)
-        phantom_role = @constellation.Role(link_fact_type, 0, :object_type => entity_type, :concept => :new)
-      end
-
       def reading_preferably_starting_with_role role, negated = false
         all_reading_by_ordinal.detect do |reading|
-          reading.text =~ /\{\d\}/ and
-            reading.role_sequence.all_role_ref_in_order[$1.to_i].role == role and
+          reading.text =~ /\{(\d+)\}/ and
+            reading.role_sequence.all_role_ref_in_order[$1.to_i].role.base_role == role and
             reading.is_negative == !!negated
         end || preferred_reading(negated)
       end
@@ -273,28 +256,19 @@ module ActiveFacts
     end
 
     class Role
+      # Mirror Role defines this, but it's more convenient not to have to type-check.
+      # A Role that's not a Mirror Role is its own base role.
+      def base_role
+	self
+      end
+
       def describe(highlight = nil)
         object_type.name + (self == highlight ? "*" : "")
       end
 
-      # Find any internal uniqueness constraint on this role only
-      def uniqueness_constraint
-        all_role_ref.detect{|rr|
-          rs = rr.role_sequence
-          rs.all_role_ref.size == 1 and
-          rs.all_presence_constraint.each{|pc|
-            return pc if pc.max_frequency == 1
-          }
-        }
-	nil
-      end
-
-      # Is there are internal uniqueness constraint on this role only?
-      def unique
-	uniqueness_constraint ? true : false
-      end
-
       def is_mandatory
+	# REVISIT: An objectification role is always mandatory
+	# REVISIT: Handle mirror roles
         return fact_type.implying_role.is_mandatory if fact_type.is_a?(LinkFactType)
         all_role_ref.detect{|rr|
           rs = rr.role_sequence
@@ -312,18 +286,31 @@ module ActiveFacts
       # Return true if this role is functional (has only one instance wrt its player)
       # A role in an objectified fact type is deemed to refer to the implicit role of the objectification.
       def is_functional
+	# REVISIT: Handle mirror and objectification roles
         fact_type.entity_type or
         fact_type.all_role.size != 2 or
-        is_unique
+        uniqueness_constraint
       end
 
-      def is_unique
-        all_role_ref.detect do |rr|
-          rr.role_sequence.all_role_ref.size == 1 and
-            rr.role_sequence.all_presence_constraint.detect do |pc|
+      # Find any internal uniqueness constraint on this role only
+      def uniqueness_constraint
+        base_role.all_role_ref.detect{|rr|
+          rs = rr.role_sequence
+          rs.all_role_ref.size == 1 and
+            rs.all_presence_constraint.detect do |pc|
               pc.max_frequency == 1 and !pc.enforcement   # Alethic uniqueness constraint
             end
-        end
+        }
+      end
+
+      # Is there are internal uniqueness constraint on this role only?
+      def is_unique
+	# REVISIT: Handle objectification roles
+	uniqueness_constraint ? true : false
+      end
+
+      def unique
+	raise "REVISIT: unique is deprecated. Call is_unique instead"
       end
 
       def name
@@ -346,7 +333,7 @@ module ActiveFacts
         name_array =
           if role.fact_type.all_role.size == 1
             if role.fact_type.is_a?(LinkFactType)
-              "#{role.object_type.name} phantom for #{role.fact_type.role.object_type.name}"
+              "#{role.object_type.name} objectification role for #{role.fact_type.role.object_type.name}"
             else
               role.fact_type.preferred_reading.text.gsub(/\{[0-9]\}/,'').strip.split(/\s/)
             end
@@ -516,7 +503,7 @@ module ActiveFacts
               all_supertypes = supertypes_transitive
               trace :pi, "PI roles must be played by one of #{all_supertypes.map(&:name)*", "}" if all_supertypes.size > 1
               all_role.each{|role|
-                  next unless role.unique || fact_type
+                  next unless role.is_unique || fact_type
                   ftroles = Array(role.fact_type.all_role)
 
                   # Skip roles in ternary and higher fact types, they're objectified, and in unaries, they can't identify us.
@@ -604,7 +591,7 @@ module ActiveFacts
                 pi = possible_pi
               end
             else
-              byebug
+              debugger
               trace :pi, "No PI found for #{name}"
             end
           end
@@ -663,15 +650,69 @@ module ActiveFacts
         candidates[0] # REVISIT: This might not be the closest supertype
       end
 
-      # This entity type has just objectified a fact type. Create the necessary ImplicitFactTypes with phantom roles
-      def create_implicit_fact_types
+      def add_supertype(supertype, is_identifying_supertype, assimilation)
+	inheritance_fact = constellation.TypeInheritance(self, supertype, :concept => :new)
+
+	inheritance_fact.assimilation = assimilation
+
+	# Create a reading:
+	sub_role = constellation.Role(inheritance_fact, 0, :object_type => self, :concept => :new)
+	super_role = constellation.Role(inheritance_fact, 1, :object_type => supertype, :concept => :new)
+
+	rs = constellation.RoleSequence(:new)
+	constellation.RoleRef(rs, 0, :role => sub_role)
+	constellation.RoleRef(rs, 1, :role => super_role)
+	constellation.Reading(inheritance_fact, 0, :role_sequence => rs, :text => "{0} is a kind of {1}", :is_negative => false)
+
+	rs2 = constellation.RoleSequence(:new)
+	constellation.RoleRef(rs2, 0, :role => super_role)
+	constellation.RoleRef(rs2, 1, :role => sub_role)
+	# Decide in which order to include is a/is an. Provide both, but in order.
+	n = 'aeioh'.include?(sub_role.object_type.name.downcase[0]) ? 'n' : ''
+	constellation.Reading(inheritance_fact, 2, :role_sequence => rs2, :text => "{0} is a#{n} {1}", :is_negative => false)
+
+	if is_identifying_supertype
+	  inheritance_fact.provides_identification = true
+	end
+
+	# Create uniqueness constraints over the subtyping fact type.
+	p1rs = constellation.RoleSequence(:new)
+	constellation.RoleRef(p1rs, 0).role = sub_role
+	pc1 = constellation.PresenceConstraint(:new, :vocabulary => vocabulary)
+	pc1.name = "#{name}MustHaveSupertype#{supertype.name}"
+	pc1.role_sequence = p1rs
+	pc1.is_mandatory = true   # A subtype instance must have a supertype instance
+	pc1.min_frequency = 1
+	pc1.max_frequency = 1
+	pc1.is_preferred_identifier = false
+	trace :constraint, "Made new subtype PC GUID=#{pc1.concept.guid} min=1 max=1 over #{p1rs.describe}"
+
+	p2rs = constellation.RoleSequence(:new)
+	constellation.RoleRef(p2rs, 0).role = super_role
+	pc2 = constellation.PresenceConstraint(:new, :vocabulary => vocabulary)
+	pc2.name = "#{supertype.name}MayBeA#{name}"
+	pc2.role_sequence = p2rs
+	pc2.is_mandatory = false
+	pc2.min_frequency = 0
+	pc2.max_frequency = 1
+	# The supertype role often identifies the subtype:
+	pc2.is_preferred_identifier = inheritance_fact.provides_identification
+	trace :supertype, "identification of #{name} via supertype #{supertype.name} was #{inheritance_fact.provides_identification ? '' : 'not '}added"
+	trace :constraint, "Made new supertype PC GUID=#{pc2.concept.guid} min=1 max=1 over #{p2rs.describe}"
+      end
+
+      # This entity type has just objectified a fact type.
+      # Create the necessary ImplicitFactTypes with objectification and mirror roles
+      def create_link_fact_types
         fact_type.all_role.map do |role|
-          next if role.link_fact_type     # Already exists
+          next if role.mirror_role_as_base_role     # Already exists
           link_fact_type = @constellation.LinkFactType(:new, :implying_role => role)
-          link_fact_type.concept.implication_rule = 'objectification'
-          phantom_role = @constellation.Role(link_fact_type, 0, :object_type => self, :concept => :new)
-          # We could create a copy of the visible external role here, but there's no need yet...
-          # Nor is there a need for a presence constraint, readings, etc.
+          objectification_role = @constellation.Role(link_fact_type, 0, :object_type => self, :concept => :new)
+          mirror_role = @constellation.MirrorRole(link_fact_type, 1, :concept => :new, :object_type => role.object_type, :base_role => role)
+
+          link_fact_type.concept.implication_rule =
+          objectification_role.concept.implication_rule =
+          mirror_role.concept.implication_rule = 'objectification'
           link_fact_type
         end
       end
@@ -968,10 +1009,6 @@ module ActiveFacts
       def is_objectification_step
         !!objectification_variable
       end
-
-      def external_fact_type
-        fact_type.is_a?(LinkFactType) ? fact_type.role.fact_type : fact_type
-      end
     end
 
     class Variable
@@ -1066,99 +1103,50 @@ module ActiveFacts
     end
 
     class LinkFactType
-      def default_reading
-        # There are two cases, where role is in a unary fact type, and where the fact type is objectified
-        # If a unary fact type is objectified, only the LinkFactType for the objectification is asserted
-        if objectification = implying_role.fact_type.entity_type
-          "#{objectification.name} involves #{implying_role.object_type.name}"
-        else
-          implying_role.fact_type.default_reading+" Boolean"  # Must be a unary FT
-        end
-      end
-
-      def add_reading implicit_reading
-        @readings ||= []
-        @readings << implicit_reading
-      end
-
       def all_reading
-        @readings ||=
-          [ ImplicitReading.new(
-              self,
-              implying_role.fact_type.entity_type ? "{0} involves {1}" : implying_role.fact_type.default_reading+" Boolean"
-            )
-          ] +
-          Array(implying_role.fact_type.entity_type ? ImplicitReading.new(self, "{1} is involved in {0}") : nil)
-      end
-
-      def reading_preferably_starting_with_role role, negated = false
-        all_reading[role == implying_role ? 1 : 0]
-      end
-
-      # This is only used for debugging, from RoleRef#describe
-      class ImplicitReading
-        attr_accessor :fact_type, :text
-        attr_reader :is_negative  # Never true
-
-        def initialize(fact_type, text)
-          @fact_type = fact_type
-          @text = text
-        end
-
-        class ImplicitReadingRoleSequence
-          class ImplicitReadingRoleRef
-            attr_reader :role
-            attr_reader :role_sequence
-            def initialize(role, role_sequence)
-              @role = role
-              @role_sequence = role_sequence
-            end
-            def variable; nil; end
-            def play; nil; end
-            def leading_adjective; nil; end
-            def trailing_adjective; nil; end
-            def describe
-              @role.object_type.name
-            end
-          end
-
-          def initialize roles
-            @role_refs = roles.map{|role| ImplicitReadingRoleRef.new(role, self) }
-          end
-
-          def all_role_ref
-            @role_refs
-          end
-          def all_role_ref_in_order
-            @role_refs
-          end
-          def describe
-            '('+@role_refs.map(&:describe)*', '+')'
-          end
-          def all_reading
-            []
-          end
-        end
-
-        def role_sequence
-          ImplicitReadingRoleSequence.new([@fact_type.implying_role, @fact_type.all_role.single])
-        end
-
-        def ordinal; 0; end
-
-        def expand
-          text.gsub(/\{([01])\}/) do
-            if $1 == '0'
-              fact_type.all_role[0].object_type.name
-            else
-              fact_type.implying_role.object_type.name
-            end
-          end
-        end
+	if super.size == 0
+	  # REVISIT: Should we create reading orders independently?
+	  # No user-defined readings have been defined, so it's time to stop being lazy:
+	  objectification_role, mirror_role = *all_role_in_order
+	  rs = constellation.RoleSequence(:new)
+	  rr0 = constellation.RoleRef(rs, 0, :role => objectification_role)
+	  rr1 = constellation.RoleRef(rs, 1, :role => mirror_role)
+	  r0 = constellation.Reading(self, 0, :role_sequence => rs, :text => "{0} involves {1}", :is_negative => false)  # REVISIT: This assumes English!
+	  r1 = constellation.Reading(self, 1, :role_sequence => rs, :text => "{1} is involved in {0}", :is_negative => false)
+	end
+	@all_reading
       end
     end
 
-    # Some queries must be over the proximate roles, some over the counterpart roles.
+    class MirrorRole
+      def is_mandatory
+	true  # An objectified fact type must have a player for each role
+      end
+
+      def is_unique
+	true  # A mirror role exists is played exactly once for each objectification
+      end
+
+      def is_functional
+	true
+      end
+
+      def uniqueness_constraint
+	raise "A MirrorRole should not be asked for its uniqueness constraints"
+      end
+
+      %w{all_ring_constraint_as_other_role all_ring_constraint all_role_value role_value_constraint mirror_role_as_base_role
+      }.each do |accessor|
+	define_method(accessor.to_sym) do
+	  base_role.send(accessor.to_sym)
+	end
+	define_method("#{accessor}=".to_sym) do |*a|
+	  raise "REVISIT: It's a bad idea to try to set #{accessor} for a MirrorRole"
+	end
+      end
+    end
+
+    # Some queries in constraints must be over the proximate roles, some over the counterpart roles.
     # Return the common superclass of the appropriate roles, and the actual roles
     def self.plays_over roles, options = :both   # Or :proximate, :counterpart
       # If we can stay inside this objectified FT, there's no query:
@@ -1204,7 +1192,8 @@ module ActiveFacts
           if fact_type.entity_type
             objectification_role_supertypes =
               fact_type.entity_type.supertypes_transitive+object_type.supertypes_transitive
-            objectification_role = role.link_fact_type.all_role.single # Find the phantom role here
+	    # Find the objectification role here:
+            objectification_role = role.link_fact_type.all_role.detect{|r| !r.is_a?(MirrorRole)}
           else
             objectification_role_supertypes = counterpart_role_supertypes
             objectification_role = counterpart_role
