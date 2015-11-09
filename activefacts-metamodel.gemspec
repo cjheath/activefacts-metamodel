@@ -25,4 +25,5 @@ This gem provides the core representations for the Fact Modeling tools of Active
   spec.add_development_dependency "rspec", "~> 3.3"
 
   spec.add_runtime_dependency "activefacts-api", ">= 1.8", "~> 1.8.4"
+  spec.add_development_dependency "activefacts", "~> 1.8", "~> 1.8.0"
 end
