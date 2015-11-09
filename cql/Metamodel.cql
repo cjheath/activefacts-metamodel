@@ -313,6 +313,7 @@ Fact Type Shape is for one Fact Type,
 Fact Type Shape has at most one Rotation Setting;
 
 Injection is a kind of Mapping;
+ValueField is a kind of Injection;
 
 Mirror Role is a kind of Role;
 Mirror Role is for at most one Role (as Base Role),

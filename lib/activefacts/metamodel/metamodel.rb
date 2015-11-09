@@ -586,6 +586,9 @@ module ActiveFacts
       one_to_one :role_display                    # See RoleDisplay.value_constraint_shape
     end
   
+    class ValueField < Injection
+    end
+  
     class ValueRange
       identified_by :minimum_bound, :maximum_bound
       has_one :maximum_bound, :class => Bound     # See Bound.all_value_range_as_maximum_bound
