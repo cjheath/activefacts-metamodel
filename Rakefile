@@ -32,7 +32,7 @@ end
 desc "Generate new Ruby from the ORM file"
 task :ruby do
   system %q{
-    afgen --ruby cql/Metamodel.cql |
+    afgen --ruby cql/Metamodel.cql 2>/dev/null |
       sed '2a\
 module ActiveFacts
 	

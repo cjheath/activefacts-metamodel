@@ -58,6 +58,7 @@ Component is identified by Guid where
 	Component has one Guid,
 	Guid is of at most one Component;
 Component projects at most one Name;
+Component has at most one Ordinal rank;
 
 Composition is identified by Guid where
 	Composition has one Guid,

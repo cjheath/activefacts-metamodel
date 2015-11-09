@@ -184,6 +184,7 @@ module ActiveFacts
       identified_by :guid
       one_to_one :guid, :mandatory => true        # See Guid.component
       has_one :name                               # See Name.all_component
+      has_one :ordinal                            # See Ordinal.all_component
       has_one :parent, :class => "Mapping", :counterpart => :member  # See Mapping.all_member
     end
   
