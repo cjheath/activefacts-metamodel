@@ -267,9 +267,7 @@ module ActiveFacts
       end
 
       def is_mandatory
-	# REVISIT: An objectification role is always mandatory
-	# REVISIT: Handle mirror roles
-        return fact_type.implying_role.is_mandatory if fact_type.is_a?(LinkFactType)
+	return true if fact_type.is_a?(LinkFactType) # Handle objectification roles
         all_role_ref.detect{|rr|
           rs = rr.role_sequence
           rs.all_role_ref.size == 1 and
@@ -286,7 +284,8 @@ module ActiveFacts
       # Return true if this role is functional (has only one instance wrt its player)
       # A role in an objectified fact type is deemed to refer to the implicit role of the objectification.
       def is_functional
-	# REVISIT: Handle mirror and objectification roles
+	return true if fact_type.is_a?(LinkFactType) # Handle objectification roles
+
         fact_type.entity_type or
         fact_type.all_role.size != 2 or
         uniqueness_constraint
@@ -305,7 +304,8 @@ module ActiveFacts
 
       # Is there are internal uniqueness constraint on this role only?
       def is_unique
-	# REVISIT: Handle objectification roles
+	return true if fact_type.is_a?(LinkFactType) # Handle objectification roles
+
 	uniqueness_constraint ? true : false
       end
 
@@ -598,6 +598,10 @@ module ActiveFacts
           raise "No PI found for #{name}" unless pi
           @preferred_identifier = pi
         end
+      end
+
+      def rank_in_preferred_identifier(role)
+	preferred_identifier.role_sequence.all_role_ref_in_order.map(&:role).index(role)
       end
 
       # An array of all direct subtypes:
@@ -1120,15 +1124,15 @@ module ActiveFacts
 
     class MirrorRole
       def is_mandatory
-	true  # An objectified fact type must have a player for each role
+	base_role.is_mandatory 
       end
 
       def is_unique
-	true  # A mirror role exists is played exactly once for each objectification
+	base_role.is_unique
       end
 
       def is_functional
-	true
+	base_role.is_functional
       end
 
       def uniqueness_constraint
@@ -1343,5 +1347,180 @@ module ActiveFacts
       end
     end
 
+    class Mapping
+      def inspect
+	"#{self.class.basename} (#{rank_kind}) of #{object_type.name}"
+      end
+
+      def show_trace
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name})" : ''}" do
+	  yield if block_given?
+	  all_member.sort_by{|member| [member.ordinal, member.name]}.each do |member|
+	    member.show_trace
+	  end
+	end
+      end
+    end
+
+    class Nesting
+      def show_trace
+	# The index role has a counterpart played by the parent object in the enclosing Absorption
+	reading = index_role.fact_type.default_reading
+	trace :composition, "#{ordinal}: Nesting under #{index_role.object_type.name}#{key_name ? " (as #{key_name})" : ''} in #{reading.inspect}}"
+      end
+    end
+
+    class Absorption
+      def inspect
+	"#{super} in #{parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand.inspect}"
+      end
+
+      def show_trace
+	super() do
+	  if nesting_mode || all_nesting.size > 0
+	    trace :composition, "Nested using #{nesting_mode || 'unspecified'} mode" do
+	      all_nesting.sort_by(&:ordinal).each(&:show_trace)
+	    end
+	  end
+	end
+      end
+
+      def is_type_inheritance
+	child_role.fact_type.is_a?(TypeInheritance) && child_role.fact_type
+      end
+
+      def is_supertype_absorption
+	is_type_inheritance && child_role.fact_type.supertype == object_type
+      end
+
+      def is_subtype_absorption
+	is_type_inheritance && parent_role.fact_type.supertype == object_type
+      end
+    end
+
+    class Indicator
+      def inspect
+	"#{self.class.basename} #{role.fact_type.default_reading.inspect}"
+      end
+
+      def show_trace
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name})" : ''}"
+      end
+    end
+
+    class Discriminator
+      def inspect
+	"#{self.class.basename} #{role.fact_type.default_reading.inspect}"
+      end
+
+      def show_trace
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name})" : ''}"
+      end
+    end
+
+    class ValueField
+      def inspect
+	"#{self.class.basename} #{object_type.name.inspect}"
+      end
+
+      def show_trace
+	trace :composition, "#{ordinal}: #{inspect} #{name ? " (as #{name})" : ''}"
+      end
+    end
+
+    class Component
+      # The ranking key of a component indicates its importance to its parent:
+      # Ranking assigns a total order, but is computed in groups:
+      RANK_SUPER = 0		# Supertypes, with the identifying supertype first, others alphabetical
+      RANK_IDENT = 1		# Identifying components (absorptions, indicator), in order of the identifier
+      RANK_VALUE = 2		# A ValueField
+      RANK_INJECTION = 3	# Injections, in alphabetical order
+      RANK_DISCRIMINATOR = 4	# Discriminator components, in alphabetical order
+      RANK_FOREIGN = 5		# REVISIT: Foreign key components
+      RANK_INDICATOR = 6	# Indicators in alphabetical order
+      RANK_MANDATORY = 7	# Absorption: unique mandatory
+      RANK_NON_MANDATORY = 8	# Absorption: unique optional
+      RANK_MULTIPLE = 9		# Absorption: manifold
+      RANK_SUBTYPE = 10		# Subtypes in alphabetical order
+      RANK_SCOPING = 11		# Scoping in alphabetical order
+
+      def rank_key
+	parent_et = parent &&
+	  parent.object_type.is_a?(EntityType) &&
+	  parent.object_type
+
+	case self
+	when Indicator
+	  if parent_et && (position = parent_et.rank_in_preferred_identifier(role))
+	    [RANK_IDENT, position]     # An identifying unary
+	  else
+	    [RANK_INDICATOR, name || role.role_name || role.fact_type.default_reading]	      # A non-identifying unary
+	  end
+
+	when Discriminator
+	  [RANK_DISCRIMINATOR, name || object_type.name]
+
+	when ValueField
+	  [RANK_IDENT]
+
+	when Injection
+	  [RANK_INJECTION, name || object_type.name]	      # REVISIT: A different sub-key for ranking may be needed
+
+	when Absorption
+	  if is_type_inheritance
+	    # We are traversing a type inheritance fact type. Is this object_type the subtype or supertype?
+	    if is_supertype_absorption
+	      # What's the rank of this supertype?
+	      tis = parent_role.object_type.all_type_inheritance_as_subtype.sort_by{|ti| ti.provides_identification ? '' : ti.supertype.name }
+	      [RANK_SUPER, child_role.fact_type.provides_identification ? 0 : 1+tis.index(parent_role.fact_type)]
+	    else
+	      # What's the rank of this subtype?
+	      tis = parent_role.object_type.all_type_inheritance_as_supertype.sort_by{|ti| ti.subtype.name }
+	      [RANK_SUBTYPE, tis.index(parent_role.fact_type)]
+	    end
+	  elsif parent_et && (position = parent_et.rank_in_preferred_identifier(child_role))
+	    [RANK_IDENT, position]
+	  else
+	    if parent_role.is_unique
+	      [parent_role.is_mandatory ? RANK_MANDATORY : RANK_NON_MANDATORY, name || child_role.role_name || object_type.name]
+	    else
+	      [RANK_MULTIPLE, name || child_role.role_name || object_type.name]
+	    end
+	  end
+
+	when Scoping
+	  [RANK_SCOPING, name || object_type.name]
+
+	else
+	  raise "unexpected #{self.class.basename} in Component#rank_key"
+	end
+      end
+
+      def rank_kind
+	return "composite" if self.class == Mapping
+	case rank_key[0]
+	when RANK_SUPER; "supertype"
+	when RANK_IDENT; "existential"
+	when RANK_VALUE; "self-value"
+	when RANK_INJECTION; "injection"
+	when RANK_DISCRIMINATOR; "discriminator"
+	when RANK_FOREIGN; "foreignkey"
+	when RANK_INDICATOR; "indicator"
+	when RANK_MANDATORY; "mandatory"
+	when RANK_NON_MANDATORY; "optional"
+	when RANK_MULTIPLE; "multiple"
+	when RANK_SUBTYPE; "subtype"
+	when RANK_SCOPING; "scoping"
+	end
+      end
+
+      def inspect
+	"#{self.class.basename}"
+      end
+
+      def show_trace
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}#{name ? " (as #{name})" : ''}"
+      end
+    end
   end
 end
