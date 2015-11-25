@@ -14365,15 +14365,15 @@
 						<orm:Role id="_55655C95-CEBB-4F43-A278-5C6396BBD04A" ref="_BE744A85-0CE7-4C53-A1D9-1C63B9A5E19D" />
 						<orm:Role id="_F4C84715-891B-4420-BD45-E7CDC2E7C5E9" ref="_ADDCA92F-8C0E-4290-A293-292FECBCED9D" />
 						<orm:JoinRule>
-							<orm:JoinPath id="_E5699ACC-C908-4EA9-97FA-DDC84C413773" IsAutomatic="true">
+							<orm:JoinPath id="_E5699ACC-C908-4EA9-97FA-DDC84C413773">
 								<orm:PathComponents>
 									<orm:RolePath id="_23C7A5CE-D3D6-43CB-BD7D-513DA6241068">
-										<orm:RootObjectType id="_52FACDE1-D9CD-49AF-BB0B-E29DD4803659" ref="_C4DE2415-F2F5-42AD-906B-50039DAE1DDF" />
+										<orm:RootObjectType id="_52FACDE1-D9CD-49AF-BB0B-E29DD4803659" ref="_43DF94C6-2C2C-4CC8-8A40-D69D0F43598B" />
 										<orm:PathedRoles>
-											<orm:PathedRole id="_EF910EC3-345E-4BC2-BFEB-6BCB3F0AAE12" ref="_BE744A85-0CE7-4C53-A1D9-1C63B9A5E19D" Purpose="PostInnerJoin" />
-											<orm:PathedRole id="_E33400C7-8355-4E99-BFE4-7F8AB4F53AB4" ref="_30290A84-BB41-49A9-9FF6-DB3C7E73CA3F" Purpose="SameFactType" />
-											<orm:PathedRole id="_43FF170C-1CA8-4D56-AA72-E531142469B4" ref="_8BD226F9-F7EE-4CFB-881B-0C4EF4686D2F" Purpose="PostInnerJoin" />
-											<orm:PathedRole id="_D0128322-E900-4294-82BF-74FD2337AC67" ref="_ADDCA92F-8C0E-4290-A293-292FECBCED9D" Purpose="SameFactType" />
+											<orm:PathedRole id="_38DCA761-CC74-4DD3-B67F-30E81BE83DFE" ref="_BE744A85-0CE7-4C53-A1D9-1C63B9A5E19D" Purpose="PostInnerJoin" />
+											<orm:PathedRole id="_6DB61B15-BAD0-40A6-9EAB-DA618A709B2E" ref="_30290A84-BB41-49A9-9FF6-DB3C7E73CA3F" Purpose="SameFactType" />
+											<orm:PathedRole id="_6F827ACD-1F83-41FF-9F41-7405538CE940" ref="_8BD226F9-F7EE-4CFB-881B-0C4EF4686D2F" Purpose="PostInnerJoin" />
+											<orm:PathedRole id="_34171070-C436-4F38-88B5-4936120D0050" ref="_ADDCA92F-8C0E-4290-A293-292FECBCED9D" Purpose="SameFactType" />
 										</orm:PathedRoles>
 									</orm:RolePath>
 								</orm:PathComponents>
@@ -14384,9 +14384,9 @@
 												<orm:PathRoot ref="_52FACDE1-D9CD-49AF-BB0B-E29DD4803659" />
 											</orm:ProjectedFrom>
 										</orm:ConstraintRoleProjection>
-										<orm:ConstraintRoleProjection id="_BC6E811F-B427-47DD-84ED-AC909E9251D8" ref="_F4C84715-891B-4420-BD45-E7CDC2E7C5E9">
+										<orm:ConstraintRoleProjection id="_3920CDD5-B3EE-4B5C-B489-DAB1098E000A" ref="_F4C84715-891B-4420-BD45-E7CDC2E7C5E9">
 											<orm:ProjectedFrom>
-												<orm:PathedRole ref="_D0128322-E900-4294-82BF-74FD2337AC67" />
+												<orm:PathedRole ref="_34171070-C436-4F38-88B5-4936120D0050" />
 											</orm:ProjectedFrom>
 										</orm:ConstraintRoleProjection>
 									</orm:JoinPathProjection>
@@ -14618,16 +14618,9 @@ culture and locale aspects.</orm:Text>
 			<orm:ModelNote id="_B9AF43E9-C8B6-4F27-83C7-336BDD97C112">
 				<orm:Text>Legacy Facets</orm:Text>
 			</orm:ModelNote>
-			<orm:ModelNote id="_E9030C26-B3A3-4A37-882A-276C5A4DFC02">
-				<orm:Text>For each Component and Fact Type,
-that Component is some Absorption that traverses to some child-Role1 that belongs to that Fact Type
-if and only if
-some Mapping1 contains that Component
-and represents some Object Type that plays some Role2 that belongs to that Fact Type.</orm:Text>
-			</orm:ModelNote>
 			<orm:ModelNote id="_39D1306F-6C1B-4FEC-ADF8-3959AEC77C2A">
-				<orm:Text>If some Absorption traverses to some child Role that is played by some Object Type
-then some Mapping that is that Absorption represents that Object Type.</orm:Text>
+				<orm:Text>If for some Mapping, that Mapping is some Absorption that traverses to some child Role
+that is played by some Object Type then that Mapping represents that Object Type.</orm:Text>
 				<orm:ReferencedBy>
 					<orm:SetComparisonConstraint ref="_07F24ACF-D8A5-40A0-92FC-BFC087225CB8" />
 				</orm:ReferencedBy>
@@ -14646,30 +14639,31 @@ but merely passes down its parent's Object Type</orm:Text>
 				</orm:ReferencedBy>
 			</orm:ModelNote>
 			<orm:ModelNote id="_E6F06CF4-44F6-42A8-BAA3-DC7088FBC488">
-				<orm:Text>An Injection is an object type added in the composition,
-e.g. a surrogate key or audit field</orm:Text>
+				<orm:Text>An Injection is an object type added in the composition, e.g.
+a surrogate key or audit field like a timestamp or data source name</orm:Text>
 				<orm:ReferencedBy>
 					<orm:ObjectType ref="_32350DBF-3941-4250-B316-1E369A866F3E" />
 				</orm:ReferencedBy>
 			</orm:ModelNote>
 			<orm:ModelNote id="_B4F02530-8044-428F-A881-98A56E623EA1">
-				<orm:Text>A Discriminator is a value type that indicates
-which of several alternate roles is played.</orm:Text>
+				<orm:Text>A Discriminator is a value type that indicates which of several
+alternate roles is played. It replaces more than one Indicator</orm:Text>
 				<orm:ReferencedBy>
 					<orm:ObjectType ref="_B37F1E95-6872-4F0B-9A83-412C935929E7" />
 				</orm:ReferencedBy>
 			</orm:ModelNote>
 			<orm:ModelNote id="_AE143400-FB85-429A-9C4C-09C081A2C86A">
 				<orm:Text>An absorption always traverses a binary Fact Type
-which is always either one-to-one or one-to-many</orm:Text>
+which is always either one-to-one or one-to-many.
+In an objectified Fact Type, LinkFactTypes are often traversed.</orm:Text>
 				<orm:ReferencedBy>
 					<orm:FactType ref="_6DB13E64-50B7-4C94-9594-D3EB5518413A" />
 					<orm:FactType ref="_6096F661-5482-40E6-97AD-A4D3EBDF3187" />
 				</orm:ReferencedBy>
 			</orm:ModelNote>
 			<orm:ModelNote id="_2E8601DA-1E1A-4EE0-9FD8-90A6434BAFF3">
-				<orm:Text>If some Absorption traverses from some parent Role that is played by some Object Type
-then that Absorption is some Component that belongs to some parent Mapping that represents that Object Type.</orm:Text>
+				<orm:Text>If some Absorption traverses from some parent Role that is played by some Object Type then
+that Absorption is some Component that belongs to some parent Mapping that represents that Object Type.</orm:Text>
 				<orm:ReferencedBy>
 					<orm:SetComparisonConstraint ref="_CC4F9EB2-1E67-4EDB-A6C1-50D4D144CF0B" />
 				</orm:ReferencedBy>
@@ -14678,6 +14672,27 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 				<orm:Text>A ValueField is injected to hold the value of a ValueType</orm:Text>
 				<orm:ReferencedBy>
 					<orm:ObjectType ref="_8081637F-F1BE-4B58-BF6C-0359BFC7CD53" />
+				</orm:ReferencedBy>
+			</orm:ModelNote>
+			<orm:ModelNote id="_E571EE2C-4AC2-477E-8BD1-6457D50EA7B6">
+				<orm:Text>A Composite is e.g. a
+relational table or an
+XSD ComplexType</orm:Text>
+				<orm:ReferencedBy>
+					<orm:ObjectType ref="_EBB0CD65-AA67-4C13-AA05-777E0A5F5C2E" />
+				</orm:ReferencedBy>
+			</orm:ModelNote>
+			<orm:ModelNote id="_42CD3236-A5DC-4E3A-84A7-DA06AD6FBA74">
+				<orm:Text>Component Ordinal is provided to preserve a preferred ordering of members</orm:Text>
+				<orm:ReferencedBy>
+					<orm:FactType ref="_83DC2475-AC45-4AAE-9F06-A94E492D7C23" />
+				</orm:ReferencedBy>
+			</orm:ModelNote>
+			<orm:ModelNote id="_519F86D3-A4F4-41CE-9F4B-F1A476C22426">
+				<orm:Text>Nesting supports specific kinds of denormalised structures such as SQL repeated attributes, Set (no nesting role),
+Array (one small integer key role) and HSTORE (one or more key roles) composite data types.</orm:Text>
+				<orm:ReferencedBy>
+					<orm:ObjectType ref="_583079A2-FCCF-4B48-8E67-5193D9A5F427" />
 				</orm:ReferencedBy>
 			</orm:ModelNote>
 		</orm:ModelNotes>
@@ -17230,15 +17245,15 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 	</ormDiagram:ORMDiagram>
 	<ormDiagram:ORMDiagram id="_099D32BA-5B3C-4FD4-BFCE-C5B30ECB6683" IsCompleteView="true" Name="Composition" BaseFontName="Tahoma" BaseFontSize="0.0972222238779068">
 		<ormDiagram:Shapes>
-			<ormDiagram:ObjectTypeShape id="_F4DBE782-737C-4D59-B873-32077D3DF06A" IsExpanded="true" AbsoluteBounds="0.519726776168214, 2.2005533499868521, 0.78098135709762573, 0.35900605320930479">
+			<ormDiagram:ObjectTypeShape id="_F4DBE782-737C-4D59-B873-32077D3DF06A" IsExpanded="true" AbsoluteBounds="0.59974532341957087, 2.4422922389393196, 0.78098135709762573, 0.35900605320930479">
 				<ormDiagram:Subject ref="_955A3766-115E-47CE-88B8-AC37518E989F" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_D78BFF97-36FB-46BC-9782-7355CC89D8FB" IsExpanded="true" AbsoluteBounds="0.56807681231247065, 3.5956256969628884, 0.68428128480911254, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_D78BFF97-36FB-46BC-9782-7355CC89D8FB" IsExpanded="true" AbsoluteBounds="0.64809535956382758, 3.8373645859153558, 0.68428128480911254, 0.22950302660465241">
 				<ormDiagram:Subject ref="_EBB0CD65-AA67-4C13-AA05-777E0A5F5C2E" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FactTypeShape id="_0075F5BD-36CF-41C7-9AB3-A05C55E7E38A" IsExpanded="true" AbsoluteBounds="0.71827301022084233, 2.9059714782711095, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_0075F5BD-36CF-41C7-9AB3-A05C55E7E38A" IsExpanded="true" AbsoluteBounds="0.79829155747219915, 3.1477103672235769, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_0E69AAD0-44C2-456C-96BB-6E373D6339E5" IsExpanded="true" AbsoluteBounds="0.36732973578356476, 3.2146118805658048, 0.95934152603149414, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_0E69AAD0-44C2-456C-96BB-6E373D6339E5" IsExpanded="true" AbsoluteBounds="0.44734828303492158, 3.4563507695182722, 0.95934152603149414, 0.12950302660465241">
 						<ormDiagram:Subject ref="_10F411DA-AE5D-4079-8467-BBA48668ACBC" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17248,12 +17263,12 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_6EF02438-FF3C-40D3-AAFD-743FBD48424E" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_57F5AF2F-B4B4-432C-86C5-525814CF061F" IsExpanded="true" AbsoluteBounds="4.7720779980324561, 3.5956256969628884, 0.75373249769210815, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_57F5AF2F-B4B4-432C-86C5-525814CF061F" IsExpanded="true" AbsoluteBounds="4.9108185367691926, 3.8373645859153558, 0.75373249769210815, 0.22950302660465241">
 				<ormDiagram:Subject ref="_6E038746-2591-4605-A6FE-AE888E8B2EB1" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FactTypeShape id="_62619675-F31E-47F2-B81E-A8597972F6A7" IsExpanded="true" AbsoluteBounds="3.8228892673780166, 3.5534327657690294, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_62619675-F31E-47F2-B81E-A8597972F6A7" IsExpanded="true" AbsoluteBounds="3.8703505548759387, 3.7951716547214969, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_3C5F5917-402F-4A82-A589-0E783FF1F8BC" IsExpanded="true" AbsoluteBounds="3.8228892673780166, 3.8620731680637252, 0.49668148159980774, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_3C5F5917-402F-4A82-A589-0E783FF1F8BC" IsExpanded="true" AbsoluteBounds="3.8703505548759387, 4.1038120570161922, 0.49668148159980774, 0.12950302660465241">
 						<ormDiagram:Subject ref="_4C4ABB13-9C81-4BA3-B8B6-D48BE65E7F29" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17263,18 +17278,18 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_BE2BC553-EB41-48E4-BDE1-E5C6DEE057FC" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_D876A3D9-9E30-4981-A80C-1803908D0405" IsExpanded="true" AbsoluteBounds="2.5762332192245547, 3.5956256969628884, 0.58525517106056224, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_D876A3D9-9E30-4981-A80C-1803908D0405" IsExpanded="true" AbsoluteBounds="2.6236945067224768, 3.8373645859153558, 0.58525517106056224, 0.22950302660465241">
 				<ormDiagram:Subject ref="_43DF94C6-2C2C-4CC8-8A40-D69D0F43598B" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_6590BEC7-688C-431A-8280-677856D238E2" IsExpanded="true" AbsoluteBounds="2.5179378649774615, 4.8048441353486524, 0.70184587955474853, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_6590BEC7-688C-431A-8280-677856D238E2" IsExpanded="true" AbsoluteBounds="2.5653991524753836, 5.0465830243011176, 0.70184587955474853, 0.22950302660465241">
 				<ormDiagram:Subject ref="_C4DE2415-F2F5-42AD-906B-50039DAE1DDF" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_13EED334-E840-46B3-BEC1-AD2A2BF5B05D" IsExpanded="true" AbsoluteBounds="5.1295059648840748, 4.8048441353486524, 0.37661665201187133, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_13EED334-E840-46B3-BEC1-AD2A2BF5B05D" IsExpanded="true" AbsoluteBounds="5.2622203889870214, 5.0465830243011176, 0.37661665201187133, 0.22950302660465241">
 				<ormDiagram:Subject ref="_ABCDC9B2-822F-4E84-83D4-3732C029BB1B" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FactTypeShape id="_299E11E0-1873-49F0-A3A1-F90AF6B8D3D2" IsExpanded="true" AbsoluteBounds="5.0426073699959293, 4.0273357792342335, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_299E11E0-1873-49F0-A3A1-F90AF6B8D3D2" IsExpanded="true" AbsoluteBounds="5.1753217940988758, 4.2690746681866987, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_B1BFD149-0F63-49CF-8331-66F49329F47C" IsExpanded="true" AbsoluteBounds="5.0426073699959293, 4.3359761815289311, 0.88267457485198975, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_B1BFD149-0F63-49CF-8331-66F49329F47C" IsExpanded="true" AbsoluteBounds="5.1753217940988758, 4.5777150704813963, 0.88267457485198975, 0.12950302660465241">
 						<ormDiagram:Subject ref="_D8E6C490-1154-4869-94F5-68E99D5CEADB" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17284,15 +17299,15 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_8BD226F9-F7EE-4CFB-881B-0C4EF4686D2F" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:FactTypeShape id="_88AA4BF3-8549-4240-9E58-605BAA2603A4" IsExpanded="true" AbsoluteBounds="2.0586957105545567, 2.22311193209532, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_88AA4BF3-8549-4240-9E58-605BAA2603A4" IsExpanded="true" AbsoluteBounds="2.1061569980524788, 2.4648508210477873, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_2B3B04BB-6DBE-4732-9FCF-16382C3B2219" IsExpanded="true" AbsoluteBounds="1.6065485228233487, 2.5701556506856571, 1.3130062818527222, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_2B3B04BB-6DBE-4732-9FCF-16382C3B2219" IsExpanded="true" AbsoluteBounds="1.6540098103212708, 2.8118945396381245, 1.3130062818527222, 0.12950302660465241">
 						<ormDiagram:Subject ref="_AF22C1FF-1361-4556-B2C4-D6EF9FFC7B7C" />
 					</ormDiagram:ReadingShape>
-					<ormDiagram:RoleNameShape id="_997DBF88-C467-4FB8-A321-8906598A6D5C" IsExpanded="true" AbsoluteBounds="2.0086957105545569, 1.8731119320953198, 0.46720150113105774, 0.12950302660465241">
+					<ormDiagram:RoleNameShape id="_997DBF88-C467-4FB8-A321-8906598A6D5C" IsExpanded="true" AbsoluteBounds="2.056156998052479, 2.1148508210477872, 0.46720150113105774, 0.12950302660465241">
 						<ormDiagram:Subject ref="_7E7A5CB5-5D07-4682-B0C5-F78ED445EDE1" />
 					</ormDiagram:RoleNameShape>
-					<ormDiagram:RoleNameShape id="_EC18FD78-FA74-4A4D-8F81-6282557BD7AD" IsExpanded="true" AbsoluteBounds="2.0086957105545569, 1.8731119320953198, 0.05, 0.05">
+					<ormDiagram:RoleNameShape id="_EC18FD78-FA74-4A4D-8F81-6282557BD7AD" IsExpanded="true" AbsoluteBounds="2.056156998052479, 2.1148508210477872, 0.05, 0.05">
 						<ormDiagram:Subject ref="_8B6BC787-EB8A-4011-9B09-04E14CB3E3CC" />
 					</ormDiagram:RoleNameShape>
 				</ormDiagram:RelativeShapes>
@@ -17302,12 +17317,12 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_8B6BC787-EB8A-4011-9B09-04E14CB3E3CC" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_3834D6A4-B4CA-4273-9C6F-BB0F168B4A66" IsExpanded="true" AbsoluteBounds="5.002261177624, 6.400779312952257, 0.69942479848861694, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_3834D6A4-B4CA-4273-9C6F-BB0F168B4A66" IsExpanded="true" AbsoluteBounds="5.1349756017269463, 6.6425182019047231, 0.69942479848861694, 0.22950302660465241">
 				<ormDiagram:Subject ref="_4A49FC50-0CE4-49E8-8376-5B8590845541" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FactTypeShape id="_5328B387-2226-4366-BC4A-C480BAA7570E" IsExpanded="true" AbsoluteBounds="5.0726207303868387, 5.3519685784035271, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_5328B387-2226-4366-BC4A-C480BAA7570E" IsExpanded="true" AbsoluteBounds="5.2053351544897852, 5.5937074673559923, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_7F8CD4FF-A474-4F82-91FE-784B657CB5C4" IsExpanded="true" AbsoluteBounds="4.9770262803888672, 5.6765413890312155, 0.95934152603149414, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_7F8CD4FF-A474-4F82-91FE-784B657CB5C4" IsExpanded="true" AbsoluteBounds="5.1097407044918137, 5.9182802779836807, 0.95934152603149414, 0.12950302660465241">
 						<ormDiagram:Subject ref="_1AC3F1A8-D2A0-4E44-BA7D-EC4259C54DDA" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17317,9 +17332,9 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_5B536D4B-03A4-43D1-8E21-BAA11B1915E1" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:FactTypeShape id="_0968A420-A6C0-4411-9488-A591E755723A" IsExpanded="true" AbsoluteBounds="3.8228892673780162, 4.7626512041547935, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_0968A420-A6C0-4411-9488-A591E755723A" IsExpanded="true" AbsoluteBounds="3.8703505548759383, 5.00439009310726, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_56B559FB-B6BC-45E3-81FD-41CF4A55727F" IsExpanded="true" AbsoluteBounds="3.5538809723677649, 5.0402521877944588, 0.82518625259399414, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_56B559FB-B6BC-45E3-81FD-41CF4A55727F" IsExpanded="true" AbsoluteBounds="3.601342259865687, 5.2819910767469249, 0.82518625259399414, 0.12950302660465241">
 						<ormDiagram:Subject ref="_69894A4B-7A46-4D94-9A67-4AF39106C3C2" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17329,26 +17344,23 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_30290A84-BB41-49A9-9FF6-DB3C7E73CA3F" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ModelNoteShape id="_0A175D4A-A974-4C51-8A31-854E0FFD9F69" IsExpanded="true" AbsoluteBounds="0.5, 8.0027901630618, 4.54000178527832, 0.61090413284301759">
-				<ormDiagram:Subject ref="_E9030C26-B3A3-4A37-882A-276C5A4DFC02" />
-			</ormDiagram:ModelNoteShape>
-			<ormDiagram:ModelNoteShape id="_9A30A348-00B4-416E-85B3-708F9A9CE3BA" IsExpanded="true" AbsoluteBounds="4.2075254812812917, 4.4803482222152216, 3.7576192970275879, 0.2588533217906952">
+			<ormDiagram:ModelNoteShape id="_9A30A348-00B4-416E-85B3-708F9A9CE3BA" IsExpanded="true" AbsoluteBounds="4.2794276725477092, 4.7220871111676868, 3.9374424571990971, 0.2588533217906952">
 				<ormDiagram:Subject ref="_39D1306F-6C1B-4FEC-ADF8-3959AEC77C2A" />
 			</ormDiagram:ModelNoteShape>
-			<ormDiagram:FactTypeShape id="_6C9AD75C-416E-4A8D-B699-F85C8E473BC2" IsExpanded="true" AbsoluteBounds="1.3577196616303391, 4.8326512041547938, 0.2238888889923692, 0.17388888899236918">
+			<ormDiagram:FactTypeShape id="_6C9AD75C-416E-4A8D-B699-F85C8E473BC2" IsExpanded="true" AbsoluteBounds="1.4051809491282614, 5.07439009310726, 0.2238888889923692, 0.17388888899236918">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_00397F8D-944F-4EB5-9DCD-FD9F3BD4E225" IsExpanded="true" AbsoluteBounds="0.993264603660883, 4.8483793630712322, 0.35996273159980774, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_00397F8D-944F-4EB5-9DCD-FD9F3BD4E225" IsExpanded="true" AbsoluteBounds="1.0407258911588053, 5.0901182520236983, 0.35996273159980774, 0.12950302660465241">
 						<ormDiagram:Subject ref="_610C5D27-DAD2-4381-A75A-2214DA0C65A7" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
 				<ormDiagram:Subject ref="_DC8015D6-FB62-4DEB-BD7F-F473FFA6AC4C" />
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_C33617E7-73BB-4742-B1C5-B7BD90F8BFE8" IsExpanded="true" AbsoluteBounds="0.68799053935752985, 0.82626370342064082, 0.44445383071899414, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_C33617E7-73BB-4742-B1C5-B7BD90F8BFE8" IsExpanded="true" AbsoluteBounds="0.76800908660888667, 1.0680025923731082, 0.44445383071899414, 0.22950302660465241">
 				<ormDiagram:Subject ref="_25D2C6A4-DE21-447E-BB72-3EF90026E125" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FactTypeShape id="_7951F8A5-BAF7-407F-BD63-9A49DF0E9BE3" IsExpanded="true" AbsoluteBounds="1.6448359913264843, 0.78407077222678256, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_7951F8A5-BAF7-407F-BD63-9A49DF0E9BE3" IsExpanded="true" AbsoluteBounds="1.669856991078748, 1.02580966117925, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_DA583D60-7C0C-4F9D-AF48-6D085CF5E2FF" IsExpanded="true" AbsoluteBounds="1.6448359913264843, 1.0927111745214806, 0.43346126675605773, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_DA583D60-7C0C-4F9D-AF48-6D085CF5E2FF" IsExpanded="true" AbsoluteBounds="1.669856991078748, 1.334450063473948, 0.43346126675605773, 0.12950302660465241">
 						<ormDiagram:Subject ref="_8434C3D0-6DDE-4E01-BFBE-BDB8F54E6326" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17358,29 +17370,29 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_CE2B0AEC-BAEB-4902-BEE9-5CB79E065A1B" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ExternalConstraintShape id="_E802EC42-8F3B-48EC-ACA2-606F0A4B923A" IsExpanded="true" AbsoluteBounds="1.3896641061265238, 1.4338140589136375, 0.16, 0.16">
+			<ormDiagram:ExternalConstraintShape id="_E802EC42-8F3B-48EC-ACA2-606F0A4B923A" IsExpanded="true" AbsoluteBounds="1.4371253936244459, 1.6755529478661049, 0.16, 0.16">
 				<ormDiagram:Subject ref="_2E788E45-9073-467F-B7B9-96B0C0178B7E" />
 			</ormDiagram:ExternalConstraintShape>
-			<ormDiagram:ExternalConstraintShape id="_E5224181-EAB7-4958-B7EC-8E66BAEB79C4" IsExpanded="true" AbsoluteBounds="2.1021323773257237, 4.2132999583029633, 0.16, 0.16">
+			<ormDiagram:ExternalConstraintShape id="_E5224181-EAB7-4958-B7EC-8E66BAEB79C4" IsExpanded="true" AbsoluteBounds="2.1495936648236458, 4.4550388472554285, 0.16, 0.16">
 				<ormDiagram:Subject ref="_8C8C66BF-B81C-4BA9-99DF-F2DE6B79E078" />
 			</ormDiagram:ExternalConstraintShape>
-			<ormDiagram:FactTypeShape id="_7846684F-65AB-4CE8-976F-F02B99CA8466" IsExpanded="true" AbsoluteBounds="3.8228892673780162, 5.3519685784035271, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_7846684F-65AB-4CE8-976F-F02B99CA8466" IsExpanded="true" AbsoluteBounds="3.8703505548759383, 5.5937074673559923, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_0C4BC83B-2045-41E5-BB2F-69465D47769A" IsExpanded="true" AbsoluteBounds="3.4796513431419416, 5.6295695620431925, 1.0266565084457398, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_0C4BC83B-2045-41E5-BB2F-69465D47769A" IsExpanded="true" AbsoluteBounds="3.5271126306398637, 5.8713084509956577, 1.0266565084457398, 0.12950302660465241">
 						<ormDiagram:Subject ref="_E272B42C-EAC1-47EC-8042-37F2C843645C" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
 				<ormDiagram:Subject ref="_6096F661-5482-40E6-97AD-A4D3EBDF3187" />
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_413F1965-E2AF-4E7B-BFF2-8D9D9B6E0D0E" IsExpanded="true" AbsoluteBounds="3.7059233145830186, 0.8262637034206417, 0.617820794582367, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_413F1965-E2AF-4E7B-BFF2-8D9D9B6E0D0E" IsExpanded="true" AbsoluteBounds="3.7533846020809407, 1.0680025923731091, 0.617820794582367, 0.22950302660465241">
 				<ormDiagram:Subject ref="_C79CB122-3E40-4199-9A78-0AB6E9CE2A79" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_231FDB42-C238-4809-B541-F1B3896DF26C" IsExpanded="true" AbsoluteBounds="3.598233576309398, 1.3990625456113122, 0.83320027112960815, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_231FDB42-C238-4809-B541-F1B3896DF26C" IsExpanded="true" AbsoluteBounds="3.64569486380732, 1.6408014345637796, 0.83320027112960815, 0.22950302660465241">
 				<ormDiagram:Subject ref="_B37F1E95-6872-4F0B-9A83-412C935929E7" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FactTypeShape id="_BC8FFB3A-0D4E-4FC9-85B2-2D9B79DED360" IsExpanded="true" AbsoluteBounds="4.9271443830942623, 0.78407077222678256, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_BC8FFB3A-0D4E-4FC9-85B2-2D9B79DED360" IsExpanded="true" AbsoluteBounds="5.0658849218309987, 1.02580966117925, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_2699095C-9318-4998-A32C-0CD8F9924973" IsExpanded="true" AbsoluteBounds="4.528834174769381, 1.0528801536889914, 0.96522802114486694, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_2699095C-9318-4998-A32C-0CD8F9924973" IsExpanded="true" AbsoluteBounds="4.6675747135061174, 1.2946190426414588, 0.96522802114486694, 0.12950302660465241">
 						<ormDiagram:Subject ref="_DBC31188-9EEF-4307-A3F6-B9ED0CCA07C7" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17390,9 +17402,9 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_5C2627FE-0158-4223-8854-145DE8BB0103" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:FactTypeShape id="_90B59620-741C-4467-B190-F6A78164CB63" IsExpanded="true" AbsoluteBounds="4.861623070033934, 1.286869614417453, 0.5438888889923692, 0.31388888899236916">
+			<ormDiagram:FactTypeShape id="_90B59620-741C-4467-B190-F6A78164CB63" IsExpanded="true" AbsoluteBounds="5.00036360877067, 1.5286085033699204, 0.5438888889923692, 0.31388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_8BB0B1AB-EACF-48C9-94B5-3B217BAD27CE" IsExpanded="true" AbsoluteBounds="4.861623070033934, 1.6655100167121502, 1.2046756744384766, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_8BB0B1AB-EACF-48C9-94B5-3B217BAD27CE" IsExpanded="true" AbsoluteBounds="5.00036360877067, 1.9072489056646176, 1.2046756744384766, 0.12950302660465241">
 						<ormDiagram:Subject ref="_CAD3B786-5F32-449C-AE41-C7992C90B073" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17403,65 +17415,65 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_AA5D1430-6D4D-4A1B-ABB1-3FB7362F2F6E" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_201461C6-F3E1-4477-9405-F491B48329FF" IsExpanded="true" AbsoluteBounds="3.7394146578428291, 2.2178435757912558, 0.55083810806274414, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_201461C6-F3E1-4477-9405-F491B48329FF" IsExpanded="true" AbsoluteBounds="3.7868759453407512, 2.4121211772458011, 0.55083810806274414, 0.22950302660465241">
 				<ormDiagram:Subject ref="_57FC7F7E-5AB2-4DF0-A0FC-B01388581A98" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FrequencyConstraintShape id="_70FD4EC4-B3F5-4E65-B1ED-22ADB76F97FB" IsExpanded="true" AbsoluteBounds="4.7518202449560718, 1.1356075452500112, 0.25681781768798828, 0.25681781768798828">
+			<ormDiagram:FrequencyConstraintShape id="_70FD4EC4-B3F5-4E65-B1ED-22ADB76F97FB" IsExpanded="true" AbsoluteBounds="4.8905607836928082, 1.3773464342024786, 0.25681781768798828, 0.25681781768798828">
 				<ormDiagram:Subject ref="_5C76D53E-E4BB-4F74-9979-47638D3DE6E0" />
 			</ormDiagram:FrequencyConstraintShape>
-			<ormDiagram:ObjectTypeShape id="_D454A929-ABCB-4C19-B188-813518C06AEC" IsExpanded="true" AbsoluteBounds="3.7092225955841096, 2.7826368072879792, 0.611222232580185, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_D454A929-ABCB-4C19-B188-813518C06AEC" IsExpanded="true" AbsoluteBounds="3.7566838830820317, 3.0473790285021325, 0.611222232580185, 0.22950302660465241">
 				<ormDiagram:Subject ref="_32350DBF-3941-4250-B316-1E369A866F3E" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_4BB65F3A-9425-4396-BB74-50F34D2FCFC4" IsExpanded="true" AbsoluteBounds="2.5035302004400317, 0.76151219011831417, 0.73066120862960815, 0.35900605320930479">
+			<ormDiagram:ObjectTypeShape id="_4BB65F3A-9425-4396-BB74-50F34D2FCFC4" IsExpanded="true" AbsoluteBounds="2.5509914879379538, 1.0032510790707816, 0.73066120862960815, 0.35900605320930479">
 				<ormDiagram:Subject ref="_A8280EA2-0613-4A3F-BC44-CE95D634779B" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ModelNoteShape id="_B4A73FCC-3CEB-4975-8755-30BBCE0D976D" IsExpanded="true" AbsoluteBounds="3.228822619841206, 0.5, 3.7929696197509766, 0.14150302660465242">
+			<ormDiagram:ModelNoteShape id="_B4A73FCC-3CEB-4975-8755-30BBCE0D976D" IsExpanded="true" AbsoluteBounds="2.936734266271134, 0.78785627367388011, 3.7929696197509766, 0.14150302660465242">
 				<ormDiagram:Subject ref="_F81F3682-77FD-446B-A0FE-B392F6546B4B" />
 			</ormDiagram:ModelNoteShape>
-			<ormDiagram:ObjectTypeShape id="_528C81B2-6B69-40E5-AD1E-133418B3A385" IsExpanded="true" AbsoluteBounds="5.6775495064909371, 0.83114159242902641, 0.37661665201187133, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_528C81B2-6B69-40E5-AD1E-133418B3A385" IsExpanded="true" AbsoluteBounds="5.8162900452276736, 1.0728804813814938, 0.37661665201187133, 0.22950302660465241">
 				<ormDiagram:Subject ref="_ABCDC9B2-822F-4E84-83D4-3732C029BB1B" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ExternalConstraintShape id="_3CB46EF6-C960-488E-A43B-2775717C32EF" IsExpanded="true" AbsoluteBounds="2.0899916608847038, 3.0630433149467717, 0.16, 0.16">
+			<ormDiagram:ExternalConstraintShape id="_3CB46EF6-C960-488E-A43B-2775717C32EF" IsExpanded="true" AbsoluteBounds="2.1374529483826259, 3.3047822038992392, 0.16, 0.16">
 				<ormDiagram:Subject ref="_DD3B5604-D38A-4939-8291-E64D24D0436A" />
 			</ormDiagram:ExternalConstraintShape>
-			<ormDiagram:ExternalConstraintShape id="_98845C72-D28D-4D04-B3EC-5191FEBD45A8" IsExpanded="true" AbsoluteBounds="3.1540957952462114, 4.04585446444131, 0.16, 0.16">
+			<ormDiagram:ExternalConstraintShape id="_98845C72-D28D-4D04-B3EC-5191FEBD45A8" IsExpanded="true" AbsoluteBounds="3.2015570827441335, 4.2875933533937758, 0.16, 0.16">
 				<ormDiagram:Subject ref="_5F76BB6E-A761-4899-99BF-2A0C6869EE37" />
 			</ormDiagram:ExternalConstraintShape>
-			<ormDiagram:ObjectTypeShape id="_D270317A-2BF4-476A-8487-4E81BCAEF2DA" IsExpanded="true" AbsoluteBounds="5.6490189684088143, 1.3990625456113113, 0.43367772817611694, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_D270317A-2BF4-476A-8487-4E81BCAEF2DA" IsExpanded="true" AbsoluteBounds="5.7877595071455508, 1.6408014345637787, 0.43367772817611694, 0.22950302660465241">
 				<ormDiagram:Subject ref="_37D88A60-D029-4760-929B-038077D1A708" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ExternalConstraintShape id="_40607EF9-4E39-4C02-B8E9-003585C8A2AE" IsExpanded="true" AbsoluteBounds="3.2987782403847592, 1.4338140589136383, 0.16, 0.16">
+			<ormDiagram:ExternalConstraintShape id="_40607EF9-4E39-4C02-B8E9-003585C8A2AE" IsExpanded="true" AbsoluteBounds="3.3462395278826813, 1.6755529478661058, 0.16, 0.16">
 				<ormDiagram:Subject ref="_2F17A7BC-306A-4462-80C4-3622D5493D01" />
 			</ormDiagram:ExternalConstraintShape>
-			<ormDiagram:ModelNoteShape id="_B8AA3992-3832-45B4-B752-43A75D172890" IsExpanded="true" AbsoluteBounds="4.4074208172353746, 2.1814688476187931, 2.5590514297485352, 0.2588533217906952">
+			<ormDiagram:ModelNoteShape id="_B8AA3992-3832-45B4-B752-43A75D172890" IsExpanded="true" AbsoluteBounds="4.4548821047332972, 2.3757464490733384, 2.5590514297485352, 0.2588533217906952">
 				<ormDiagram:Subject ref="_FA2D77F6-B644-4F3F-BA22-BE5F74B88D49" />
 			</ormDiagram:ModelNoteShape>
-			<ormDiagram:ModelNoteShape id="_E96A9244-CB5A-4992-9DE3-5B06B1B76A86" IsExpanded="true" AbsoluteBounds="4.5936133418318317, 2.7450777906634563, 2.5172287578582764, 0.2588533217906952">
+			<ormDiagram:ModelNoteShape id="_E96A9244-CB5A-4992-9DE3-5B06B1B76A86" IsExpanded="true" AbsoluteBounds="4.0125535180533447, 2.7197333451346486, 3.0259365196228027, 0.2588533217906952">
 				<ormDiagram:Subject ref="_E6F06CF4-44F6-42A8-BAA3-DC7088FBC488" />
 			</ormDiagram:ModelNoteShape>
-			<ormDiagram:FactTypeShape id="_B4F7CD22-933F-4A9D-BBC8-B520855B0BC9" IsExpanded="true" AbsoluteBounds="0.71827301022084233, 1.356869614417453, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_B4F7CD22-933F-4A9D-BBC8-B520855B0BC9" IsExpanded="true" AbsoluteBounds="0.79829155747219915, 1.5986085033699204, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_F78473B2-3819-4DA6-9A22-4E485856BE15" IsExpanded="true" AbsoluteBounds="0.76827301022084238, 1.6655100167121493, 0.66971611976623535, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_F78473B2-3819-4DA6-9A22-4E485856BE15" IsExpanded="true" AbsoluteBounds="0.8482915574721992, 1.9072489056646167, 0.66971611976623535, 0.12950302660465241">
 						<ormDiagram:Subject ref="_39D0F45B-DC98-4B10-8026-EDEA761D0801" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
 				<ormDiagram:Subject ref="_DEC73244-39B9-4CFD-8356-CEBF4A034D10" />
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ModelNoteShape id="_3B645FD2-0EB0-48A7-8309-7B1E94CCD6B8" IsExpanded="true" AbsoluteBounds="3.2924586507553184, 1.8161704221796733, 2.0107523555755615, 0.2588533217906952">
+			<ormDiagram:ModelNoteShape id="_3B645FD2-0EB0-48A7-8309-7B1E94CCD6B8" IsExpanded="true" AbsoluteBounds="3.3399199382532405, 2.0579093111321405, 2.7573885078430176, 0.2588533217906952">
 				<ormDiagram:Subject ref="_B4F02530-8044-428F-A881-98A56E623EA1" />
 			</ormDiagram:ModelNoteShape>
-			<ormDiagram:ModelNoteShape id="_10199046-1B19-4193-89A5-921FC83B67E3" IsExpanded="true" AbsoluteBounds="3.8964478916335477, 5.8747443518037477, 2.2699481601715088, 0.2588533217906952">
+			<ormDiagram:ModelNoteShape id="_10199046-1B19-4193-89A5-921FC83B67E3" IsExpanded="true" AbsoluteBounds="3.9439091791314698, 6.1164832407562137, 2.8209532852172852, 0.37620357227325441">
 				<ormDiagram:Subject ref="_AE143400-FB85-429A-9C4C-09C081A2C86A" />
 			</ormDiagram:ModelNoteShape>
-			<ormDiagram:RingConstraintShape id="_DD40E02F-5956-4297-8A04-7A04D5CE6AA9" IsExpanded="true" AbsoluteBounds="2.4600036619820269, 1.9096187618274905, 0.213333333, 0.213333333">
+			<ormDiagram:RingConstraintShape id="_DD40E02F-5956-4297-8A04-7A04D5CE6AA9" IsExpanded="true" AbsoluteBounds="2.507464949479949, 2.1513576507799579, 0.213333333, 0.213333333">
 				<ormDiagram:Subject ref="_CC25CC73-F5C3-4684-B944-B359A3117BCF" />
 			</ormDiagram:RingConstraintShape>
-			<ormDiagram:FactTypeShape id="_AAE796D7-DB60-4452-9D1E-B49A22280472" IsExpanded="true" AbsoluteBounds="1.7878970274071033, 6.3275863817583984, 0.6738888889923691, 0.30588888899236916">
+			<ormDiagram:FactTypeShape id="_AAE796D7-DB60-4452-9D1E-B49A22280472" IsExpanded="true" AbsoluteBounds="1.8353583149050254, 6.5693252707108645, 0.6738888889923691, 0.30588888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_70193934-3A37-4197-BB16-19365F635DD5" IsExpanded="true" AbsoluteBounds="1.5269859760755695, 6.6712359856394876, 1.4981937408447266, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_70193934-3A37-4197-BB16-19365F635DD5" IsExpanded="true" AbsoluteBounds="1.5744472635734916, 6.9129748745919537, 1.4981937408447266, 0.12950302660465241">
 						<ormDiagram:Subject ref="_CBDE86EE-A121-4312-8F4E-146B62633CFB" />
 					</ormDiagram:ReadingShape>
-					<ormDiagram:ObjectifiedFactTypeNameShape id="_D4635F4A-5450-456B-8D6C-1AB1F84A6F01" IsExpanded="true" AbsoluteBounds="1.7878970274071033, 6.13333184185142, 0.44460493326187134, 0.12950302660465241">
+					<ormDiagram:ObjectifiedFactTypeNameShape id="_D4635F4A-5450-456B-8D6C-1AB1F84A6F01" IsExpanded="true" AbsoluteBounds="1.8353583149050254, 6.3750707308038859, 0.44460493326187134, 0.12950302660465241">
 						<ormDiagram:Subject ref="_583079A2-FCCF-4B48-8E67-5193D9A5F427" />
 					</ormDiagram:ObjectifiedFactTypeNameShape>
 				</ormDiagram:RelativeShapes>
@@ -17472,9 +17484,9 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_3ECA0267-A4E1-4210-B6A7-40F9F5364470" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:FactTypeShape id="_ED92330D-3F74-4353-A61C-14AD0F0771B0" IsExpanded="true" AbsoluteBounds="1.889686242430459, 3.55343276576903, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_ED92330D-3F74-4353-A61C-14AD0F0771B0" IsExpanded="true" AbsoluteBounds="1.9371475299283811, 3.7951716547214973, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_1351CB97-884D-47DC-8A0D-C2AADA7176A7" IsExpanded="true" AbsoluteBounds="1.623691331907164, 3.8620731680637252, 0.94861292839050293, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_1351CB97-884D-47DC-8A0D-C2AADA7176A7" IsExpanded="true" AbsoluteBounds="1.6711526194050861, 4.1038120570161922, 0.94861292839050293, 0.12950302660465241">
 						<ormDiagram:Subject ref="_E8E764A4-7D72-401B-AA0E-2E2463506B8C" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17484,9 +17496,9 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_26D94604-0A10-41E4-8A8E-3F145C9AB03B" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:FactTypeShape id="_D85B6573-6777-483C-9739-B6C5EA483FBF" IsExpanded="true" AbsoluteBounds="2.6825151450227143, 5.3519685784035271, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_D85B6573-6777-483C-9739-B6C5EA483FBF" IsExpanded="true" AbsoluteBounds="2.7299764325206364, 5.5937074673559923, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_477D1A4A-FEB6-4740-AD94-2DCC546F1B25" IsExpanded="true" AbsoluteBounds="2.383139738997794, 5.6606089806982229, 1.0404708385467529, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_477D1A4A-FEB6-4740-AD94-2DCC546F1B25" IsExpanded="true" AbsoluteBounds="2.4306010264957161, 5.9023478696506881, 1.0404708385467529, 0.12950302660465241">
 						<ormDiagram:Subject ref="_42202CEC-82BF-4475-AA2E-8A193D50C3CA" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17496,27 +17508,27 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_42115505-97E1-48B9-87D6-71DB1378ED86" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ExternalConstraintShape id="_53658C42-AA3E-43BF-89F5-E4186C1FFB73" IsExpanded="true" AbsoluteBounds="3.9348337118742007, 4.1042802237304183, 0.16, 0.16">
+			<ormDiagram:ExternalConstraintShape id="_53658C42-AA3E-43BF-89F5-E4186C1FFB73" IsExpanded="true" AbsoluteBounds="3.9822949993721228, 4.3460191126828835, 0.16, 0.16">
 				<ormDiagram:Subject ref="_07F24ACF-D8A5-40A0-92FC-BFC087225CB8" />
 			</ormDiagram:ExternalConstraintShape>
-			<ormDiagram:ExternalConstraintShape id="_D6BA0B2F-03D9-4192-8723-9AC88F6E6C6E" IsExpanded="true" AbsoluteBounds="4.3772105581792458, 3.5022833652498631, 0.16, 0.16">
+			<ormDiagram:ExternalConstraintShape id="_D6BA0B2F-03D9-4192-8723-9AC88F6E6C6E" IsExpanded="true" AbsoluteBounds="4.3772105581792458, 3.7440222542023305, 0.16, 0.16">
 				<ormDiagram:Subject ref="_CC4F9EB2-1E67-4EDB-A6C1-50D4D144CF0B" />
 			</ormDiagram:ExternalConstraintShape>
-			<ormDiagram:ModelNoteShape id="_289B6686-8BDE-453A-A99C-7F992AA3693A" IsExpanded="true" AbsoluteBounds="3.9946381479633652, 3.09246810306024, 5.0495642776489253, 0.2588533217906952">
+			<ormDiagram:ModelNoteShape id="_289B6686-8BDE-453A-A99C-7F992AA3693A" IsExpanded="true" AbsoluteBounds="4.0420994354612878, 3.3342069920127075, 4.8204177970886226, 0.2588533217906952">
 				<ormDiagram:Subject ref="_2E8601DA-1E1A-4EE0-9FD8-90A6434BAFF3" />
 			</ormDiagram:ModelNoteShape>
-			<ormDiagram:ObjectTypeShape id="_9B2C9E3F-21DC-419B-923F-B9E10D046DCF" IsExpanded="true" AbsoluteBounds="2.7667595581288489, 6.400779312952257, 0.52050363540649414, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_9B2C9E3F-21DC-419B-923F-B9E10D046DCF" IsExpanded="true" AbsoluteBounds="2.814220845626771, 6.6425182019047231, 0.52050363540649414, 0.22950302660465241">
 				<ormDiagram:Subject ref="_4674DAF9-EFB8-4C15-A06F-F75328A04FA0" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_1A10C89C-603B-42ED-905D-5D16A78F2C08" IsExpanded="true" AbsoluteBounds="1.064711456749381, 6.400779312952257, 0.37661665201187133, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_1A10C89C-603B-42ED-905D-5D16A78F2C08" IsExpanded="true" AbsoluteBounds="1.1121727442473031, 6.6425182019047231, 0.37661665201187133, 0.22950302660465241">
 				<ormDiagram:Subject ref="_ABCDC9B2-822F-4E84-83D4-3732C029BB1B" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_CC0205D9-76B1-41DD-A68E-82A8373F23BC" IsExpanded="true" AbsoluteBounds="0.97589234798299018, 5.3941615095973861, 0.44445383071899414, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_CC0205D9-76B1-41DD-A68E-82A8373F23BC" IsExpanded="true" AbsoluteBounds="1.0782541548937417, 5.8776392875023173, 0.44445383071899414, 0.22950302660465241">
 				<ormDiagram:Subject ref="_25D2C6A4-DE21-447E-BB72-3EF90026E125" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FactTypeShape id="_2F4E527E-F0E5-4C92-A2C2-A2705DC0FD64" IsExpanded="true" AbsoluteBounds="1.7121301457746032, 5.3519685784035271, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_2F4E527E-F0E5-4C92-A2C2-A2705DC0FD64" IsExpanded="true" AbsoluteBounds="1.7595914332725253, 5.8354463563084575, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_6841E320-7567-4700-BE2F-2F909AC9D65A" IsExpanded="true" AbsoluteBounds="1.5771761537065685, 5.6426151150891517, 0.45558311343193053, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_6841E320-7567-4700-BE2F-2F909AC9D65A" IsExpanded="true" AbsoluteBounds="1.6246374412044906, 6.1260928929940821, 0.45558311343193053, 0.12950302660465241">
 						<ormDiagram:Subject ref="_2F6A444C-6935-4A45-A2DA-AD4E9DC7ADFA" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17526,17 +17538,17 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_E2E061D9-1236-4EBE-8C67-F8CC143D35C0" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_F19C5C8F-D780-40D9-A909-077A11908C51" IsExpanded="true" AbsoluteBounds="3.65787333681728, 6.400779312952257, 0.84259968519210815, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_F19C5C8F-D780-40D9-A909-077A11908C51" IsExpanded="true" AbsoluteBounds="3.7053346243152023, 6.6425182019047231, 0.84259968519210815, 0.22950302660465241">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ValueConstraintShape id="_88602EC0-5C95-4AFD-8D34-1242936131C7" IsExpanded="true" AbsoluteBounds="3.7057644055785022, 6.658144396942637, 1.5149987936019898, 0.12950302660465241">
+					<ormDiagram:ValueConstraintShape id="_88602EC0-5C95-4AFD-8D34-1242936131C7" IsExpanded="true" AbsoluteBounds="3.7532256930764243, 6.8998832858951031, 1.5149987936019898, 0.12950302660465241">
 						<ormDiagram:Subject ref="_E8FEEEEE-7745-4028-93DC-3AF8B9410873" />
 					</ormDiagram:ValueConstraintShape>
 				</ormDiagram:RelativeShapes>
 				<ormDiagram:Subject ref="_D26C9629-CD3D-4D1D-A67D-4A2BBA474EA8" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FactTypeShape id="_CB9CDD14-6AC9-4C3F-B3D6-AAC39B436BFE" IsExpanded="true" AbsoluteBounds="3.4132518319373677, 5.8306130548171868, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_CB9CDD14-6AC9-4C3F-B3D6-AAC39B436BFE" IsExpanded="true" AbsoluteBounds="3.46071311943529, 6.072351943769652, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_749BC027-4E8A-404E-97E3-8EEBBE8F4F78" IsExpanded="true" AbsoluteBounds="3.4132518319373677, 6.1392534571118826, 0.23026981949806213, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_749BC027-4E8A-404E-97E3-8EEBBE8F4F78" IsExpanded="true" AbsoluteBounds="3.46071311943529, 6.3809923460643478, 0.23026981949806213, 0.12950302660465241">
 						<ormDiagram:Subject ref="_084515E1-433A-4B79-ADA4-220359AF7181" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17546,12 +17558,12 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_6F4289FB-F681-49E7-AE52-307D4E89B92D" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ExternalConstraintShape id="_82F4AB44-E393-481D-AA60-D99BA28331FE" IsExpanded="true" AbsoluteBounds="2.5396115778090378, 5.9134617085455243, 0.16, 0.16">
+			<ormDiagram:ExternalConstraintShape id="_82F4AB44-E393-481D-AA60-D99BA28331FE" IsExpanded="true" AbsoluteBounds="2.58707286530696, 6.1552005974979895, 0.16, 0.16">
 				<ormDiagram:Subject ref="_BBBECAC9-D1F7-44FA-B35A-7FD880625809" />
 			</ormDiagram:ExternalConstraintShape>
-			<ormDiagram:FactTypeShape id="_8D7421C7-2A1A-438C-BCD1-6D4A7E4D760E" IsExpanded="true" AbsoluteBounds="1.7357538985951133, 1.356869614417453, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_8D7421C7-2A1A-438C-BCD1-6D4A7E4D760E" IsExpanded="true" AbsoluteBounds="1.669856991078748, 0.5, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_15A1392D-F273-4872-A1EF-F56FF9B68F8F" IsExpanded="true" AbsoluteBounds="1.7357538985951133, 1.6655100167121484, 0.68734036684036259, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_15A1392D-F273-4872-A1EF-F56FF9B68F8F" IsExpanded="true" AbsoluteBounds="1.669856991078748, 0.80864040229469536, 0.68734036684036259, 0.12950302660465241">
 						<ormDiagram:Subject ref="_B14CDB5C-FCD6-4A75-A508-294DED802DF9" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -17561,14 +17573,23 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 					<ormDiagram:Role ref="_31534373-6DA5-4ED9-8E05-3D542789DB8F" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_6CB0BD23-80DC-4C83-8F45-D2F3BA0C5F62" IsExpanded="true" AbsoluteBounds="1.57916431201069, 1.9023128183084745, 0.52050363540649414, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_6CB0BD23-80DC-4C83-8F45-D2F3BA0C5F62" IsExpanded="true" AbsoluteBounds="0.72998418426513667, 0.54219293119385836, 0.52050363540649414, 0.22950302660465241">
 				<ormDiagram:Subject ref="_4674DAF9-EFB8-4C15-A06F-F75328A04FA0" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_6506969F-2DEE-4C7B-856D-740693D13397" IsExpanded="true" AbsoluteBounds="4.4932869920115488, 2.483153350353632, 0.67483442544937133, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_6506969F-2DEE-4C7B-856D-740693D13397" IsExpanded="true" AbsoluteBounds="4.9704619752817365, 3.0473790285021325, 0.67483442544937133, 0.22950302660465241">
 				<ormDiagram:Subject ref="_8081637F-F1BE-4B58-BF6C-0359BFC7CD53" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ModelNoteShape id="_D947E81E-4B82-49B6-9D85-6E67D18791BC" IsExpanded="true" AbsoluteBounds="5.3441782754668452, 2.5271533503536316, 2.5330683345794678, 0.14150302660465242">
+			<ormDiagram:ModelNoteShape id="_D947E81E-4B82-49B6-9D85-6E67D18791BC" IsExpanded="true" AbsoluteBounds="5.8213532587370329, 3.0913790285021321, 2.5330683345794678, 0.14150302660465242">
 				<ormDiagram:Subject ref="_B42BE929-8E57-457F-B9AE-5E5BC2316BC0" />
+			</ormDiagram:ModelNoteShape>
+			<ormDiagram:ModelNoteShape id="_0A40F88A-8232-4E64-A6B2-07DD3C68812D" IsExpanded="true" AbsoluteBounds="0.5, 4.1913923988079329, 0.98047200393676759, 0.37620357227325441">
+				<ormDiagram:Subject ref="_E571EE2C-4AC2-477E-8BD1-6457D50EA7B6" />
+			</ormDiagram:ModelNoteShape>
+			<ormDiagram:ModelNoteShape id="_84650E8B-4627-486D-94C0-C77B38C23D7E" IsExpanded="true" AbsoluteBounds="2.3143964218813831, 0.5861929311938584, 3.4234491939544678, 0.14150302660465242">
+				<ormDiagram:Subject ref="_42CD3236-A5DC-4E3A-84A7-DA06AD6FBA74" />
+			</ormDiagram:ModelNoteShape>
+			<ormDiagram:ModelNoteShape id="_039A05D9-B8EC-428D-8CE8-3028EC081619" IsExpanded="true" AbsoluteBounds="0.596695555580987, 7.1226730346679688, 5.0554503555297847, 0.2588533217906952">
+				<ormDiagram:Subject ref="_519F86D3-A4F4-41CE-9F4B-F1A476C22426" />
 			</ormDiagram:ModelNoteShape>
 		</ormDiagram:Shapes>
 		<ormDiagram:Subject ref="_E99B1F8C-EF79-4A4B-8EBC-66FFD234E616" />
@@ -17633,9 +17654,9 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 		<ormDiagram:Subject ref="_E99B1F8C-EF79-4A4B-8EBC-66FFD234E616" />
 	</ormDiagram:ORMDiagram>
 	<diagramDisplay:DiagramDisplay id="_36114BE7-E5F8-4043-B0F7-86F614309DA9" SaveDiagramPosition="true">
-		<diagramDisplay:Diagram id="_2BBFBCD4-5B03-4041-BDF3-C3D20F82230E" ref="_DA90097C-5E98-485C-B45D-0ADDC8EF660B" CenterPoint="5.3180388676557007, 3.0552385225894509" ZoomFactor="1.13704979" />
-		<diagramDisplay:Diagram id="_91C59B24-B619-4264-82BB-C5F0C17F0962" ref="_F37D50E6-A512-482F-A8D4-70334B31CAF2" CenterPoint="4.0212015596516828, 2.3101993456396834" ZoomFactor="1.5037483" />
-		<diagramDisplay:Diagram id="_F680603C-B795-49C1-8665-FF62A2C42E30" ref="_107EEF4C-2438-41D6-96FC-64110DC7F234" CenterPoint="4.0212015596516828, 2.5872847244270516" ZoomFactor="1.5037483" />
+		<diagramDisplay:Diagram id="_2BBFBCD4-5B03-4041-BDF3-C3D20F82230E" ref="_DA90097C-5E98-485C-B45D-0ADDC8EF660B" CenterPoint="5.9089320751730012, 3.4171033551000454" ZoomFactor="1.13704979" />
+		<diagramDisplay:Diagram id="_91C59B24-B619-4264-82BB-C5F0C17F0962" ref="_F37D50E6-A512-482F-A8D4-70334B31CAF2" CenterPoint="4.4680017329463144, 2.5838211571922094" ZoomFactor="1.5037483" />
+		<diagramDisplay:Diagram id="_F680603C-B795-49C1-8665-FF62A2C42E30" ref="_107EEF4C-2438-41D6-96FC-64110DC7F234" CenterPoint="4.0212015596516828, 2.5838211571922094" ZoomFactor="1.5037483" />
 		<diagramDisplay:Diagram id="_8A7EB9D9-9782-4B98-BEB8-4925A92F418E" ref="_E6507DF3-A512-482F-A8D4-70334B31CAF2" CenterPoint="4.9681002248616224, 2.6268116131452257" ZoomFactor="1.3225" />
 		<diagramDisplay:Diagram id="_1BF33124-B049-4A79-8EEA-23EACFF57ADD" ref="_42D757AB-38DD-4061-8929-7BAEB5912A36" CenterPoint="5.0306579311432529, 2.7124925186924429" ZoomFactor="1.30760729" />
 		<diagramDisplay:Diagram id="_9FD5F577-0352-412D-A2F3-708E9F81C997" ref="_89024882-AAC6-4033-9E04-41B22DA86FC4" CenterPoint="4.9740075973049773, 2.6819470892832067" ZoomFactor="1.3225" />
@@ -17643,10 +17664,10 @@ then that Absorption is some Component that belongs to some parent Mapping that 
 		<diagramDisplay:Diagram id="_B1F54A7E-3930-4803-B9CA-8762146921BF" ref="_E67D50F3-A512-482F-A8D4-70334B31CAF2" CenterPoint="5.0306579311432529, 2.7124925186924429" ZoomFactor="1.30760729" />
 		<diagramDisplay:Diagram id="_D9EAA91F-2766-43C2-A029-2A9C308B0E77" ref="_ABD75742-38DD-4061-8929-7BAEB5912A36" CenterPoint="4.1659818166198779, 2.3321279220042226" ZoomFactor="1.520875" />
 		<diagramDisplay:Diagram id="_82A4D73D-7B13-4881-A51F-8CAB1D52E40B" ref="_40EBB5F3-C265-444F-8FB0-E8240F9F2278" CenterPoint="4.3252240315584922, 2.3321279220042226" ZoomFactor="1.520875" />
-		<diagramDisplay:Diagram id="_2D90736A-0B96-49C0-A224-995D1259160E" ref="_190E178C-2240-4FB2-BC97-C46F01F5DE17" CenterPoint="4.624381518651874, 2.9753772561868645" ZoomFactor="1.30760729" />
+		<diagramDisplay:Diagram id="_2D90736A-0B96-49C0-A224-995D1259160E" ref="_190E178C-2240-4FB2-BC97-C46F01F5DE17" CenterPoint="5.1382016873909713, 2.9713941541036157" ZoomFactor="1.30760729" />
 		<diagramDisplay:Diagram id="_57E7F408-FBE8-4009-82EC-A3E88F0DA20A" ref="_86C40B76-3BD0-48A2-82AE-0249005503FC" CenterPoint="5.2581522829253213, 3.383152244052726" ZoomFactor="1.15" />
-		<diagramDisplay:Diagram id="_05371502-2ACB-43D7-8AE7-E8A19C0B2B13" ref="_6AEDDB43-BD63-487D-94C9-6E1E01CF1237" CenterPoint="4.3744854176055776, 2.5872847244270516" ZoomFactor="1.5037483" />
-		<diagramDisplay:Diagram id="_55A2B3F0-97C3-4FE2-84B3-5F34D393F77E" ref="_099D32BA-5B3C-4FD4-BFCE-C5B30ECB6683" CenterPoint="5.22271949303294, 3.7877087107095053" ZoomFactor="1.157802" IsActive="true" />
+		<diagramDisplay:Diagram id="_05371502-2ACB-43D7-8AE7-E8A19C0B2B13" ref="_6AEDDB43-BD63-487D-94C9-6E1E01CF1237" CenterPoint="4.8212855909002093, 2.5838211571922094" ZoomFactor="1.5037483" />
+		<diagramDisplay:Diagram id="_55A2B3F0-97C3-4FE2-84B3-5F34D393F77E" ref="_099D32BA-5B3C-4FD4-BFCE-C5B30ECB6683" CenterPoint="6.062191692357402, 4.041461128238268" ZoomFactor="1.10830379" IsActive="true" />
 	</diagramDisplay:DiagramDisplay>
 	<oial:model id="_2864B7FA-6FBE-4B7F-B519-EA46B095A655" name="Metamodel">
 		<oial:informationTypeFormats>

@@ -222,6 +222,10 @@ module ActiveFacts
         end
       end
 
+      def is_unary
+	all_role.size == 1
+      end
+
       def internal_presence_constraints
         all_role.map do |r|
           r.all_role_ref.map do |rr|
@@ -314,9 +318,35 @@ module ActiveFacts
       end
 
       def name
-        role_name || object_type.name
+        role_name or is_mirror_role && base_role.role_name or fact_type.is_unary && unary_name or object_type.name
       end
 
+      def unary_name
+	fact_type.preferred_reading.text.gsub(/\{[0-9]\}/,'').words.titlewords*' '
+      end
+
+      def is_link_role
+        fact_type.is_a?(LinkFactType)
+      end
+
+      def is_mirror_role
+	is_a?(MirrorRole)
+      end
+
+      def is_objectification_role
+	is_link_role && !is_mirror_role
+      end
+
+      def counterpart
+	case fact_type.all_role.size
+	when 1
+	  self
+	when 2
+	  (fact_type.all_role.to_a-[self])[0]
+	else
+	  raise "counterpart roles are undefined in n-ary fact types"
+	end
+      end
     end
 
     class RoleRef
@@ -428,6 +458,16 @@ module ActiveFacts
         return self if other.supertypes_transitive.include?(self)
         return other if supertypes_transitive.include(other)
         nil
+      end
+
+      # Is this ValueType auto-assigned either at assert or on first save to the database?
+      def is_auto_assigned
+        type = self
+        while type
+          return true if type.name =~ /^Auto/ || type.transaction_phase
+          type = type.supertype
+        end
+        false
       end
     end
 
@@ -1349,30 +1389,42 @@ module ActiveFacts
 
     class Mapping
       def inspect
-	"#{self.class.basename} (#{rank_kind}) of #{object_type.name}"
+	"#{self.class.basename} (#{rank_kind})#{parent ? " in #{parent.name}" :''} of #{name && name != '' ? name : '<anonymous>'}"
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name})" : ''}" do
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}" do
 	  yield if block_given?
 	  all_member.sort_by{|member| [member.ordinal, member.name]}.each do |member|
 	    member.show_trace
 	  end
 	end
       end
+
+      # Recompute a contiguous member ranking fron zero, based on current membership:
+      def re_rank
+        next_rank = 0
+        all_member.
+	sort_by(&:rank_key).
+        each do |member|
+          member.ordinal = next_rank
+          next_rank += 1
+        end
+      end
+
     end
 
     class Nesting
       def show_trace
 	# The index role has a counterpart played by the parent object in the enclosing Absorption
 	reading = index_role.fact_type.default_reading
-	trace :composition, "#{ordinal}: Nesting under #{index_role.object_type.name}#{key_name ? " (as #{key_name})" : ''} in #{reading.inspect}}"
+	trace :composition, "#{ordinal}: Nesting under #{index_role.object_type.name}#{key_name ? " (as #{key_name.inspect})" : ''} in #{reading.inspect}}"
       end
     end
 
     class Absorption
       def inspect
-	"#{super} in #{parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand.inspect}"
+	"#{super} in #{parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand.inspect}#{absorption ? ' (forward)' : (reverse_absorption ? ' (reverse)' : '')}"
       end
 
       def show_trace
@@ -1396,6 +1448,36 @@ module ActiveFacts
       def is_subtype_absorption
 	is_type_inheritance && parent_role.fact_type.supertype == object_type
       end
+
+      def is_preferred_direction
+	return child_role.is_mirror_role if child_role.is_mirror_role != parent_role.is_mirror_role
+
+	# Prefer to absorb the one into the many:
+	p_un = parent_role.is_unique
+	c_un = child_role.is_unique
+	return c_un if p_un != c_un
+
+	# Prefer to absorb a subtype into the supertype (opposite if separate or partitioned)
+	if (ti = child_role.fact_type).is_a?(TypeInheritance)
+	  is_subtype = child_role == ti.subtype
+	  prefer_super = ["separate", "partitioned"].include?(ti.assimilation)
+	  return is_subtype == prefer_super
+	end
+
+	if p_un && c_un
+	  # Prefer to absorb a ValueType into an EntityType rather than the other way around:
+	  pvt = parent_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
+	  cvt = child_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
+	  return cvt if pvt != cvt
+
+	  # Primary absorption absorbs the object playing the mandatory role into the non-mandatory:
+	  return child_role.is_mandatory if !parent_role.is_mandatory != !child_role.is_mandatory
+	end
+
+	# For stability, absorb a later-named role into an earlier-named one:
+	return parent_role.name < child_role.name
+      end
+
     end
 
     class Indicator
@@ -1404,17 +1486,17 @@ module ActiveFacts
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name})" : ''}"
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name.inspect})" : ''}"
       end
     end
 
     class Discriminator
       def inspect
-	"#{self.class.basename} #{role.fact_type.default_reading.inspect}"
+	"#{self.class.basename} between #{all_discriminated_role.map{|dr|dr.fact_type.default_reading.inspect}*', '}"
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name})" : ''}"
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name.inspect})" : ''}"
       end
     end
 
@@ -1424,7 +1506,7 @@ module ActiveFacts
       end
 
       def show_trace
-	trace :composition, "#{ordinal}: #{inspect} #{name ? " (as #{name})" : ''}"
+	trace :composition, "#{ordinal}: #{inspect} #{name ? " (as #{name.inspect})" : ''}"
       end
     end
 
@@ -1445,72 +1527,75 @@ module ActiveFacts
       RANK_SCOPING = 11		# Scoping in alphabetical order
 
       def rank_key
-	parent_et = parent &&
+	@rank_key ||=
+	  case self
+	  when Indicator
+	    if (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
+	      [RANK_IDENT, position]     # An identifying unary
+	    else
+	      [RANK_INDICATOR, name || role.name]	      # A non-identifying unary
+	    end
+
+	  when Discriminator
+	    [RANK_DISCRIMINATOR, name || child_role.name]
+
+	  when ValueField
+	    [RANK_IDENT]
+
+	  when Injection
+	    [RANK_INJECTION, name || child_role.name]	      # REVISIT: A different sub-key for ranking may be needed
+
+	  when Absorption
+	    if is_type_inheritance
+	      # We are traversing a type inheritance fact type. Is this object_type the subtype or supertype?
+	      if is_supertype_absorption
+		# What's the rank of this supertype?
+		tis = parent_role.object_type.all_type_inheritance_as_subtype.sort_by{|ti| ti.provides_identification ? '' : ti.supertype.name }
+		[RANK_SUPER, child_role.fact_type.provides_identification ? 0 : 1+tis.index(parent_role.fact_type)]
+	      else
+		# What's the rank of this subtype?
+		tis = parent_role.object_type.all_type_inheritance_as_supertype.sort_by{|ti| ti.subtype.name }
+		[RANK_SUBTYPE, tis.index(parent_role.fact_type)]
+	      end
+	    elsif (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
+	      [RANK_IDENT, position]
+	    else
+	      if parent_role.is_unique
+		[parent_role.is_mandatory ? RANK_MANDATORY : RANK_NON_MANDATORY, name || child_role.name]
+	      else
+		[RANK_MULTIPLE, name || child_role.name]
+	      end
+	    end
+
+	  when Scoping
+	    [RANK_SCOPING, name || object_type.name]
+
+	  else
+	    raise "unexpected #{self.class.basename} in Component#rank_key"
+	  end
+      end
+
+      def parent_entity_type
+	parent &&
 	  parent.object_type.is_a?(EntityType) &&
 	  parent.object_type
-
-	case self
-	when Indicator
-	  if parent_et && (position = parent_et.rank_in_preferred_identifier(role))
-	    [RANK_IDENT, position]     # An identifying unary
-	  else
-	    [RANK_INDICATOR, name || role.role_name || role.fact_type.default_reading]	      # A non-identifying unary
-	  end
-
-	when Discriminator
-	  [RANK_DISCRIMINATOR, name || object_type.name]
-
-	when ValueField
-	  [RANK_IDENT]
-
-	when Injection
-	  [RANK_INJECTION, name || object_type.name]	      # REVISIT: A different sub-key for ranking may be needed
-
-	when Absorption
-	  if is_type_inheritance
-	    # We are traversing a type inheritance fact type. Is this object_type the subtype or supertype?
-	    if is_supertype_absorption
-	      # What's the rank of this supertype?
-	      tis = parent_role.object_type.all_type_inheritance_as_subtype.sort_by{|ti| ti.provides_identification ? '' : ti.supertype.name }
-	      [RANK_SUPER, child_role.fact_type.provides_identification ? 0 : 1+tis.index(parent_role.fact_type)]
-	    else
-	      # What's the rank of this subtype?
-	      tis = parent_role.object_type.all_type_inheritance_as_supertype.sort_by{|ti| ti.subtype.name }
-	      [RANK_SUBTYPE, tis.index(parent_role.fact_type)]
-	    end
-	  elsif parent_et && (position = parent_et.rank_in_preferred_identifier(child_role))
-	    [RANK_IDENT, position]
-	  else
-	    if parent_role.is_unique
-	      [parent_role.is_mandatory ? RANK_MANDATORY : RANK_NON_MANDATORY, name || child_role.role_name || object_type.name]
-	    else
-	      [RANK_MULTIPLE, name || child_role.role_name || object_type.name]
-	    end
-	  end
-
-	when Scoping
-	  [RANK_SCOPING, name || object_type.name]
-
-	else
-	  raise "unexpected #{self.class.basename} in Component#rank_key"
-	end
       end
 
       def rank_kind
-	return "composite" if self.class == Mapping
+	return "top" unless parent  # E.g. a Mapping that is a Composite
 	case rank_key[0]
-	when RANK_SUPER; "supertype"
-	when RANK_IDENT; "existential"
-	when RANK_VALUE; "self-value"
-	when RANK_INJECTION; "injection"
-	when RANK_DISCRIMINATOR; "discriminator"
-	when RANK_FOREIGN; "foreignkey"
-	when RANK_INDICATOR; "indicator"
-	when RANK_MANDATORY; "mandatory"
-	when RANK_NON_MANDATORY; "optional"
-	when RANK_MULTIPLE; "multiple"
-	when RANK_SUBTYPE; "subtype"
-	when RANK_SCOPING; "scoping"
+	when RANK_SUPER;	"supertype"
+	when RANK_IDENT;	"existential"
+	when RANK_VALUE;	"self-value"
+	when RANK_INJECTION;	"injection"
+	when RANK_DISCRIMINATOR;"discriminator"
+	when RANK_FOREIGN;	"foreignkey"
+	when RANK_INDICATOR;	"indicator"
+	when RANK_MANDATORY;	"mandatory"
+	when RANK_NON_MANDATORY;"optional"
+	when RANK_MULTIPLE;	"multiple"
+	when RANK_SUBTYPE;	"subtype"
+	when RANK_SCOPING;	"scoping"
 	end
       end
 
@@ -1519,7 +1604,8 @@ module ActiveFacts
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}#{name ? " (as #{name})" : ''}"
+	raise "Implemented in subclasses"
+	# trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}#{name ? " (as #{name.inspect})" : ''}"
       end
     end
   end
