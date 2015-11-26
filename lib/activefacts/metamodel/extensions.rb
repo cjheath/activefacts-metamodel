@@ -1179,7 +1179,7 @@ module ActiveFacts
 	raise "A MirrorRole should not be asked for its uniqueness constraints"
       end
 
-      %w{all_ring_constraint_as_other_role all_ring_constraint all_role_value role_value_constraint mirror_role_as_base_role
+      %w{all_ring_constraint_as_other_role all_ring_constraint all_role_value role_value_constraint
       }.each do |accessor|
 	define_method(accessor.to_sym) do
 	  base_role.send(accessor.to_sym)
