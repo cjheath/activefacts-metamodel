@@ -485,6 +485,10 @@ module ActiveFacts
         end
       end
 
+      def is_separate
+	super || !['absorbed', nil].include?(assimilation)
+      end
+
       def preferred_identifier
         return @preferred_identifier if @preferred_identifier
         if fact_type
@@ -1460,8 +1464,12 @@ module ActiveFacts
 	# Prefer to absorb a subtype into the supertype (opposite if separate or partitioned)
 	if (ti = child_role.fact_type).is_a?(TypeInheritance)
 	  is_subtype = child_role == ti.subtype
-	  prefer_super = ["separate", "partitioned"].include?(ti.assimilation)
-	  return is_subtype == prefer_super
+	  subtype = ti.subtype_role.object_type
+	  # REVISIT: We need fewer ways to say this:
+	  child_separate = ["separate", "partitioned"].include?(ti.assimilation) ||
+	    subtype.is_independent ||
+	    subtype.concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'separate'}
+	  return !is_subtype == !child_separate
 	end
 
 	if p_un && c_un
@@ -1474,8 +1482,35 @@ module ActiveFacts
 	  return child_role.is_mandatory if !parent_role.is_mandatory != !child_role.is_mandatory
 	end
 
+	if parent_role.object_type.is_a?(ActiveFacts::Metamodel::EntityType) &&
+	     child_role.object_type.is_a?(ActiveFacts::Metamodel::EntityType)
+	  # Prefer to absorb an identifying element into the EntityType it identifies
+	  return true if parent_role.object_type.preferred_identifier.
+	    role_sequence.all_role_ref.map(&:role).detect{|r|
+	      r.object_type == child_role.object_type
+	    }
+	  return false if child_role.object_type.preferred_identifier.
+	    role_sequence.all_role_ref.map(&:role).detect{|r|
+	      r.object_type == parent_role.object_type
+	    }
+	end
+
 	# For stability, absorb a later-named role into an earlier-named one:
 	return parent_role.name < child_role.name
+      end
+
+      def flip!
+	if (other = absorption)
+	  # We point at them - make them point at us instead
+	  absorption = nil
+	  reverse_absorption = other
+	elsif (other = reverse_absorption)
+	  # They point at us - make us point at them instead
+	  reverse_absorption = nil
+	  absorption = other
+	else
+	  raise "Absorption cannot be flipped as it has no reverse"
+	end
       end
 
     end
