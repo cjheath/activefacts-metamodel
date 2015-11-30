@@ -1459,7 +1459,7 @@ module ActiveFacts
 	# Prefer to absorb the one into the many:
 	p_un = parent_role.is_unique
 	c_un = child_role.is_unique
-	return c_un if p_un != c_un
+	return p_un if p_un != c_un
 
 	# Prefer to absorb a subtype into the supertype (opposite if separate or partitioned)
 	if (ti = child_role.fact_type).is_a?(TypeInheritance)
