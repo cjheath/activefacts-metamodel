@@ -644,8 +644,12 @@ module ActiveFacts
         end
       end
 
+      def preferred_identifier_roles
+	preferred_identifier.role_sequence.all_role_ref_in_order.map(&:role)
+      end
+
       def rank_in_preferred_identifier(role)
-	preferred_identifier.role_sequence.all_role_ref_in_order.map(&:role).index(role)
+	preferred_identifier_roles.index(role)
       end
 
       # An array of all direct subtypes:
@@ -1502,12 +1506,12 @@ module ActiveFacts
       def flip!
 	if (other = absorption)
 	  # We point at them - make them point at us instead
-	  absorption = nil
-	  reverse_absorption = other
+	  self.absorption = nil
+	  self.reverse_absorption = other
 	elsif (other = reverse_absorption)
 	  # They point at us - make us point at them instead
-	  reverse_absorption = nil
-	  absorption = other
+	  self.reverse_absorption = nil
+	  self.absorption = other
 	else
 	  raise "Absorption cannot be flipped as it has no reverse"
 	end
