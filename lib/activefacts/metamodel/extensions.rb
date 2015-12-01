@@ -4,6 +4,8 @@
 #
 # Copyright (c) 2009 Clifford Heath. Read the LICENSE file.
 #
+require 'activefacts/support'
+
 module ActiveFacts
   module Metamodel
     class Vocabulary
@@ -318,7 +320,11 @@ module ActiveFacts
       end
 
       def name
-        role_name or is_mirror_role && base_role.role_name or fact_type.is_unary && unary_name or object_type.name
+        role_name or
+	is_mirror_role && base_role.role_name or
+	fact_type.is_unary && unary_name or
+	String::Words.new(preferred_reference.role_name nil).capwords*' ' or
+	object_type.name
       end
 
       def unary_name
@@ -1467,13 +1473,13 @@ module ActiveFacts
 
 	# Prefer to absorb a subtype into the supertype (opposite if separate or partitioned)
 	if (ti = child_role.fact_type).is_a?(TypeInheritance)
-	  is_subtype = child_role == ti.subtype
-	  subtype = ti.subtype_role.object_type
+	  is_subtype = child_role == ti.subtype_role  # Supertype absorbing subtype
+	  subtype = ti.subtype_role.object_type	      # Subtype doesn't want to be absorbed?
 	  # REVISIT: We need fewer ways to say this:
 	  child_separate = ["separate", "partitioned"].include?(ti.assimilation) ||
 	    subtype.is_independent ||
 	    subtype.concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'separate'}
-	  return !is_subtype == !child_separate
+	  return !is_subtype != !child_separate
 	end
 
 	if p_un && c_un
@@ -1582,7 +1588,7 @@ module ActiveFacts
 	    [RANK_IDENT]
 
 	  when Injection
-	    [RANK_INJECTION, name || child_role.name]	      # REVISIT: A different sub-key for ranking may be needed
+	    [RANK_INJECTION, name]	      # REVISIT: Injection not fully elaborated. A different sub-key for ranking may be needed
 
 	  when Absorption
 	    if is_type_inheritance
@@ -1602,7 +1608,7 @@ module ActiveFacts
 	      if parent_role.is_unique
 		[parent_role.is_mandatory ? RANK_MANDATORY : RANK_NON_MANDATORY, name || child_role.name]
 	      else
-		[RANK_MULTIPLE, name || child_role.name]
+		[RANK_MULTIPLE, name || child_role.name, parent_role.name]
 	      end
 	    end
 
