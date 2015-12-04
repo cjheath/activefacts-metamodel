@@ -1547,7 +1547,7 @@ module ActiveFacts
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name.inspect})" : ''}"
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? "(as #{name.inspect})" : ''}"
       end
     end
 
@@ -1557,7 +1557,7 @@ module ActiveFacts
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? "(as #{name.inspect})" : ''}"
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name.inspect})" : ''}"
       end
     end
 
