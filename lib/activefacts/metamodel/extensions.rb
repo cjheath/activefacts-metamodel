@@ -1401,6 +1401,18 @@ module ActiveFacts
       end
     end
 
+    class Composition
+      def all_composite_by_name
+	all_composite.keys.sort_by do |key|
+          @constellation.Composite[key].mapping.name
+        end.map do |key|
+          composite = @constellation.Composite[key]
+	  yield composite if block_given?
+	  composite
+	end
+      end
+    end
+
     class Mapping
       def inspect
 	"#{self.class.basename} (#{rank_kind})#{parent ? " in #{parent.name}" :''} of #{name && name != '' ? name : '<anonymous>'}"
@@ -1437,8 +1449,12 @@ module ActiveFacts
     end
 
     class Absorption
+      def inspect_reading
+	parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand.inspect
+      end
+
       def inspect
-	"#{super} in #{parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand.inspect}#{absorption ? ' (forward)' : (reverse_absorption ? ' (reverse)' : '')}"
+	"#{super} in #{inspect_reading}#{absorption ? ' (forward)' : (reverse_absorption ? ' (reverse)' : '')}"
       end
 
       def show_trace
@@ -1541,7 +1557,7 @@ module ActiveFacts
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name.inspect})" : ''}"
+	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? "(as #{name.inspect})" : ''}"
       end
     end
 
@@ -1551,7 +1567,7 @@ module ActiveFacts
       end
 
       def show_trace
-	trace :composition, "#{ordinal}: #{inspect} #{name ? " (as #{name.inspect})" : ''}"
+	trace :composition, "#{ordinal}: #{inspect}#{name ? " (as #{name.inspect})" : ''}"
       end
     end
 
