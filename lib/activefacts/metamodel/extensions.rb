@@ -1454,7 +1454,8 @@ module ActiveFacts
       end
 
       def inspect
-	"#{super} in #{inspect_reading}#{absorption ? ' (forward)' : (reverse_absorption ? ' (reverse)' : '')}"
+	"#{super}#{full_absorption ? ' (full)' : ''
+	} in #{inspect_reading}#{absorption ? ' (forward)' : (reverse_absorption ? ' (reverse)' : '')}"
       end
 
       def show_trace
@@ -1503,6 +1504,10 @@ module ActiveFacts
 	  pvt = parent_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
 	  cvt = child_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
 	  return cvt if pvt != cvt
+
+	  if !pvt
+	    # REVISIT: Force the decision if one EntityType identifies another
+	  end
 
 	  # Primary absorption absorbs the object playing the mandatory role into the non-mandatory:
 	  return child_role.is_mandatory if !parent_role.is_mandatory != !child_role.is_mandatory

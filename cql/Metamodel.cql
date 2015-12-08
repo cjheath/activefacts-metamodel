@@ -54,18 +54,6 @@ Coefficient is identified by Numerator and Denominator and Coefficient is precis
 	Coefficient has one Denominator,
 	Coefficient is precise;
 
-Component is identified by Guid where
-	Component has one Guid,
-	Guid is of at most one Component;
-Component projects at most one Name;
-Component has at most one Ordinal rank;
-
-Composition is identified by Guid where
-	Composition has one Guid,
-	Guid is of at most one Composition;
-Composition is called one Name,
-	Name is of at most one Composition;
-
 Concept is identified by Guid where
 	Concept has one Guid,
 	Guid is of at most one Concept;
@@ -88,8 +76,6 @@ Context Note has one Discussion,
 Context Note applies to at most one relevant-Concept,
 	Concept has Context Note;
 
-Discriminator is a kind of Component;
-
 Enforcement is identified by Constraint where
 	Constraint requires at most one Enforcement,
 	Enforcement applies to one Constraint;
@@ -107,8 +93,6 @@ Fact is of one Fact Type;
 Implication Rule is identified by its Name;
 Concept is implied by at most one Implication Rule;
 
-Indicator is a kind of Component;
-
 Instance is identified by Concept where
 	Instance is an instance of one Concept;
 Instance objectifies at most one Fact,
@@ -119,10 +103,6 @@ Link Fact Type is a kind of Fact Type;
 Location is identified by X and Y where
 	Location is at one X,
 	Location is at one Y;
-
-Mapping is a kind of Component;
-Mapping (as Parent) contains Component (as Member) [acyclic, stronglyintransitive],
-	Member belongs to at most one Parent;
 
 Presence Constraint is a kind of Constraint;
 Presence Constraint has at most one max-Frequency restricted to {1..};
@@ -149,7 +129,7 @@ Role is identified by Fact Type and Ordinal where
 	Fact Type contains Role,
 	Role fills one Ordinal,
 	Ordinal applies to Role;
-Indicator indicates one Role played;
+
 Link Fact Type has one implying-Role,
 	implying-Role implies at most one Link Fact Type;
 Ring Constraint has at most one other-Role,
@@ -175,8 +155,6 @@ Role Value is identified by Fact and Role where
 	Role Value is of one Role;
 Instance plays Role Value,
 	Role Value is of one Instance;
-
-Scoping is a kind of Mapping;
 
 Set Constraint is a kind of Constraint;
 
@@ -253,11 +231,41 @@ Vocabulary contains Constraint,
 Vocabulary includes Unit,
 	Unit is in one Vocabulary;
 
+/* Compositions */
+Composition is identified by Guid where
+	Composition has one Guid,
+	Guid is of at most one Composition;
+Composition is called one Name,
+	Name is of at most one Composition;
+
+Component is identified by Guid where
+	Component has one Guid,
+	Guid is of at most one Component;
+Component projects at most one Name;
+Component has at most one Ordinal rank;
+
+Discriminator is a kind of Component;
+
+Indicator is a kind of Component;
+Indicator indicates one Role played;
+
+Mapping is a kind of Component;
+Mapping (as Parent) contains Component (as Member) [acyclic, stronglyintransitive],
+	Member belongs to at most one Parent;
+
+Scoping is a kind of Mapping;
+
 Absorption is a kind of Mapping;
 Absorption traverses to one child-Role;
 Absorption traverses from one parent-Role;
 Absorption is matched by at most one reverse-Absorption;
 Absorption flattens;
+
+Full Absorption is identified by Absorption where
+	Full Absorption is via one Absorption,
+	Absorption provides at most one Full Absorption;
+Composition contains Full Absorption,
+	Full Absorption belongs to one Composition;
 
 Aggregation is where
 	Variable is bound to Aggregate over aggregated-Variable,
@@ -279,6 +287,9 @@ Composite is identified by Mapping where
 	Composite consists of one Mapping;
 Composition contains Composite,
 	Composite belongs to one Composition;
+
+CompositeIdentifyingPart is where
+	Composite has Ordinal identifying one Component;
 
 Constraint Shape is a kind of Shape;
 Constraint Shape is for one Constraint;

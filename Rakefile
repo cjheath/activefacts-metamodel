@@ -29,7 +29,7 @@ task :cql do
   system "afgen --cql cql/Metamodel.cql 2>/dev/null | diff -ub - Metamodel.cql | tee Metamodel.cql.diffs"
 end
 
-desc "Generate new Ruby from the ORM file"
+desc "Generate new Ruby from the CQL file"
 task :ruby do
   system %q{
     afgen --ruby cql/Metamodel.cql 2>/dev/null |

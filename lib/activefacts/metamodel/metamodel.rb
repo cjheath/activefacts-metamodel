@@ -436,6 +436,13 @@ module ActiveFacts
       one_to_one :mapping, :mandatory => true     # See Mapping.composite
     end
   
+    class CompositeIdentifyingPart
+      identified_by :composite, :ordinal
+      has_one :component, :mandatory => true      # See Component.all_composite_identifying_part
+      has_one :composite, :mandatory => true      # See Composite.all_composite_identifying_part
+      has_one :ordinal, :mandatory => true        # See Ordinal.all_composite_identifying_part
+    end
+  
     class ConstraintShape < Shape
       has_one :constraint, :mandatory => true     # See Constraint.all_constraint_shape
     end
@@ -477,6 +484,12 @@ module ActiveFacts
       has_one :display_role_names_setting         # See DisplayRoleNamesSetting.all_fact_type_shape
       has_one :fact_type, :mandatory => true      # See FactType.all_fact_type_shape
       has_one :rotation_setting                   # See RotationSetting.all_fact_type_shape
+    end
+  
+    class FullAbsorption
+      identified_by :absorption
+      one_to_one :absorption, :mandatory => true  # See Absorption.full_absorption
+      has_one :composition, :mandatory => true    # See Composition.all_full_absorption
     end
   
     class Injection < Mapping
