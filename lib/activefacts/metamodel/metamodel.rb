@@ -161,9 +161,9 @@ module ActiveFacts
     class AccessPath
       identified_by :guid
       has_one :composite, :mandatory => true      # See Composite.all_access_path
-      has_one :composite                          # See Composite.all_access_path
       one_to_one :guid, :mandatory => true        # See Guid.access_path
       maybe :is_unique
+      has_one :parent_composite, :class => "Composite", :counterpart => :foreign_access_path  # See Composite.all_foreign_access_path
     end
   
     class Agent
@@ -458,7 +458,7 @@ module ActiveFacts
       identified_by :mapping
       has_one :composition, :mandatory => true    # See Composition.all_composite
       one_to_one :mapping, :mandatory => true     # See Mapping.composite
-      one_to_one :primary_access_path, :class => AccessPath  # See AccessPath.composite_as_primary_access_path
+      one_to_one :primary_access_path, :class => AccessPath, :counterpart => :identified_composite  # See AccessPath.identified_composite
     end
   
     class ConstraintShape < Shape

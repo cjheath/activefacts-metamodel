@@ -23,10 +23,13 @@ task :bump do
   end
 end
 
-desc "Generate new CQL from the ORM file"
+desc "Generate new CQL from the ORM file (to verify version similarity)"
 task :cql do
+  # Note: Import from ORM is broken on the implicit derivations in constraints, and the result is unstable.
+  # This means that SOME PATCHES WILL FAIL
   system "afgen --cql orm/Metamodel.orm > Metamodel.cql"
-  system "afgen --cql cql/Metamodel.cql 2>/dev/null | diff -ub - Metamodel.cql | tee Metamodel.cql.diffs"
+  system "patch < orm/Metamodel.cql.diffs"
+  system "afgen --cql cql/Metamodel.cql 2>/dev/null | diff -b -U 1 Metamodel.cql - | tee Metamodel.cql.diffs"
 end
 
 desc "Generate new Ruby from the CQL file"

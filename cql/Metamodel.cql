@@ -250,8 +250,8 @@ Indicator is a kind of Component;
 Indicator indicates one Role played;
 
 Mapping is a kind of Component;
-Mapping (as Parent) contains Component (as Member) [acyclic, stronglyintransitive],
-	Member belongs to at most one Parent;
+Component (as Member) belongs to at most one Mapping (as Parent),
+	Parent contains Member [acyclic, stronglyintransitive];
 
 Scoping is a kind of Mapping;
 
@@ -295,7 +295,7 @@ Access Path is identified by Guid where
 Access Path is unique;
 Composite is reached through Access Path,
 	Access Path is to one Composite;
-Composite has at most one primary-Access Path,
+identified-Composite has at most one primary-Access Path,
 	Access Path is primary for at most one Composite;
 
 Access Key is where
@@ -304,14 +304,16 @@ Access Key is where
 each Access Path occurs at least one time in
 	Access Path refers to Ordinal Component;
 
-Access Path traverses from at most one Composite;
+foreign-Access Path traverses from at most one parent-Composite,
+	Composite uses Access Path;
+
 Foreign Key is where
 	Access Path links from Ordinal one Component;
 Foreign Key is discriminated by at most one Value;
-Access Path traverses from Composite
+foreign Access Path traverses from parent Composite
 	if and only if
 	Access Path links from Ordinal Component;
-Composite has primary Access Path
+identified Composite has primary Access Path
 	only if Composite is reached through Access Path;
 
 Constraint Shape is a kind of Shape;
