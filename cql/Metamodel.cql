@@ -288,8 +288,31 @@ Composite is identified by Mapping where
 Composition contains Composite,
 	Composite belongs to one Composition;
 
-CompositeIdentifyingPart is where
-	Composite has Ordinal identifying one Component;
+/* Access Paths */
+Access Path is identified by Guid where
+	Access Path has one Guid,
+	Guid is of at most one Access Path;
+Access Path is unique;
+Composite is reached through Access Path,
+	Access Path is to one Composite;
+Composite has at most one primary-Access Path,
+	Access Path is primary for at most one Composite;
+
+Access Key is where
+	Access Path refers to Ordinal one Component,
+	Ordinal Component provides Access Path;
+each Access Path occurs at least one time in
+	Access Path refers to Ordinal Component;
+
+Access Path traverses from at most one Composite;
+Foreign Key is where
+	Access Path links from Ordinal one Component;
+Foreign Key is discriminated by at most one Value;
+Access Path traverses from Composite
+	if and only if
+	Access Path links from Ordinal Component;
+Composite has primary Access Path
+	only if Composite is reached through Access Path;
 
 Constraint Shape is a kind of Shape;
 Constraint Shape is for one Constraint;

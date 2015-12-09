@@ -66,6 +66,7 @@ module ActiveFacts
   
     class Guid < ::Guid
       value_type 
+      one_to_one :access_path                     # See AccessPath.guid
       one_to_one :alternative_set                 # See AlternativeSet.guid
       one_to_one :component                       # See Component.guid
       one_to_one :composition                     # See Composition.guid
@@ -157,6 +158,14 @@ module ActiveFacts
       value_type :length => 32
     end
   
+    class AccessPath
+      identified_by :guid
+      has_one :composite, :mandatory => true      # See Composite.all_access_path
+      has_one :composite                          # See Composite.all_access_path
+      one_to_one :guid, :mandatory => true        # See Guid.access_path
+      maybe :is_unique
+    end
+  
     class Agent
       identified_by :agent_name
       one_to_one :agent_name, :mandatory => true  # See AgentName.agent
@@ -242,6 +251,14 @@ module ActiveFacts
     class FactType
       identified_by :concept
       one_to_one :concept, :mandatory => true     # See Concept.fact_type
+    end
+  
+    class ForeignKey
+      identified_by :access_path, :ordinal
+      has_one :access_path, :mandatory => true    # See AccessPath.all_foreign_key
+      has_one :component, :mandatory => true      # See Component.all_foreign_key
+      has_one :ordinal, :mandatory => true        # See Ordinal.all_foreign_key
+      has_one :value                              # See Value.all_foreign_key
     end
   
     class ImplicationRule
@@ -411,6 +428,13 @@ module ActiveFacts
       one_to_one :reverse_absorption, :class => Absorption  # See Absorption.absorption_as_reverse_absorption
     end
   
+    class AccessKey
+      identified_by :access_path, :ordinal
+      has_one :access_path, :mandatory => true    # See AccessPath.all_access_key
+      has_one :component, :mandatory => true      # See Component.all_access_key
+      has_one :ordinal, :mandatory => true        # See Ordinal.all_access_key
+    end
+  
     class Aggregation
       identified_by :aggregate, :aggregated_variable
       has_one :aggregate, :mandatory => true      # See Aggregate.all_aggregation
@@ -434,13 +458,7 @@ module ActiveFacts
       identified_by :mapping
       has_one :composition, :mandatory => true    # See Composition.all_composite
       one_to_one :mapping, :mandatory => true     # See Mapping.composite
-    end
-  
-    class CompositeIdentifyingPart
-      identified_by :composite, :ordinal
-      has_one :component, :mandatory => true      # See Component.all_composite_identifying_part
-      has_one :composite, :mandatory => true      # See Composite.all_composite_identifying_part
-      has_one :ordinal, :mandatory => true        # See Ordinal.all_composite_identifying_part
+      one_to_one :primary_access_path, :class => AccessPath  # See AccessPath.composite_as_primary_access_path
     end
   
     class ConstraintShape < Shape
