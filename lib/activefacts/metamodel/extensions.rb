@@ -350,7 +350,7 @@ module ActiveFacts
 	when 2
 	  (fact_type.all_role.to_a-[self])[0]
 	else
-	  raise "counterpart roles are undefined in n-ary fact types"
+	  nil # raise "counterpart roles are undefined in n-ary fact types"
 	end
       end
     end
@@ -451,9 +451,10 @@ module ActiveFacts
         [self] + (supertype ? supertype.supertypes_transitive : [])
       end
 
-      def subtypes
+      def all_subtype
         all_value_type_as_supertype
       end
+      alias_method :subtypes, :all_subtype    # REVISIT: Delete legacy name
 
       def subtypes_transitive
         [self] + subtypes.map{|st| st.subtypes_transitive}.flatten
@@ -556,7 +557,8 @@ module ActiveFacts
                   next unless role.is_unique || fact_type
                   ftroles = Array(role.fact_type.all_role)
 
-                  # Skip roles in ternary and higher fact types, they're objectified, and in unaries, they can't identify us.
+                  # Skip roles in ternary and higher fact types, they're objectified
+		  # REVISIT: This next line prevents a unary being used as a preferred_identifier:
                   next if ftroles.size != 2
 
                   trace :pi, "Considering role in #{role.fact_type.describe(role)}"
@@ -641,8 +643,8 @@ module ActiveFacts
                 pi = possible_pi
               end
             else
-              debugger
               trace :pi, "No PI found for #{name}"
+              debugger if respond_to?(:debugger)
             end
           end
           raise "No PI found for #{name}" unless pi
@@ -674,11 +676,16 @@ module ActiveFacts
           }
       end
 
-      # An array all direct supertypes
+      # An array of all direct supertypes
       def supertypes
         all_supertype_inheritance.map{|ti|
             ti.supertype
           }
+      end
+
+      # An array of all direct subtypes
+      def all_subtype
+        all_type_inheritance_as_supertype.map(&:subtype)
       end
 
       # An array of self followed by all supertypes in order:
@@ -702,7 +709,7 @@ module ActiveFacts
       end
 
       def common_supertype(other)
-        return nil unless other.is_?(ActiveFacts::Metamodel::EntityType)
+        return nil unless other.is_a?(ActiveFacts::Metamodel::EntityType)
         candidates = supertypes_transitive & other.supertypes_transitive
         return candidates[0] if candidates.size <= 1
         candidates[0] # REVISIT: This might not be the closest supertype
@@ -988,6 +995,10 @@ module ActiveFacts
         min = min_frequency
         max = max_frequency
         'PresenceConstraint over '+role_sequence.describe + " occurs " + frequency + " time#{(min&&min>1)||(max&&max>1) ? 's' : ''}"
+      end
+
+      def covers_role role
+	role_sequence.all_role_ref.map(&:role).include?(role)
       end
     end
 
@@ -1413,6 +1424,89 @@ module ActiveFacts
       end
     end
 
+    class Composite
+      def inspect
+	"Composite #{mapping.inspect}"
+      end
+
+      def show_trace
+	trace :composition, inspect do
+	  trace :composition?, "Columns" do
+	    mapping.show_trace
+	  end
+
+	  trace :composition?, "Indices" do
+	    all_access_path.
+	    sort_by{|ap| ap.all_access_key.map(&:inspect)+ap.all_foreign_key.map(&:inspect) }.  # REVISIT: Fix hack for stable ordering
+	    each do |ap|
+	      ap.show_trace unless ap.parent_composite
+	    end
+	  end
+
+	  trace :composition?, "Foreign keys inbound" do
+	    all_access_path.
+	    sort_by{|ap| ap.all_access_key.map(&:inspect)+ap.all_foreign_key.map(&:inspect) }.  # REVISIT: Fix hack for stable ordering
+	    each do |ap|
+	      ap.show_trace if ap.parent_composite
+	    end
+	  end
+
+	  trace :composition?, "Foreign keys outbound" do
+	    all_foreign_access_path.
+	    sort_by{|ap| ap.all_access_key.map(&:inspect)+ap.all_foreign_key.map(&:inspect) }.  # REVISIT: Fix hack for stable ordering
+	    each do |ap|
+	      ap.show_trace
+	    end
+	  end
+	end
+      end
+    end
+
+    class AccessPath
+      def inspect
+	kind =
+	  case
+	  when parent_composite
+	    "Foreign Key from #{parent_composite.mapping.name}"
+	  when !is_unique
+	    'Non-unique index'
+	  when identified_composite
+	    'Primary index'
+	  else
+	    'Unique index'
+	  end
+	"#{kind} to #{composite.mapping.name}"
+      end
+
+      def show_trace
+	trace :composition, inspect do
+	  # First list any fields in a foreign key
+	  all_foreign_key.sort_by(&:ordinal).each do |fk|
+	    raise "Internal error: Foreign key not in foreign table!" if fk.component.root != parent_composite
+	    trace :composition, fk.inspect
+	  end
+	  # Now list the fields in the primary key
+	  all_access_key.sort_by(&:ordinal).each do |ak|
+	    #raise "Index #{parent_composite ? 'for foreign ' : ''}key not in local table!" if ak.component.root != composite
+	    trace :composition, ak.inspect
+	  end
+	end
+      end
+    end
+
+    class AccessKey
+      def inspect
+	"AccessKey part #{ordinal} in #{component.root.mapping.name} references #{component.inspect}"
+      end
+    end
+
+    class ForeignKey
+      def inspect
+	operation = value ? "filters by value #{value} of" : "is"
+	"ForeignKey part #{ordinal} in #{component.root.mapping.name} #{operation} #{component.inspect}"
+      end
+    end
+
     class Mapping
       def inspect
 	"#{self.class.basename} (#{rank_kind})#{parent ? " in #{parent.name}" :''} of #{name && name != '' ? name : '<anonymous>'}"
@@ -1438,6 +1532,9 @@ module ActiveFacts
         end
       end
 
+      def root
+	composite || parent.root
+      end
     end
 
     class Nesting
@@ -1455,7 +1552,15 @@ module ActiveFacts
 
       def inspect
 	"#{super}#{full_absorption ? ' (full)' : ''
-	} in #{inspect_reading}#{absorption ? ' (forward)' : (reverse_absorption ? ' (reverse)' : '')}"
+	} in #{inspect_reading}#{
+	  # If we have a related forward absorption, we're by definition a reverse absorption
+	  if forward_absorption
+	    ' (reverse)'
+	   else
+	      # If we have a related reverse absorption, we're by definition a forward absorption
+	      reverse_absorption ? ' (forward)' : ''
+	  end
+	}"
       end
 
       def show_trace
@@ -1531,19 +1636,26 @@ module ActiveFacts
       end
 
       def flip!
-	if (other = absorption)
+	raise "REVISIT: Need to flip FullAbsorption on #{inspect}" if full_absorption or reverse_absorption && reverse_absorption.full_absorption or forward_absorption && forward_absorption.full_absorption
+	if (other = forward_absorption)
 	  # We point at them - make them point at us instead
-	  self.absorption = nil
+	  self.forward_absorption = nil
 	  self.reverse_absorption = other
 	elsif (other = reverse_absorption)
 	  # They point at us - make us point at them instead
 	  self.reverse_absorption = nil
-	  self.absorption = other
+	  self.forward_absorption = other
 	else
 	  raise "Absorption cannot be flipped as it has no reverse"
 	end
       end
 
+    end
+
+    class FullAbsorption
+      def inspect
+	"Full #{absorption.inspect}"
+      end
     end
 
     class Indicator
@@ -1663,6 +1775,10 @@ module ActiveFacts
 	when RANK_SUBTYPE;	"subtype"
 	when RANK_SCOPING;	"scoping"
 	end
+      end
+
+      def root
+	parent.root
       end
 
       def inspect

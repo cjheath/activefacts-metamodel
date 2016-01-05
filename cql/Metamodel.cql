@@ -231,42 +231,6 @@ Vocabulary contains Constraint,
 Vocabulary includes Unit,
 	Unit is in one Vocabulary;
 
-/* Compositions */
-Composition is identified by Guid where
-	Composition has one Guid,
-	Guid is of at most one Composition;
-Composition is called one Name,
-	Name is of at most one Composition;
-
-Component is identified by Guid where
-	Component has one Guid,
-	Guid is of at most one Component;
-Component projects at most one Name;
-Component has at most one Ordinal rank;
-
-Discriminator is a kind of Component;
-
-Indicator is a kind of Component;
-Indicator indicates one Role played;
-
-Mapping is a kind of Component;
-Component (as Member) belongs to at most one Mapping (as Parent),
-	Parent contains Member [acyclic, stronglyintransitive];
-
-Scoping is a kind of Mapping;
-
-Absorption is a kind of Mapping;
-Absorption traverses to one child-Role;
-Absorption traverses from one parent-Role;
-Absorption is matched by at most one reverse-Absorption;
-Absorption flattens;
-
-Full Absorption is identified by Absorption where
-	Full Absorption is via one Absorption,
-	Absorption provides at most one Full Absorption;
-Composition contains Full Absorption,
-	Full Absorption belongs to one Composition;
-
 Aggregation is where
 	Variable is bound to Aggregate over aggregated-Variable,
 	Aggregate of aggregated-Variable is bound as one Variable;
@@ -281,40 +245,6 @@ Bound is identified by Value and Bound is inclusive where
 	Bound has one Value,
 	Value is of at least one Bound,
 	Bound is inclusive;
-
-Composite is identified by Mapping where
-	Mapping projects at most one Composite,
-	Composite consists of one Mapping;
-Composition contains Composite,
-	Composite belongs to one Composition;
-
-/* Access Paths */
-Access Path is identified by Guid where
-	Access Path has one Guid,
-	Guid is of at most one Access Path;
-Access Path is unique;
-Composite is reached through Access Path,
-	Access Path is to one Composite;
-identified-Composite has at most one primary-Access Path,
-	Access Path is primary for at most one Composite;
-
-Access Key is where
-	Access Path refers to Ordinal one Component,
-	Ordinal Component provides Access Path;
-each Access Path occurs at least one time in
-	Access Path refers to Ordinal Component;
-
-foreign-Access Path traverses from at most one parent-Composite,
-	Composite uses Access Path;
-
-Foreign Key is where
-	Access Path links from Ordinal one Component;
-Foreign Key is discriminated by at most one Value;
-foreign Access Path traverses from parent Composite
-	if and only if
-	Access Path links from Ordinal Component;
-identified Composite has primary Access Path
-	only if Composite is reached through Access Path;
 
 Constraint Shape is a kind of Shape;
 Constraint Shape is for one Constraint;
@@ -338,18 +268,11 @@ Diagram is identified by Vocabulary and Name where
 	Diagram is called one Name,
 	Name is of Diagram;
 
-Discriminated Role is where
-	Discriminator distinguishes Role using one Value,
-	Role is indicated by Value for Discriminator;
-
 Fact Type Shape is a kind of Shape;
 Fact Type Shape has at most one Display Role Names Setting;
 Fact Type Shape is for one Fact Type,
 	Fact Type has Fact Type Shape;
 Fact Type Shape has at most one Rotation Setting;
-
-Injection is a kind of Mapping;
-ValueField is a kind of Injection;
 
 Mirror Role is a kind of Role;
 Mirror Role is for at most one Role (as Base Role),
@@ -357,16 +280,6 @@ Mirror Role is for at most one Role (as Base Role),
 
 Model Note Shape is a kind of Shape;
 Model Note Shape is for one Context Note;
-
-Nesting is where
-	Absorption is nested under index-Role in Ordinal position,
-	Absorption in Ordinal position is nested under one Role,
-	Role keys nesting of Absorption at Ordinal priority;
-Absorption uses at most one Nesting Mode;
-Nesting has at most one key-Name;
-Absorption is nested under index Role in Ordinal position
-	if and only if
-	that Absorption uses some Nesting Mode;
 
 ORM Diagram is a kind of Diagram;
 Shape is in one ORM Diagram,
@@ -376,7 +289,6 @@ Object Type is identified by Vocabulary and Name where
 	Object Type belongs to one Vocabulary,
 	Object Type is called one Name;
 Instance is of one Object Type;
-Mapping represents one Object Type;
 Object Type is an instance of one Concept;
 Object Type uses at most one Pronoun;
 Object Type plays Role,
@@ -493,14 +405,110 @@ Value Type is subtype of at most one super-Value Type (as Supertype) [acyclic, t
 	Supertype is supertype of Value Type;
 
 Value Type Parameter is where
-	Value Type has facet called Name,
-	Name is a facet of Value Type;
-Value Type Parameter requires value of one facet-Value Type;
+	Value Type has parameter called Name,
+	Name identifies parameter of Value Type;
+Value Type Parameter requires value of one parameter-Value Type;
 
 Value Type Parameter Restriction is where
 	Value Type receives Value Type Parameter,
 	Value Type Parameter applies to Value Type;
 Value Type Parameter Restriction has one Value;
+
+/* Compositions */
+Composition is identified by Guid where
+	Composition has one Guid,
+	Guid is of at most one Composition;
+Composition is called one Name,
+	Name is of at most one Composition;
+
+Component is identified by Guid where
+	Component has one Guid,
+	Guid is of at most one Component;
+Component projects at most one Name;
+Component has at most one Ordinal rank;
+
+Indicator is a kind of Component;
+Indicator indicates one Role played;
+
+Discriminator is a kind of Component;
+Discriminated Role is where
+	Discriminator distinguishes Role using one Value,
+	Role is indicated by Value for Discriminator;
+
+Mapping is a kind of Component;
+Mapping represents one Object Type;
+Component (as Member) belongs to at most one Mapping (as Parent),
+	Parent contains Member [acyclic, stronglyintransitive];
+
+Composite is identified by Mapping where
+	Mapping projects at most one Composite,
+	Composite consists of one Mapping;
+Composition contains Composite,
+	Composite belongs to one Composition;
+
+Scoping is a kind of Mapping;
+Injection is a kind of Mapping;
+ValueField is a kind of Injection;
+
+Absorption is a kind of Mapping;
+Absorption traverses to one child-Role;
+Absorption traverses from one parent-Role;
+forward-Absorption is matched by at most one reverse-Absorption,
+	reverse-Absorption is reverse of at most one forward-Absorption;
+Absorption flattens;
+
+some Absorption traverses from some parent- Role(1) and that Role(1) is played by some Object Type
+	only if that Absorption is a kind of Mapping(1) that contains some Component that is a Mapping(2) that represents that Object Type;
+some Absorption traverses to some child- Role(1) and that Role(1) is played by some Object Type
+	only if that Absorption is a kind of Mapping that represents that Object Type;
+
+Full Absorption is where
+	Composition fully absorbs Object Type;
+Full Absorption applies to one Absorption,
+	Absorption creates at most one Full Absorption;
+/*
+some Object Type is involved in some Full Absorption that applies to some Absorption that is a kind of Mapping
+	if and only if
+	that Mapping represents that Object Type;
+*/
+
+/* Access Paths */
+Access Path is identified by Guid where
+	Access Path has one Guid,
+	Guid is of at most one Access Path;
+Access Path is unique;
+Composite is reached through Access Path,
+	Access Path is to one Composite;
+identified-Composite has at most one primary-Access Path,
+	Access Path is primary for at most one Composite;
+
+Access Key is where
+	Access Path refers to Ordinal one Component,
+	Ordinal Component provides Access Path;
+each Access Path occurs at least one time in
+	Access Path refers to Ordinal Component;
+
+foreign-Access Path traverses from at most one parent-Composite,
+	Composite uses Access Path;
+
+Foreign Key is where
+	Access Path links from Ordinal one Component;
+Foreign Key is discriminated by at most one Value;
+foreign Access Path traverses from parent Composite
+	if and only if
+	Access Path links from Ordinal Component;
+identified Composite has primary Access Path
+	only if Composite is reached through Access Path;
+
+Nesting is where
+	Absorption is nested under index-Role in Ordinal position,
+	Absorption in Ordinal position is nested under one Role,
+	Role keys nesting of Absorption at Ordinal priority;
+Absorption uses at most one Nesting Mode;
+Nesting has at most one key-Name;
+Absorption is nested under index Role in Ordinal position
+	if and only if
+	that Absorption uses some Nesting Mode;
 
 /*
  * Constraints:
@@ -584,8 +592,6 @@ Value Type has Scale
 	only if Value Type has Length;
 Variable matches nesting over Step
 	only if Variable is for Object Type and Step specifies Fact Type;
-each Absorption(1) occurs at most one time in
-	Absorption(2) is matched by reverse Absorption(1);
 either Agreement was reached by Agent or Agreement was on Date;
 // either Component projects Name or Component is some Absorption that flattens;
 each Concept occurs at most one time in

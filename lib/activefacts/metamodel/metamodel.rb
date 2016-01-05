@@ -420,12 +420,12 @@ module ActiveFacts
     end
   
     class Absorption < Mapping
-      one_to_one :absorption, :counterpart => :reverse_absorption  # See Absorption.reverse_absorption
       has_one :child_role, :class => Role, :mandatory => true  # See Role.all_absorption_as_child_role
       maybe :flattens
+      one_to_one :forward_absorption, :class => Absorption, :counterpart => :reverse_absorption  # See Absorption.reverse_absorption
       has_one :nesting_mode                       # See NestingMode.all_absorption
       has_one :parent_role, :class => Role, :mandatory => true  # See Role.all_absorption_as_parent_role
-      one_to_one :reverse_absorption, :class => Absorption  # See Absorption.absorption_as_reverse_absorption
+      one_to_one :reverse_absorption, :class => Absorption, :counterpart => :forward_absorption  # See Absorption.forward_absorption
     end
   
     class AccessKey
@@ -502,12 +502,6 @@ module ActiveFacts
       has_one :display_role_names_setting         # See DisplayRoleNamesSetting.all_fact_type_shape
       has_one :fact_type, :mandatory => true      # See FactType.all_fact_type_shape
       has_one :rotation_setting                   # See RotationSetting.all_fact_type_shape
-    end
-  
-    class FullAbsorption
-      identified_by :absorption
-      one_to_one :absorption, :mandatory => true  # See Absorption.full_absorption
-      has_one :composition, :mandatory => true    # See Composition.all_full_absorption
     end
   
     class Injection < Mapping
@@ -639,6 +633,13 @@ module ActiveFacts
       one_to_one :fact_type                       # See FactType.entity_type
     end
   
+    class FullAbsorption
+      identified_by :composition, :object_type
+      has_one :composition, :mandatory => true    # See Composition.all_full_absorption
+      has_one :object_type, :mandatory => true    # See ObjectType.all_full_absorption
+      one_to_one :absorption, :mandatory => true  # See Absorption.full_absorption
+    end
+  
     class TypeInheritance < FactType
       identified_by :subtype, :supertype
       has_one :subtype, :class => EntityType, :mandatory => true  # See EntityType.all_type_inheritance_as_subtype
@@ -660,7 +661,7 @@ module ActiveFacts
       identified_by :value_type, :name
       has_one :name, :mandatory => true           # See Name.all_value_type_parameter
       has_one :value_type, :mandatory => true     # See ValueType.all_value_type_parameter
-      has_one :facet_value_type, :class => ValueType, :mandatory => true  # See ValueType.all_value_type_parameter_as_facet_value_type
+      has_one :parameter_value_type, :class => ValueType, :mandatory => true  # See ValueType.all_value_type_parameter_as_parameter_value_type
     end
   
     class ValueTypeParameterRestriction

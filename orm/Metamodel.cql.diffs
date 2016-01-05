@@ -17,13 +17,17 @@
 +	Mapping is an Absorption that flattens,
 +	Mapping projects Composite;
  Absorption is nested under index Role in Ordinal position
-@@ -567,8 +567,4 @@
+@@ -567,8 +564,8 @@
  	Variable is restricted by Role of Step;
 -Absorption is a kind of Mapping(1) and Absorption traverses from parent Role that is played by Object Type and Mapping(1) is a kind of Component(1)
 -	only if Member belongs to Mapping(2) that represents Object Type;
++Absorption traverses from parent Role that is played by Object Type
++	only if Absorption is a kind of Mapping(1) that contains Component that is a Mapping(2) that represents Object Type;
++Absorption traverses to child Role that is played by Object Type
++	only if Absorption is a kind of Mapping that represents Object Type;
  identified Composite has primary Access Path
  	only if Composite is reached through Access Path;
--Absorption traverses to child Role that is played by Object Type and Absorption is a kind of Mapping(2)
+-Absorption is a kind of Mapping(2) and Absorption traverses to child Role that is played by Object Type
 -	only if Mapping(1) represents Object Type;
  Presence Constraint is preferred identifier
 @@ -584,3 +580,2 @@
