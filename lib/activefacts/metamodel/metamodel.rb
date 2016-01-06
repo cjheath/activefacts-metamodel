@@ -162,8 +162,7 @@ module ActiveFacts
       identified_by :guid
       has_one :composite, :mandatory => true      # See Composite.all_access_path
       one_to_one :guid, :mandatory => true        # See Guid.access_path
-      maybe :is_unique
-      has_one :parent_composite, :class => "Composite", :counterpart => :foreign_access_path  # See Composite.all_foreign_access_path
+      has_one :name                               # See Name.all_access_path
     end
   
     class Agent
@@ -253,17 +252,33 @@ module ActiveFacts
       one_to_one :concept, :mandatory => true     # See Concept.fact_type
     end
   
-    class ForeignKey
-      identified_by :access_path, :ordinal
-      has_one :access_path, :mandatory => true    # See AccessPath.all_foreign_key
-      has_one :component, :mandatory => true      # See Component.all_foreign_key
-      has_one :ordinal, :mandatory => true        # See Ordinal.all_foreign_key
-      has_one :value                              # See Value.all_foreign_key
+    class ForeignKey < AccessPath
+      has_one :source_composite, :class => "Composite", :mandatory => true  # See Composite.all_foreign_key_as_source_composite
+    end
+  
+    class ForeignKeyField
+      identified_by :foreign_key, :ordinal
+      has_one :component, :mandatory => true      # See Component.all_foreign_key_field
+      has_one :foreign_key, :mandatory => true    # See ForeignKey.all_foreign_key_field
+      has_one :ordinal, :mandatory => true        # See Ordinal.all_foreign_key_field
+      has_one :value                              # See Value.all_foreign_key_field
     end
   
     class ImplicationRule
       identified_by :implication_rule_name
       one_to_one :implication_rule_name, :mandatory => true  # See ImplicationRuleName.implication_rule
+    end
+  
+    class Index < AccessPath
+      maybe :is_unique
+    end
+  
+    class IndexField
+      identified_by :access_path, :ordinal
+      has_one :access_path, :mandatory => true    # See AccessPath.all_index_field
+      has_one :component, :mandatory => true      # See Component.all_index_field
+      has_one :ordinal, :mandatory => true        # See Ordinal.all_index_field
+      has_one :value                              # See Value.all_index_field
     end
   
     class Indicator < Component
@@ -428,13 +443,6 @@ module ActiveFacts
       one_to_one :reverse_absorption, :class => Absorption, :counterpart => :forward_absorption  # See Absorption.forward_absorption
     end
   
-    class AccessKey
-      identified_by :access_path, :ordinal
-      has_one :access_path, :mandatory => true    # See AccessPath.all_access_key
-      has_one :component, :mandatory => true      # See Component.all_access_key
-      has_one :ordinal, :mandatory => true        # See Ordinal.all_access_key
-    end
-  
     class Aggregation
       identified_by :aggregate, :aggregated_variable
       has_one :aggregate, :mandatory => true      # See Aggregate.all_aggregation
@@ -458,7 +466,7 @@ module ActiveFacts
       identified_by :mapping
       has_one :composition, :mandatory => true    # See Composition.all_composite
       one_to_one :mapping, :mandatory => true     # See Mapping.composite
-      one_to_one :primary_access_path, :class => AccessPath, :counterpart => :identified_composite  # See AccessPath.identified_composite
+      one_to_one :primary_index, :class => Index  # See Index.composite_as_primary_index
     end
   
     class ConstraintShape < Shape

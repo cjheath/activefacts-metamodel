@@ -1437,23 +1437,25 @@ module ActiveFacts
 
 	  trace :composition?, "Indices" do
 	    all_access_path.
-	    sort_by{|ap| ap.all_access_key.map(&:inspect)+ap.all_foreign_key.map(&:inspect) }.  # REVISIT: Fix hack for stable ordering
+	    select{|ap| ap.is_a?(Index)}.
+	    sort_by{|ap| Array(ap.name)+ap.all_index_field.map(&:inspect) }.  # REVISIT: Fix hack for stable ordering
 	    each do |ap|
-	      ap.show_trace unless ap.parent_composite
+	      ap.show_trace
 	    end
 	  end
 
 	  trace :composition?, "Foreign keys inbound" do
 	    all_access_path.
-	    sort_by{|ap| ap.all_access_key.map(&:inspect)+ap.all_foreign_key.map(&:inspect) }.  # REVISIT: Fix hack for stable ordering
+	    select{|ap| ap.is_a?(ForeignKey)}.
+	    sort_by{|ap| [ap.source_composite.mapping.name]+ap.all_foreign_key_field.map(&:inspect)+ap.all_index_field.map(&:inspect) }.
 	    each do |ap|
-	      ap.show_trace if ap.parent_composite
+	      ap.show_trace
 	    end
 	  end
 
 	  trace :composition?, "Foreign keys outbound" do
-	    all_foreign_access_path.
-	    sort_by{|ap| ap.all_access_key.map(&:inspect)+ap.all_foreign_key.map(&:inspect) }.  # REVISIT: Fix hack for stable ordering
+	    all_foreign_key_as_source_composite.
+	    sort_by{|ap| [ap.composite.mapping.name]+ap.all_index_field.map(&:inspect)+ap.all_foreign_key_field.map(&:inspect) }.
 	    each do |ap|
 	      ap.show_trace
 	    end
@@ -1463,47 +1465,58 @@ module ActiveFacts
     end
 
     class AccessPath
-      def inspect
-	kind =
-	  case
-	  when parent_composite
-	    "Foreign Key from #{parent_composite.mapping.name}"
-	  when !is_unique
-	    'Non-unique index'
-	  when identified_composite
-	    'Primary index'
-	  else
-	    'Unique index'
-	  end
-	"#{kind} to #{composite.mapping.name}"
-      end
-
       def show_trace
 	trace :composition, inspect do
-	  # First list any fields in a foreign key
-	  all_foreign_key.sort_by(&:ordinal).each do |fk|
-	    raise "Internal error: Foreign key not in foreign table!" if fk.component.root != parent_composite
-	    trace :composition, fk.inspect
+	  if is_a?(ForeignKey)
+	    # First list any fields in a foreign key
+	    all_foreign_key_field.sort_by(&:ordinal).each do |fk|
+	      raise "Internal error: Foreign key not in foreign table!" if fk.component.root != source_composite
+	      trace :composition, fk.inspect
+	    end
 	  end
 	  # Now list the fields in the primary key
-	  all_access_key.sort_by(&:ordinal).each do |ak|
-	    #raise "Index #{parent_composite ? 'for foreign ' : ''}key not in local table!" if ak.component.root != composite
+	  all_index_field.sort_by(&:ordinal).each do |ak|
 	    trace :composition, ak.inspect
 	  end
 	end
       end
     end
 
-    class AccessKey
+    class Index
       def inspect
-	"AccessKey part #{ordinal} in #{component.root.mapping.name} references #{component.inspect}"
+	case
+	when !is_unique
+	  'Non-unique index'
+	when composite_as_primary_index
+	  'Primary index'
+	else
+	  'Unique index'
+	end +
+	(name ? " #{name.inspect}" : '') +
+	" to #{composite.mapping.name}"
       end
     end
 
     class ForeignKey
       def inspect
+	"Foreign Key" +
+	(name ? " #{name.inspect}" : '') +
+	" from #{source_composite.mapping.name} to #{composite.mapping.name}"
+      end
+    end
+
+    class IndexField
+      def inspect
+	"IndexField part #{ordinal} in #{component.root.mapping.name} references #{component.inspect}" +
+	(value ? " discriminated by #{value.inspect}" : '')
+      end
+    end
+
+    class ForeignKeyField
+      def inspect
 	operation = value ? "filters by value #{value} of" : "is"
-	"ForeignKey part #{ordinal} in #{component.root.mapping.name} #{operation} #{component.inspect}"
+	"ForeignKeyField part #{ordinal} in #{component.root.mapping.name} #{operation} #{component.inspect}" +
+	(value ? " discriminated by #{value.inspect}" : '')
       end
     end
 

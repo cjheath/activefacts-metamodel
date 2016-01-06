@@ -476,30 +476,38 @@ some Object Type is involved in some Full Absorption that applies to some Absorp
 Access Path is identified by Guid where
 	Access Path has one Guid,
 	Guid is of at most one Access Path;
-Access Path is unique;
-Composite is reached through Access Path,
-	Access Path is to one Composite;
-identified-Composite has at most one primary-Access Path,
-	Access Path is primary for at most one Composite;
+Access Path is called at most one Name;
+Access Path is to one Composite,
+	Composite is reached through Access Path;
 
-Access Key is where
-	Access Path refers to Ordinal one Component,
-	Ordinal Component provides Access Path;
-each Access Path occurs at least one time in
-	Access Path refers to Ordinal Component;
-
-foreign-Access Path traverses from at most one parent-Composite,
-	Composite uses Access Path;
-
-Foreign Key is where
-	Access Path links from Ordinal one Component;
-Foreign Key is discriminated by at most one Value;
-foreign Access Path traverses from parent Composite
-	if and only if
-	Access Path links from Ordinal Component;
+/* Indices */
+Index is a kind of Access Path;
+Index is unique;
+Composite has at most one primary-Index,
+	Index is primary for at most one Composite;
 identified Composite has primary Access Path
 	only if Composite is reached through Access Path;
 
+Index Field is where
+	Access Path for Ordinal field uses one Component,
+	Component provides Ordinal field for Access Path;
+Index Field is discriminated by at most one Value;
+each Access Path occurs at least one time in
+	Access Path for Ordinal field uses Component;
+
+/* Foreign keys */
+Foreign Key is a kind of Access Path;
+Foreign Key traverses from one source-Composite,
+	Composite contains Foreign Key;
+
+Foreign Key Field is where
+	Foreign Key for Ordinal field uses one Component,
+	Component provides Ordinal field for Foreign Key;
+each Foreign Key occurs at least one time in
+	Foreign Key for Ordinal field uses Component;
+Foreign Key Field is discriminated by at most one Value;
+
+/* Nesting is a non-first-normal form used for SQL ARRAY and Map (hstore) fields */
 Nesting is where
 	Absorption is nested under index-Role in Ordinal position,
 	Absorption in Ordinal position is nested under one Role,

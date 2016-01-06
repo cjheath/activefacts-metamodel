@@ -1,36 +1,80 @@
---- Metamodel.cql	2015-12-09 16:46:14.000000000 +1100
-+++ -	2015-12-09 16:46:14.000000000 +1100
-@@ -19,3 +19,3 @@
- Frequency is written as Unsigned Integer(32);
--Guid is written as Guid;
-+Guid is written as Guid auto-assigned at assert;
- Implication Rule Name is written as String;
-@@ -543,5 +543,2 @@
- either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
--for each Mapping at most one of these holds:
--	Mapping(1) is an Absorption(2) and Absorption(1) flattens,
--	Mapping projects Composite;
- for each Instance at most one of these holds:
-@@ -549,2 +546,5 @@
- 	Instance objectifies Fact;
-+for each Mapping at most one of these holds:
-+	Mapping is an Absorption that flattens,
-+	Mapping projects Composite;
- Absorption is nested under index Role in Ordinal position
-@@ -567,8 +564,8 @@
- 	Variable is restricted by Role of Step;
--Absorption is a kind of Mapping(1) and Absorption traverses from parent Role that is played by Object Type and Mapping(1) is a kind of Component(1)
--	only if Member belongs to Mapping(2) that represents Object Type;
-+Absorption traverses from parent Role that is played by Object Type
-+	only if Absorption is a kind of Mapping(1) that contains Component that is a Mapping(2) that represents Object Type;
-+Absorption traverses to child Role that is played by Object Type
-+	only if Absorption is a kind of Mapping that represents Object Type;
- identified Composite has primary Access Path
- 	only if Composite is reached through Access Path;
--Absorption is a kind of Mapping(2) and Absorption traverses to child Role that is played by Object Type
--	only if Mapping(1) represents Object Type;
- Presence Constraint is preferred identifier
-@@ -584,3 +580,2 @@
- either Agreement was reached by Agent or Agreement was on Date;
--either Component projects Name or Absorption flattens;
- each Concept occurs at most one time in
+*** Metamodel.cql.orig	2016-01-06 12:19:44.000000000 +1100
+--- Metamodel.cql	2016-01-06 12:21:05.000000000 +1100
+***************
+*** 17,23 ****
+  Ephemera URL is written as String;
+  Exponent is written as Signed Integer(16);
+  Frequency is written as Unsigned Integer(32);
+! Guid is written as Guid;
+  Implication Rule Name is written as String;
+  Length is written as Unsigned Integer(32);
+  Literal is written as String;
+--- 17,23 ----
+  Ephemera URL is written as String;
+  Exponent is written as Signed Integer(16);
+  Frequency is written as Unsigned Integer(32);
+! Guid is written as Guid auto-assigned at assert;
+  Implication Rule Name is written as String;
+  Length is written as Unsigned Integer(32);
+  Literal is written as String;
+***************
+*** 548,565 ****
+  either Value Constraint Shape is for Object Type Shape or Value Constraint Shape is for Role Display but not both;
+  either Value Constraint allows Value Range or Value Constraint requires matching Regular Expression but not both;
+  either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
+- for each Mapping at most one of these holds:
+- 	Mapping(1) is an Absorption(2) and Absorption(1) flattens,
+- 	Mapping projects Composite;
+  for each Instance at most one of these holds:
+  	Instance has Value,
+  	Instance objectifies Fact;
+  Absorption is nested under index Role in Ordinal position
+  	if and only if
+  	Absorption uses Nesting Mode;
+- Object Type is involved in Full Absorption that applies to Absorption that is a kind of Mapping(2)
+- 	if and only if
+- 	Mapping(1) represents Object Type;
+  Role Value is of Instance that is of Object Type
+  	if and only if
+  	Role Value is of Role that is played by Object Type;
+--- 548,562 ----
+  either Value Constraint Shape is for Object Type Shape or Value Constraint Shape is for Role Display but not both;
+  either Value Constraint allows Value Range or Value Constraint requires matching Regular Expression but not both;
+  either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
+  for each Instance at most one of these holds:
+  	Instance has Value,
+  	Instance objectifies Fact;
++ for each Mapping at most one of these holds:
++ 	Mapping is an Absorption that flattens,
++ 	Mapping projects Composite;
+  Absorption is nested under index Role in Ordinal position
+  	if and only if
+  	Absorption uses Nesting Mode;
+  Role Value is of Instance that is of Object Type
+  	if and only if
+  	Role Value is of Role that is played by Object Type;
+***************
+*** 572,583 ****
+  Variable is for Object Type that plays Role
+  	if and only if
+  	Variable is restricted by Role of Step;
+- Absorption is a kind of Mapping(1) and Absorption traverses from parent Role that is played by Object Type and Mapping(1) is a kind of Component(1)
+- 	only if Member belongs to Mapping(2) that represents Object Type;
+  Composite has primary Index
+  	only if Composite is reached through Access Path;
+- Absorption traverses to child Role that is played by Object Type and Absorption is a kind of Mapping(2)
+- 	only if Mapping(1) represents Object Type;
+  Presence Constraint is preferred identifier
+  	only if Presence Constraint has max Frequency;
+  Value Type has Scale
+--- 569,576 ----
+***************
+*** 587,593 ****
+  each Access Path occurs at least one time in
+  	Access Path for Ordinal field uses Component;
+  either Agreement was reached by Agent or Agreement was on Date;
+- either Component projects Name or Absorption flattens;
+  each Concept occurs at most one time in
+  	Object Type is an instance of Concept;
+  each Concept occurs at most one time in
+--- 580,585 ----
