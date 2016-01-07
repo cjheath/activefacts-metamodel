@@ -253,6 +253,7 @@ module ActiveFacts
     end
   
     class ForeignKey < AccessPath
+      has_one :absorption, :mandatory => true     # See Absorption.all_foreign_key
       has_one :source_composite, :class => "Composite", :mandatory => true  # See Composite.all_foreign_key_as_source_composite
     end
   
@@ -271,6 +272,7 @@ module ActiveFacts
   
     class Index < AccessPath
       maybe :is_unique
+      has_one :presence_constraint, :mandatory => true  # See PresenceConstraint.all_index
     end
   
     class IndexField

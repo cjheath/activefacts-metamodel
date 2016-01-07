@@ -1,5 +1,5 @@
-*** Metamodel.cql.orig	2016-01-06 12:19:44.000000000 +1100
---- Metamodel.cql	2016-01-06 12:21:05.000000000 +1100
+*** Metamodel.cql.orig	2016-01-07 14:43:08.000000000 +1100
+--- Metamodel.cql	2016-01-07 14:43:17.000000000 +1100
 ***************
 *** 17,23 ****
   Ephemera URL is written as String;
@@ -18,7 +18,29 @@
   Length is written as Unsigned Integer(32);
   Literal is written as String;
 ***************
-*** 548,565 ****
+*** 501,510 ****
+  /*
+   * Constraints:
+   */
+- either Access Path is an Index or Access Path is a Foreign Key but not both;
+  either Component belongs to Mapping(1) or Component is a Mapping(2) that projects Composite but not both;
+  for each Component exactly one of these holds:
+! 	Component is a Mapping that projects Composite,
+  	Component is an Indicator,
+  	Component is a Discriminator;
+  for each Concept exactly one of these holds:
+--- 501,509 ----
+  /*
+   * Constraints:
+   */
+  either Component belongs to Mapping(1) or Component is a Mapping(2) that projects Composite but not both;
+  for each Component exactly one of these holds:
+! 	Component is a Mapping,
+  	Component is an Indicator,
+  	Component is a Discriminator;
+  for each Concept exactly one of these holds:
+***************
+*** 551,568 ****
   either Value Constraint Shape is for Object Type Shape or Value Constraint Shape is for Role Display but not both;
   either Value Constraint allows Value Range or Value Constraint requires matching Regular Expression but not both;
   either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
@@ -37,7 +59,7 @@
   Role Value is of Instance that is of Object Type
   	if and only if
   	Role Value is of Role that is played by Object Type;
---- 548,562 ----
+--- 550,564 ----
   either Value Constraint Shape is for Object Type Shape or Value Constraint Shape is for Role Display but not both;
   either Value Constraint allows Value Range or Value Constraint requires matching Regular Expression but not both;
   either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
@@ -54,22 +76,36 @@
   	if and only if
   	Role Value is of Role that is played by Object Type;
 ***************
-*** 572,583 ****
+*** 575,588 ****
   Variable is for Object Type that plays Role
   	if and only if
   	Variable is restricted by Role of Step;
-- Absorption is a kind of Mapping(1) and Absorption traverses from parent Role that is played by Object Type and Mapping(1) is a kind of Component(1)
-- 	only if Member belongs to Mapping(2) that represents Object Type;
+! Absorption is a kind of Mapping(1) and Absorption traverses from parent Role that is played by Object Type and Mapping(1) is a kind of Component(1)
+! 	only if Member belongs to Mapping(2) that represents Object Type;
   Composite has primary Index
   	only if Composite is reached through Access Path;
-- Absorption traverses to child Role that is played by Object Type and Absorption is a kind of Mapping(2)
+- Index is primary for Composite
+- 	only if Index is unique;
+- Absorption is a kind of Mapping(2) and Absorption traverses to child Role that is played by Object Type
 - 	only if Mapping(1) represents Object Type;
   Presence Constraint is preferred identifier
   	only if Presence Constraint has max Frequency;
   Value Type has Scale
---- 569,576 ----
+--- 571,582 ----
+  Variable is for Object Type that plays Role
+  	if and only if
+  	Variable is restricted by Role of Step;
+! Absorption traverses from parent Role that is played by Object Type
+! 	only if Absorption is a kind of Mapping(1) that contains Component that is a Mapping(2) that represents Object Type;
+! Absorption traverses to child Role that is played by Object Type
+! 	only if Absorption is a kind of Mapping that represents Object Type;
+  Composite has primary Index
+  	only if Composite is reached through Access Path;
+  Presence Constraint is preferred identifier
+  	only if Presence Constraint has max Frequency;
+  Value Type has Scale
 ***************
-*** 587,593 ****
+*** 592,598 ****
   each Access Path occurs at least one time in
   	Access Path for Ordinal field uses Component;
   either Agreement was reached by Agent or Agreement was on Date;
@@ -77,4 +113,4 @@
   each Concept occurs at most one time in
   	Object Type is an instance of Concept;
   each Concept occurs at most one time in
---- 580,585 ----
+--- 586,591 ----

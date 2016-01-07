@@ -483,6 +483,7 @@ Access Path is to one Composite,
 /* Indices */
 Index is a kind of Access Path;
 Index is unique;
+Index derives from one Presence Constraint;
 Composite has at most one primary-Index,
 	Index is primary for at most one Composite;
 identified Composite has primary Access Path
@@ -499,6 +500,7 @@ each Access Path occurs at least one time in
 Foreign Key is a kind of Access Path;
 Foreign Key traverses from one source-Composite,
 	Composite contains Foreign Key;
+Foreign Key derives from one Absorption;
 
 Foreign Key Field is where
 	Foreign Key for Ordinal field uses one Component,

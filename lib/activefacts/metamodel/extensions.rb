@@ -1447,17 +1447,17 @@ module ActiveFacts
 	  trace :composition?, "Foreign keys inbound" do
 	    all_access_path.
 	    select{|ap| ap.is_a?(ForeignKey)}.
-	    sort_by{|ap| [ap.source_composite.mapping.name]+ap.all_foreign_key_field.map(&:inspect)+ap.all_index_field.map(&:inspect) }.
-	    each do |ap|
-	      ap.show_trace
+	    sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_foreign_key_field.map(&:inspect)+fk.all_index_field.map(&:inspect) }.
+	    each do |fk|
+	      fk.show_trace
 	    end
 	  end
 
 	  trace :composition?, "Foreign keys outbound" do
 	    all_foreign_key_as_source_composite.
-	    sort_by{|ap| [ap.composite.mapping.name]+ap.all_index_field.map(&:inspect)+ap.all_foreign_key_field.map(&:inspect) }.
-	    each do |ap|
-	      ap.show_trace
+	    sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_index_field.map(&:inspect)+fk.all_foreign_key_field.map(&:inspect) }.
+	    each do |fk|
+	      fk.show_trace
 	    end
 	  end
 	end
@@ -1501,7 +1501,8 @@ module ActiveFacts
       def inspect
 	"Foreign Key" +
 	(name ? " #{name.inspect}" : '') +
-	" from #{source_composite.mapping.name} to #{composite.mapping.name}"
+	" from #{source_composite.mapping.name} to #{composite.mapping.name}" +
+	(absorption ? " over #{absorption.inspect}" : '')
       end
     end
 
