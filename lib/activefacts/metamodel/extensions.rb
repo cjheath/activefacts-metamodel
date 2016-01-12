@@ -444,6 +444,10 @@ module ActiveFacts
       def is_separate
 	is_independent or concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'separate'}
       end
+
+      def all_role_transitive
+	supertypes_transitive.flat_map(&:all_role)
+      end
     end
 
     class ValueType
@@ -1493,7 +1497,8 @@ module ActiveFacts
 	  'Unique index'
 	end +
 	(name ? " #{name.inspect}" : '') +
-	" to #{composite.mapping.name}"
+	" to #{composite.mapping.name}" +
+	(presence_constraint ? " over #{presence_constraint.describe}" : '')
       end
     end
 
@@ -1547,7 +1552,7 @@ module ActiveFacts
       end
 
       def root
-	composite || parent.root
+	composite || parent && parent.root
       end
     end
 
