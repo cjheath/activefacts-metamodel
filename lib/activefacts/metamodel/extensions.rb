@@ -310,7 +310,8 @@ module ActiveFacts
 
       # Is there are internal uniqueness constraint on this role only?
       def is_unique
-	return true if fact_type.is_a?(LinkFactType) # Handle objectification roles
+	return true if fact_type.is_a?(LinkFactType) or		# Handle objectification roles
+	  fact_type.all_role.size == 1				# and unary roles
 
 	uniqueness_constraint ? true : false
       end
@@ -503,6 +504,11 @@ module ActiveFacts
       def preferred_identifier
         return @preferred_identifier if @preferred_identifier
         if fact_type
+	  # Objectified unaries are identified by the ID of the object that plays the role:
+	  if fact_type.all_role.size == 1
+	    return @preferred_identifier = fact_type.all_role.single.object_type.preferred_identifier
+	  end
+
           # When compiling a fact instance, the delayed creation of a preferred identifier might be necessary
           if c = fact_type.check_and_add_spanning_uniqueness_constraint
             fact_type.check_and_add_spanning_uniqueness_constraint = nil
