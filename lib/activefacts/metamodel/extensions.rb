@@ -490,11 +490,7 @@ module ActiveFacts
       end
 
       def assimilation
-        if rr = identification_is_inherited
-          rr.role.fact_type.assimilation
-        else
-          nil
-        end
+	ti = identifying_type_inheritance and ti.assimilation
       end
 
       def is_separate
@@ -705,17 +701,15 @@ module ActiveFacts
           }).flatten.uniq
       end
 
+      def identifying_type_inheritance
+        all_type_inheritance_as_subtype.detect do |ti|
+	  ti.provides_identification
+	end
+      end
+
       # A subtype does not have a identifying_supertype if it defines its own identifier
       def identifying_supertype
-        trace "Looking for identifying_supertype of #{name}"
-        all_type_inheritance_as_subtype.detect{|ti|
-            trace "considering supertype #{ti.supertype.name}"
-            next unless ti.provides_identification
-            trace "found identifying supertype of #{name}, it's #{ti.supertype.name}"
-            return ti.supertype
-          }
-        trace "Failed to find identifying supertype of #{name}"
-        return nil
+	ti = identifying_type_inheritance and ti.supertype
       end
 
       def common_supertype(other)
