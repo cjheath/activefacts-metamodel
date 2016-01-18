@@ -1442,7 +1442,7 @@ module ActiveFacts
 	  indices =
 	    all_access_path.
 	    select{|ap| ap.is_a?(Index)}.
-	    sort_by{|ap| Array(ap.name)+ap.all_index_field.map(&:inspect) }  # REVISIT: Fix hack for stable ordering
+	    sort_by{|ap| [ap.composite_as_primary_index ? 0 : 1] + Array(ap.name)+ap.all_index_field.map(&:inspect) }  # REVISIT: Fix hack for stable ordering
 	  unless indices.empty?
 	    trace :composition, "Indices" do
 	      indices.each do |ap|
