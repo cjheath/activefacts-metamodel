@@ -1439,29 +1439,37 @@ module ActiveFacts
 	    mapping.show_trace
 	  end
 
-	  trace :composition?, "Indices" do
+	  indices =
 	    all_access_path.
 	    select{|ap| ap.is_a?(Index)}.
-	    sort_by{|ap| Array(ap.name)+ap.all_index_field.map(&:inspect) }.  # REVISIT: Fix hack for stable ordering
-	    each do |ap|
-	      ap.show_trace
+	    sort_by{|ap| Array(ap.name)+ap.all_index_field.map(&:inspect) }  # REVISIT: Fix hack for stable ordering
+	  unless indices.empty?
+	    trace :composition, "Indices" do
+	      indices.each do |ap|
+		ap.show_trace
+	      end
 	    end
 	  end
 
-	  trace :composition?, "Foreign keys inbound" do
-	    all_access_path.
+	  inbound = all_access_path.
 	    select{|ap| ap.is_a?(ForeignKey)}.
-	    sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_foreign_key_field.map(&:inspect)+fk.all_index_field.map(&:inspect) }.
-	    each do |fk|
-	      fk.show_trace
+	    sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_foreign_key_field.map(&:inspect)+fk.all_index_field.map(&:inspect) }
+	  unless inbound.empty?
+	    trace :composition, "Foreign keys inbound" do
+	      inbound.each do |fk|
+		fk.show_trace
+	      end
 	    end
 	  end
 
-	  trace :composition?, "Foreign keys outbound" do
+	  outbound =
 	    all_foreign_key_as_source_composite.
-	    sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_index_field.map(&:inspect)+fk.all_foreign_key_field.map(&:inspect) }.
-	    each do |fk|
-	      fk.show_trace
+	    sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_index_field.map(&:inspect)+fk.all_foreign_key_field.map(&:inspect) }
+	  unless outbound.empty?
+	    trace :composition, "Foreign keys outbound" do
+	      outbound.each do |fk|
+		fk.show_trace
+	      end
 	    end
 	  end
 	end
