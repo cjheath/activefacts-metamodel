@@ -1642,14 +1642,14 @@ module ActiveFacts
 	  cvt = child_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
 	  return cvt if pvt != cvt
 
-	  # Primary absorption absorbs the object playing the mandatory role into the non-mandatory:
-	  return child_role.is_mandatory if !parent_role.is_mandatory != !child_role.is_mandatory
-
 	  if !pvt
 	    # Force the decision if one EntityType identifies another
 	    return true if child_role.base_role.is_identifying  # Parent is identified by child role, correct
 	    return false if parent_role.base_role.is_identifying # Child is identified by parent role, incorrect
 	  end
+
+	  # Primary absorption absorbs the object playing the mandatory role into the non-mandatory:
+	  return child_role.is_mandatory if !parent_role.is_mandatory != !child_role.is_mandatory
 	end
 
 	if parent_role.object_type.is_a?(ActiveFacts::Metamodel::EntityType) &&
