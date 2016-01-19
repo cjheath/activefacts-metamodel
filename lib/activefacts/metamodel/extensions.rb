@@ -477,14 +477,14 @@ module ActiveFacts
         nil
       end
 
-      # Is this ValueType auto-assigned either at assert or on first save to the database?
+      # Is this ValueType auto-assigned? Returns either 'assert', 'commit', otherwise nil.
       def is_auto_assigned
         type = self
         while type
-          return true if type.name =~ /^Auto/ || type.transaction_phase
+          return type.transaction_phase || 'commit' if type.name =~ /^Auto/ || type.transaction_phase
           type = type.supertype
         end
-        false
+        nil
       end
     end
 
