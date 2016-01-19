@@ -303,9 +303,14 @@ module ActiveFacts
           rs = rr.role_sequence
           rs.all_role_ref.size == 1 and
             rs.all_presence_constraint.detect do |pc|
-              pc.max_frequency == 1 and !pc.enforcement   # Alethic uniqueness constraint
+              return pc if pc.max_frequency == 1 and !pc.enforcement   # Alethic uniqueness constraint
             end
         }
+	nil
+      end
+
+      def is_identifying
+	uc = uniqueness_constraint and uc.is_preferred_identifier
       end
 
       # Is there are internal uniqueness constraint on this role only?
@@ -1637,12 +1642,14 @@ module ActiveFacts
 	  cvt = child_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
 	  return cvt if pvt != cvt
 
-	  if !pvt
-	    # REVISIT: Force the decision if one EntityType identifies another
-	  end
-
 	  # Primary absorption absorbs the object playing the mandatory role into the non-mandatory:
 	  return child_role.is_mandatory if !parent_role.is_mandatory != !child_role.is_mandatory
+
+	  if !pvt
+	    # Force the decision if one EntityType identifies another
+	    return true if child_role.base_role.is_identifying  # Parent is identified by child role, correct
+	    return false if parent_role.base_role.is_identifying # Child is identified by parent role, incorrect
+	  end
 	end
 
 	if parent_role.object_type.is_a?(ActiveFacts::Metamodel::EntityType) &&
