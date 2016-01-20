@@ -1815,6 +1815,10 @@ module ActiveFacts
 	parent.root
       end
 
+      def depth
+	parent ? 1+parent.depth : 0
+      end
+
       def inspect
 	"#{self.class.basename}"
       end
