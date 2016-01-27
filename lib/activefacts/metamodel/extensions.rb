@@ -1747,13 +1747,12 @@ module ActiveFacts
 	@rank_key ||=
 	  case self
 	  when SurrogateKey
-	    [RANK_IDENT]
+	    [RANK_IDENT, -1]
 
 	  when Indicator
-	    if root and ix = root.primary_index and	# Primary index has been decided
-		pos = ix.all_index_field.map(&:component).index(self)	# so if we're in it
-	      [RANK_IDENT, pos]				# Use that
-	    elsif !ix and (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
+	    if ixcs = primary_index_components and position = ixcs.index(self)
+	      [RANK_IDENT, position]			# Use that
+	    elsif !ixcs and (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
 	      [RANK_IDENT, position]     # An identifying unary
 	    else
 	      [RANK_INDICATOR, name || role.name]	      # A non-identifying unary
@@ -1763,7 +1762,11 @@ module ActiveFacts
 	    [RANK_DISCRIMINATOR, name || child_role.name]
 
 	  when ValueField
-	    [RANK_IDENT]
+	    if ixcs = primary_index_components and !ixcs.index(self)
+	      [RANK_MANDATORY]
+	    else
+	      [RANK_IDENT]
+	    end
 
 	  when Injection
 	    [RANK_INJECTION, name]	      # REVISIT: Injection not fully elaborated. A different sub-key for ranking may be needed
@@ -1780,10 +1783,9 @@ module ActiveFacts
 		tis = parent_role.object_type.all_type_inheritance_as_supertype.sort_by{|ti| ti.subtype.name }
 		[RANK_SUBTYPE, tis.index(parent_role.fact_type)]
 	      end
-	    elsif root and ix = root.primary_index and	# Primary index has been decided
-		pos = ix.all_index_field.map(&:component).index(self)	# so if we're in it
-	      [RANK_IDENT, pos]				# Use that
-	    elsif !ix and (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
+	    elsif ixcs = primary_index_components and position = ixcs.index(self)
+	      [RANK_IDENT, position]			# Use that
+	    elsif !ixcs and (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
 	      [RANK_IDENT, position]
 	    else
 	      if parent_role.is_unique
@@ -1799,6 +1801,15 @@ module ActiveFacts
 	  else
 	    raise "unexpected #{self.class.basename} in Component#rank_key"
 	  end
+      end
+
+      def primary_index_components
+	root and
+	ix = root.primary_index and				# Primary index has been decided
+	root.primary_index.all_index_field.size > 0 and		# has been populated and
+	ix = root.primary_index and
+	ixfs = ix.all_index_field.sort_by(&:ordinal) and
+	ixfs.map(&:component)
       end
 
       def parent_entity_type
