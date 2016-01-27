@@ -1555,6 +1555,7 @@ module ActiveFacts
 
       # Recompute a contiguous member ranking fron zero, based on current membership:
       def re_rank
+        all_member.each(&:uncache_rank_key)
         next_rank = 0
         all_member.
 	sort_by(&:rank_key).
@@ -1738,11 +1739,21 @@ module ActiveFacts
       RANK_SUBTYPE = 10		# Subtypes in alphabetical order
       RANK_SCOPING = 11		# Scoping in alphabetical order
 
+      def uncache_rank_key
+	@rank_key = nil
+      end
+
       def rank_key
 	@rank_key ||=
 	  case self
+	  when SurrogateKey
+	    [RANK_IDENT]
+
 	  when Indicator
-	    if (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
+	    if root and ix = root.primary_index and	# Primary index has been decided
+		pos = ix.all_index_field.map(&:component).index(self)	# so if we're in it
+	      [RANK_IDENT, pos]				# Use that
+	    elsif !ix and (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
 	      [RANK_IDENT, position]     # An identifying unary
 	    else
 	      [RANK_INDICATOR, name || role.name]	      # A non-identifying unary
@@ -1769,7 +1780,10 @@ module ActiveFacts
 		tis = parent_role.object_type.all_type_inheritance_as_supertype.sort_by{|ti| ti.subtype.name }
 		[RANK_SUBTYPE, tis.index(parent_role.fact_type)]
 	      end
-	    elsif (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
+	    elsif root and ix = root.primary_index and	# Primary index has been decided
+		pos = ix.all_index_field.map(&:component).index(self)	# so if we're in it
+	      [RANK_IDENT, pos]				# Use that
+	    elsif !ix and (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
 	      [RANK_IDENT, position]
 	    else
 	      if parent_role.is_unique
