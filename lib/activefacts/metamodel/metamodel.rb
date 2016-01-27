@@ -616,6 +616,9 @@ module ActiveFacts
       maybe :is_mandatory
     end
   
+    class SurrogateKey < Injection
+    end
+  
     class ValueConstraintShape < ConstraintShape
       has_one :object_type_shape                  # See ObjectTypeShape.all_value_constraint_shape
       one_to_one :role_display                    # See RoleDisplay.value_constraint_shape

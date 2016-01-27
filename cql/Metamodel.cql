@@ -448,7 +448,8 @@ Composition contains Composite,
 
 Scoping is a kind of Mapping;
 Injection is a kind of Mapping;
-ValueField is a kind of Injection;
+Value Field is a kind of Injection;
+Surrogate Key is a kind of Injection;
 
 Absorption is a kind of Mapping;
 Absorption traverses to one child-Role;
@@ -486,6 +487,8 @@ Index is unique;
 Index derives from one Presence Constraint;
 Composite has at most one primary-Index,
 	Index is primary for at most one Composite;
+Index is primary for Composite
+	only if Index is unique;
 identified Composite has primary Access Path
 	only if Composite is reached through Access Path;
 
@@ -498,6 +501,7 @@ each Access Path occurs at least one time in
 
 /* Foreign keys */
 Foreign Key is a kind of Access Path;
+either Access Path is an Index or Access Path is a Foreign Key but not both;
 Foreign Key traverses from one source-Composite,
 	Composite contains Foreign Key;
 Foreign Key derives from one Absorption;
