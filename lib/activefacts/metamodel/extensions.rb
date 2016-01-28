@@ -1726,18 +1726,19 @@ module ActiveFacts
     class Component
       # The ranking key of a component indicates its importance to its parent:
       # Ranking assigns a total order, but is computed in groups:
-      RANK_SUPER = 0		# Supertypes, with the identifying supertype first, others alphabetical
-      RANK_IDENT = 1		# Identifying components (absorptions, indicator), in order of the identifier
-      RANK_VALUE = 2		# A ValueField
-      RANK_INJECTION = 3	# Injections, in alphabetical order
-      RANK_DISCRIMINATOR = 4	# Discriminator components, in alphabetical order
-      RANK_FOREIGN = 5		# REVISIT: Foreign key components
-      RANK_INDICATOR = 6	# Indicators in alphabetical order
-      RANK_MANDATORY = 7	# Absorption: unique mandatory
-      RANK_NON_MANDATORY = 8	# Absorption: unique optional
-      RANK_MULTIPLE = 9		# Absorption: manifold
-      RANK_SUBTYPE = 10		# Subtypes in alphabetical order
-      RANK_SCOPING = 11		# Scoping in alphabetical order
+      RANK_SURROGATE = 0
+      RANK_SUPER = 1		# Supertypes, with the identifying supertype first, others alphabetical
+      RANK_IDENT = 2		# Identifying components (absorptions, indicator), in order of the identifier
+      RANK_VALUE = 3		# A ValueField
+      RANK_INJECTION = 4	# Injections, in alphabetical order
+      RANK_DISCRIMINATOR = 5	# Discriminator components, in alphabetical order
+      RANK_FOREIGN = 6		# REVISIT: Foreign key components
+      RANK_INDICATOR = 7	# Indicators in alphabetical order
+      RANK_MANDATORY = 8	# Absorption: unique mandatory
+      RANK_NON_MANDATORY = 9	# Absorption: unique optional
+      RANK_MULTIPLE = 10	# Absorption: manifold
+      RANK_SUBTYPE = 11		# Subtypes in alphabetical order
+      RANK_SCOPING = 12		# Scoping in alphabetical order
 
       def uncache_rank_key
 	@rank_key = nil
@@ -1747,12 +1748,14 @@ module ActiveFacts
 	@rank_key ||=
 	  case self
 	  when SurrogateKey
-	    [RANK_IDENT, -1]
+	    if !parent.parent
+	      [RANK_SURROGATE]	# an injected PK
+	    else
+	      [RANK_MANDATORY, name]	# an FK
+	    end
 
 	  when Indicator
-	    if ixcs = primary_index_components and position = ixcs.index(self)
-	      [RANK_IDENT, position]			# Use that
-	    elsif !ixcs and (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
+	    if (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
 	      [RANK_IDENT, position]     # An identifying unary
 	    else
 	      [RANK_INDICATOR, name || role.name]	      # A non-identifying unary
@@ -1762,11 +1765,7 @@ module ActiveFacts
 	    [RANK_DISCRIMINATOR, name || child_role.name]
 
 	  when ValueField
-	    if ixcs = primary_index_components and !ixcs.index(self)
-	      [RANK_MANDATORY]
-	    else
-	      [RANK_IDENT]
-	    end
+	    [RANK_IDENT]
 
 	  when Injection
 	    [RANK_INJECTION, name]	      # REVISIT: Injection not fully elaborated. A different sub-key for ranking may be needed
@@ -1783,9 +1782,7 @@ module ActiveFacts
 		tis = parent_role.object_type.all_type_inheritance_as_supertype.sort_by{|ti| ti.subtype.name }
 		[RANK_SUBTYPE, tis.index(parent_role.fact_type)]
 	      end
-	    elsif ixcs = primary_index_components and position = ixcs.index(self)
-	      [RANK_IDENT, position]			# Use that
-	    elsif !ixcs and (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
+	    elsif (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
 	      [RANK_IDENT, position]
 	    else
 	      if parent_role.is_unique
@@ -1821,6 +1818,7 @@ module ActiveFacts
       def rank_kind
 	return "top" unless parent  # E.g. a Mapping that is a Composite
 	case rank_key[0]
+	when RANK_SURROGATE;	"surrogate"
 	when RANK_SUPER;	"supertype"
 	when RANK_IDENT;	"existential"
 	when RANK_VALUE;	"self-value"
