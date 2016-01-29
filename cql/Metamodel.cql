@@ -504,7 +504,8 @@ Foreign Key is a kind of Access Path;
 either Access Path is an Index or Access Path is a Foreign Key but not both;
 Foreign Key traverses from one source-Composite,
 	Composite contains Foreign Key;
-Foreign Key derives from one Absorption;
+Foreign Key derives from one Absorption,
+        Absorption gives rise to at most one Foreign Key;
 
 Foreign Key Field is where
 	Foreign Key for Ordinal field uses one Component,

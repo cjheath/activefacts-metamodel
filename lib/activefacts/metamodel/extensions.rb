@@ -1479,6 +1479,13 @@ module ActiveFacts
 	  end
 	end
       end
+
+      # Provide a stable ordering for indices, based on the ordering of columns by rank:
+      def all_indices_by_rank
+        all_access_path.
+        reject{|ap| ap.is_a?(ActiveFacts::Metamodel::ForeignKey)}.
+        sort_by{|ap| ap.all_index_field.to_a.flat_map{|ixf| ixf.component.rank_path}.compact }
+      end
     end
 
     class AccessPath
@@ -1496,6 +1503,10 @@ module ActiveFacts
 	    trace :composition, ak.inspect
 	  end
 	end
+      end
+
+      def position_in_index component
+	all_index_field.sort_by(&:ordinal).map(&:component).index(component)
       end
     end
 
@@ -1567,6 +1578,17 @@ module ActiveFacts
 
       def root
 	composite || parent && parent.root
+      end
+
+      def leaves
+        re_rank
+        all_member.sort_by(&:ordinal).flat_map do |member|
+          if member.is_a?(Mapping) && member.all_member.size > 0
+            member.leaves
+          else
+            member
+          end
+        end
       end
     end
 
@@ -1849,6 +1871,18 @@ module ActiveFacts
       def show_trace
 	raise "Implemented in subclasses"
 	# trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}#{name ? " (as #{name.inspect})" : ''}"
+      end
+
+      def leaves
+        self
+      end
+
+      def path
+        (parent ? parent.path+[self] : [self])
+      end
+
+      def rank_path
+        (parent ? parent.rank_path+[ordinal] : [ordinal])
       end
     end
   end

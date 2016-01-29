@@ -253,7 +253,6 @@ module ActiveFacts
     end
   
     class ForeignKey < AccessPath
-      has_one :absorption, :mandatory => true     # See Absorption.all_foreign_key
       has_one :source_composite, :class => "Composite", :mandatory => true  # See Composite.all_foreign_key_as_source_composite
     end
   
@@ -439,6 +438,7 @@ module ActiveFacts
     class Absorption < Mapping
       has_one :child_role, :class => Role, :mandatory => true  # See Role.all_absorption_as_child_role
       maybe :flattens
+      one_to_one :foreign_key                     # See ForeignKey.absorption
       one_to_one :forward_absorption, :class => Absorption, :counterpart => :reverse_absorption  # See Absorption.reverse_absorption
       has_one :nesting_mode                       # See NestingMode.all_absorption
       has_one :parent_role, :class => Role, :mandatory => true  # See Role.all_absorption_as_parent_role
