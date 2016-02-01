@@ -56,13 +56,9 @@ class Array
 end
 
 class String
-  class Words
-    def initialize words
-      @words = words
-    end
-
-    def map(&b)
-      @words.map(&b)
+  class Words < Array
+    def inspect
+      'Words'+super
     end
 
     def to_s
@@ -70,7 +66,7 @@ class String
     end
 
     def titlewords
-      @words.map do |word|
+      map do |word|
 	word[0].upcase+word[1..-1].downcase
       end
     end
@@ -80,7 +76,7 @@ class String
     end
 
     def capwords
-      @words.map do |word|
+      map do |word|
 	word[0].upcase+word[1..-1]
       end
     end
@@ -91,7 +87,7 @@ class String
 
     def camelwords
       count = 0
-      @words.map do |word|
+      map do |word|
 	if (count += 1) == 1
 	  word
 	else
@@ -105,7 +101,7 @@ class String
     end
 
     def snakewords
-      @words.map do |w|
+      map do |w|
 	w.downcase
       end
     end
@@ -115,11 +111,11 @@ class String
     end
 
     def to_a
-      @words
+      self
     end
 
     def +(words)
-      Words.new(@words + Array(words))
+      Words.new(self + Array(words))
     end
   end
 
