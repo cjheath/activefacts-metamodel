@@ -41,7 +41,7 @@ task :ruby do
 module ActiveFacts
 	
 	3s/:://
-	3,$s/^/  /
+	3,$s/^./  &/
 	$a\
 end
       ' > metamodel.rb

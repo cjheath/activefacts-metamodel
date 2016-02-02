@@ -359,11 +359,26 @@ module ActiveFacts
 	  nil # raise "counterpart roles are undefined in n-ary fact types"
 	end
       end
+
+      # return an array of all the constraints on this role (not including ValueConstraint on a ValueType player)
+      def all_constraint
+	(
+	  Array(role_value_constraint) +
+	  all_role_ref.to_a.flat_map do |rr|
+	    rr.role_sequence.all_presence_constraint.to_a +
+	    rr.role_sequence.all_subset_constraint_as_superset_role_sequence +
+	    rr.role_sequence.all_subset_constraint_as_subset_role_sequence +
+	    rr.role_sequence.all_set_comparison_roles.map(&:set_comparison_constraint)
+	  end +
+	  all_ring_constraint.to_a +
+	  all_ring_constraint_as_other_role.to_a
+	).uniq
+      end
     end
 
     class RoleRef
       def describe
-        role_name
+        role.name + " in (#{role.fact_type.default_reading})"
       end
 
       def preferred_reference
@@ -434,7 +449,9 @@ module ActiveFacts
     class RoleSequence
       def describe(highlighted_role_ref = nil)
         "("+
-          all_role_ref.sort_by{|rr| rr.ordinal}.map{|rr| rr.describe + (highlighted_role_ref == rr ? '*' : '') }*", "+
+          all_role_ref_in_order.map{|rr| rr.role.name + (highlighted_role_ref == rr ? '*' : '') }*", " +
+	  " in " +
+	  all_role_ref.map(&:role).map(&:fact_type).uniq.map(&:default_reading).map(&:inspect)*', ' +
         ")"
       end
 
@@ -935,6 +952,10 @@ module ActiveFacts
           all_allowed_range.single.to_s
         end
       end
+
+      def all_constrained_role
+	Array(role) # Empty unless it's a role value constraint
+      end
     end
 
     class AllowedRange
@@ -1009,15 +1030,34 @@ module ActiveFacts
       def covers_role role
 	role_sequence.all_role_ref.map(&:role).include?(role)
       end
+
+      def all_constrained_role
+	role_sequence.all_role_ref.map(&:role)
+      end
     end
 
     class SubsetConstraint
       def describe
         'SubsetConstraint(' +
-        subset_role_sequence.describe 
-        ' < ' +
+        subset_role_sequence.describe +
+        ' only if ' +
         superset_role_sequence.describe +
         ')'
+      end
+
+      def all_constrained_role
+	subset_role_sequence.all_role_ref.map(&:role) +
+	superset_role_sequence.all_role_ref.map(&:role)
+      end
+    end
+
+    class SetComparisonRoles
+      def describe
+        "("+
+          role_sequence.all_role_ref_in_order.map{|rr| rr.role.name }*", " +
+	  " in " +
+	  role_sequence.all_role_ref.map(&:role).map(&:fact_type).uniq.map(&:default_reading).map(&:inspect)*', ' +
+        ")"
       end
     end
 
@@ -1033,7 +1073,25 @@ module ActiveFacts
         end*',' +
         ')'
       end
+
+      def all_constrained_role
+	all_set_comparison_roles.map(&:role_sequence).flat_map(&:all_role_ref).map(&:role).uniq
+      end
     end
+
+    class SetEqualityConstraint
+      def describe
+	all_set_comparison_roles.map(&:describe) * " if and only if "
+      end
+    end
+
+    class SetExclusionConstraint
+      def describe
+	(is_mandatory ? "exactly one of " : "at most one of ") +
+	all_set_comparison_roles.map(&:describe) * " or "
+      end
+    end
+
 
     class RingConstraint
       def describe
@@ -1043,6 +1101,10 @@ module ActiveFacts
         other_role.describe+' in ' +
         role.fact_type.default_reading +
         ')'
+      end
+
+      def all_constrained_role
+	[role, other_role]
       end
     end
 
@@ -1707,6 +1769,14 @@ module ActiveFacts
 	end
       end
 
+      def all_role
+	([child_role, parent_role] + all_nesting.map(&:index_role)).flat_map{|role| [role, role.base_role]}.uniq
+      end
+
+      def value_constraints
+	return [] unless object_type.is_a?(ValueType)
+	object_type.supertypes_transitive.flat_map{|vt| Array(vt.value_constraint)}
+      end
     end
 
     class FullAbsorption
@@ -1723,6 +1793,10 @@ module ActiveFacts
       def show_trace
 	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? "(as #{name.inspect})" : ''}"
       end
+
+      def all_role
+	[role, role.base_role].uniq
+      end
     end
 
     class Discriminator
@@ -1732,6 +1806,10 @@ module ActiveFacts
 
       def show_trace
 	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name.inspect})" : ''}"
+      end
+
+      def all_role
+	all_discriminated_role.map(&:role).flat_map{|role| [role, role.base_role]}.uniq
       end
     end
 
@@ -1879,6 +1957,10 @@ module ActiveFacts
 
       def path
         (parent ? parent.path+[self] : [self])
+      end
+
+      def all_role
+	[]
       end
 
       def rank_path
