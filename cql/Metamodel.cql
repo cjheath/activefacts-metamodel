@@ -446,11 +446,6 @@ Composite is identified by Mapping where
 Composition contains Composite,
 	Composite belongs to one Composition;
 
-Scoping is a kind of Mapping;
-Injection is a kind of Mapping;
-Value Field is a kind of Injection;
-Surrogate Key is a kind of Injection;
-
 Absorption is a kind of Mapping;
 Absorption traverses to one child-Role;
 Absorption traverses from one parent-Role;
@@ -472,6 +467,26 @@ some Object Type is involved in some Full Absorption that applies to some Absorp
 	if and only if
 	that Mapping represents that Object Type;
 */
+
+/*
+ * Composition constraint categories
+ */
+Leaf Constraint is where
+	Component has leaf-Constraint,
+	Constraint applies to Component;
+
+Local Constraint is where
+	Composite contains local-Constraint,
+	local-Constraint connects leaves of Composite;
+ 
+Spanning Constraint is where
+	Composite has spanning-Constraint,
+	Constraint spans Composite;
+
+Scoping is a kind of Mapping;
+Injection is a kind of Mapping;
+Value Field is a kind of Injection;
+Surrogate Key is a kind of Injection;
 
 /* Access Paths */
 Access Path is identified by Guid where

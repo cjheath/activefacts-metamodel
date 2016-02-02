@@ -8,7 +8,7 @@ module ActiveFacts
     end
 
     class AgentName < String
-      value_type
+      value_type 
       one_to_one :agent                           # See Agent.agent_name
     end
 
@@ -18,21 +18,21 @@ module ActiveFacts
     end
 
     class Annotation < String
-      value_type
+      value_type 
     end
 
     class Assimilation < String
-      value_type
+      value_type 
       restrict 'absorbed', 'partitioned', 'separate'
     end
 
     class ContextNoteKind < String
-      value_type
+      value_type 
       restrict 'as_opposed_to', 'because', 'so_that', 'to_avoid'
     end
 
     class Date < ::Date
-      value_type
+      value_type 
     end
 
     class Denominator < UnsignedInteger
@@ -40,11 +40,11 @@ module ActiveFacts
     end
 
     class Discussion < String
-      value_type
+      value_type 
     end
 
     class DisplayRoleNamesSetting < String
-      value_type
+      value_type 
       restrict 'false', 'true'
     end
 
@@ -53,7 +53,7 @@ module ActiveFacts
     end
 
     class EphemeraURL < String
-      value_type
+      value_type 
     end
 
     class Exponent < SignedInteger
@@ -65,7 +65,7 @@ module ActiveFacts
     end
 
     class Guid < ::Guid
-      value_type
+      value_type 
       one_to_one :access_path                     # See AccessPath.guid
       one_to_one :alternative_set                 # See AlternativeSet.guid
       one_to_one :component                       # See Component.guid
@@ -77,7 +77,7 @@ module ActiveFacts
     end
 
     class ImplicationRuleName < String
-      value_type
+      value_type 
       one_to_one :implication_rule                # See ImplicationRule.implication_rule_name
     end
 
@@ -86,7 +86,7 @@ module ActiveFacts
     end
 
     class Literal < String
-      value_type
+      value_type 
     end
 
     class Name < String
@@ -99,16 +99,16 @@ module ActiveFacts
     end
 
     class NestingMode < String
-      value_type
+      value_type 
       restrict 'Array', 'Bag', 'Map', 'Repetition'
     end
 
     class Numerator < Decimal
-      value_type
+      value_type 
     end
 
     class Offset < Decimal
-      value_type
+      value_type 
     end
 
     class Ordinal < UnsignedInteger
@@ -121,15 +121,15 @@ module ActiveFacts
     end
 
     class RegularExpression < String
-      value_type
+      value_type 
     end
 
     class RingType < String
-      value_type
+      value_type 
     end
 
     class RotationSetting < String
-      value_type
+      value_type 
       restrict 'left', 'right'
     end
 
@@ -146,7 +146,7 @@ module ActiveFacts
     end
 
     class TransactionPhase < String
-      value_type
+      value_type 
       restrict 'assert', 'commit'
     end
 
@@ -293,6 +293,12 @@ module ActiveFacts
       has_one :object_type, :mandatory => true    # See ObjectType.all_instance
       has_one :population, :mandatory => true     # See Population.all_instance
       has_one :value                              # See Value.all_instance
+    end
+
+    class LeafConstraint
+      identified_by :component, :leaf_constraint
+      has_one :component, :mandatory => true      # See Component.all_leaf_constraint
+      has_one :leaf_constraint, :class => Constraint, :mandatory => true  # See Constraint.all_leaf_constraint_as_leaf_constraint
     end
 
     class LinkFactType < FactType
@@ -517,6 +523,12 @@ module ActiveFacts
     class Injection < Mapping
     end
 
+    class LocalConstraint
+      identified_by :composite, :local_constraint
+      has_one :composite, :mandatory => true      # See Composite.all_local_constraint
+      has_one :local_constraint, :class => Constraint, :mandatory => true  # See Constraint.all_local_constraint_as_local_constraint
+    end
+
     class MirrorRole < Role
       one_to_one :base_role, :class => Role       # See Role.mirror_role_as_base_role
     end
@@ -614,6 +626,12 @@ module ActiveFacts
 
     class SetExclusionConstraint < SetComparisonConstraint
       maybe :is_mandatory
+    end
+
+    class SpanningConstraint
+      identified_by :composite, :spanning_constraint
+      has_one :composite, :mandatory => true      # See Composite.all_spanning_constraint
+      has_one :spanning_constraint, :class => Constraint, :mandatory => true  # See Constraint.all_spanning_constraint_as_spanning_constraint
     end
 
     class SurrogateKey < Injection

@@ -334,7 +334,18 @@ module ActiveFacts
       end
 
       def unary_name
-	fact_type.preferred_reading.text.gsub(/\{[0-9]\}/,'').words.titlewords*' '
+	fact_type.
+	preferred_reading.
+	text.
+	gsub(/(.*)\{[0-9]\}(.*)/) do
+	  if $1.empty? or $2.empty?
+	    "#{$1} #{$2}"
+	  else
+	    "#{$1} #{object_type.name} #{$2}"
+	  end
+	end.
+	words.
+	titlewords*' '
       end
 
       def is_link_role
