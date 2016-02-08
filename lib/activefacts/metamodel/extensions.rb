@@ -1511,16 +1511,19 @@ module ActiveFacts
 	"Composite #{mapping.inspect}"
       end
 
+      def all_index
+	all_access_path.
+	select{|ap| ap.is_a?(Index)}.
+	sort_by{|ap| [ap.composite_as_primary_index ? 0 : 1] + Array(ap.name)+ap.all_index_field.map(&:inspect) }  # REVISIT: Fix hack for stable ordering
+      end
+
       def show_trace
 	trace :composition, inspect do
 	  trace :composition?, "Columns" do
 	    mapping.show_trace
 	  end
 
-	  indices =
-	    all_access_path.
-	    select{|ap| ap.is_a?(Index)}.
-	    sort_by{|ap| [ap.composite_as_primary_index ? 0 : 1] + Array(ap.name)+ap.all_index_field.map(&:inspect) }  # REVISIT: Fix hack for stable ordering
+	  indices = all_index
 	  unless indices.empty?
 	    trace :composition, "Indices" do
 	      indices.each do |ap|
@@ -1663,6 +1666,10 @@ module ActiveFacts
           end
         end
       end
+
+      def path_mandatory
+	true
+      end
     end
 
     class Nesting
@@ -1787,6 +1794,10 @@ module ActiveFacts
       def value_constraints
 	return [] unless object_type.is_a?(ValueType)
 	object_type.supertypes_transitive.flat_map{|vt| Array(vt.value_constraint)}
+      end
+
+      def path_mandatory
+	parent_role.is_mandatory && parent.path_mandatory
       end
     end
 
@@ -1968,6 +1979,10 @@ module ActiveFacts
 
       def path
         (parent ? parent.path+[self] : [self])
+      end
+
+      def path_mandatory
+	parent.path_mandatory
       end
 
       def all_role
