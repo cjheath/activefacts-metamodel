@@ -1667,6 +1667,10 @@ module ActiveFacts
         end
       end
 
+      def is_mandatory
+	true
+      end
+
       def path_mandatory
 	true
       end
@@ -1796,8 +1800,12 @@ module ActiveFacts
 	object_type.supertypes_transitive.flat_map{|vt| Array(vt.value_constraint)}
       end
 
+      def is_mandatory
+	parent_role.is_mandatory
+      end
+
       def path_mandatory
-	parent_role.is_mandatory && parent.path_mandatory
+	is_mandatory && parent.path_mandatory
       end
     end
 
@@ -1818,6 +1826,10 @@ module ActiveFacts
 
       def all_role
 	[role, role.base_role].uniq
+      end
+
+      def is_mandatory
+	false
       end
     end
 
@@ -1979,6 +1991,10 @@ module ActiveFacts
 
       def path
         (parent ? parent.path+[self] : [self])
+      end
+
+      def is_mandatory
+	parent.is_mandatory
       end
 
       def path_mandatory
