@@ -485,6 +485,10 @@ module ActiveFacts
     end
 
     class ValueType
+      def all_supertype
+	Array(supertype)
+      end
+
       def supertypes_transitive
         [self] + (supertype ? supertype.supertypes_transitive : [])
       end
@@ -720,6 +724,10 @@ module ActiveFacts
         all_supertype_inheritance.map{|ti|
             ti.supertype
           }
+      end
+
+      def all_supertype
+	supertypes
       end
 
       # An array of all direct subtypes
@@ -965,7 +973,7 @@ module ActiveFacts
       end
 
       def all_constrained_role
-	Array(role) # Empty unless it's a role value constraint
+	Array(role_as_role_value_constraint) # Empty unless it's a role value constraint
       end
     end
 

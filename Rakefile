@@ -36,15 +36,7 @@ end
 desc "Generate new Ruby from the CQL file"
 task :ruby do
   system %q{
-    afgen --ruby cql/Metamodel.cql 2>/dev/null |
-      sed '2a\
-module ActiveFacts
-	
-	3s/:://
-	3,$s/^./  &/
-	$a\
-end
-      ' > metamodel.rb
+    schema_compositor --binary --ruby=scope=ActiveFacts cql/Metamodel.cql > metamodel.rb &&
+    diff -ub lib/activefacts/metamodel/metamodel.rb metamodel.rb
   }
-  system "diff -ub lib/activefacts/metamodel/metamodel.rb metamodel.rb"
 end
