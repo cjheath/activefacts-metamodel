@@ -1570,6 +1570,11 @@ module ActiveFacts
         reject{|ap| ap.is_a?(ActiveFacts::Metamodel::ForeignKey)}.
         sort_by{|ap| ap.all_index_field.to_a.flat_map{|ixf| ixf.component.rank_path}.compact }
       end
+
+      def all_foreign_key_as_target_composite
+        all_access_path.
+        select{|ap| ap.is_a?(ActiveFacts::Metamodel::ForeignKey)}
+      end
     end
 
     class AccessPath

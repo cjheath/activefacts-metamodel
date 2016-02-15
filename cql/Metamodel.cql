@@ -500,6 +500,9 @@ Access Path is to one Composite,
 Index is a kind of Access Path;
 Index is unique;
 Index derives from one Presence Constraint;
+Composite has at most one natural-Index,
+	Index is natural for at most one Composite;
+Composite has primary-Index;  // Avoid ambiguity; this is a new fact type
 Composite has at most one primary-Index,
 	Index is primary for at most one Composite;
 Index is primary for Composite

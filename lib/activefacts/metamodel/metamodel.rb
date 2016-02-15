@@ -69,6 +69,7 @@ module ActiveFacts
       identified_by   :mapping
       one_to_one      :mapping, mandatory: true           # Composite consists of Mapping, see Mapping#composite
       has_one         :composition, mandatory: true       # Composite belongs to Composition, see Composition#all_composite
+      one_to_one      :natural_index, class: Index        # Composite has natural-Index, see Index#composite_as_natural_index
       one_to_one      :primary_index, class: Index        # Composite has primary-Index, see Index#composite_as_primary_index
     end
   
