@@ -126,7 +126,7 @@ module ActiveFacts
             rr.role.fact_type
           end
         when ActiveFacts::Metamodel::ValueConstraint
-          [ body.role ? body.role.fact_type : nil, body.value_type ] +
+          [ body.role_as_role_value_constraint ? body.role_as_role_value_constraint.fact_type : nil, body.value_type ] +
           body.all_allowed_range.map do |ar|
             [ ar.value_range.minimum_bound, ar.value_range.maximum_bound ].compact.map{|b| b.value.unit}
           end
@@ -1619,7 +1619,7 @@ module ActiveFacts
       def inspect
 	"Foreign Key" +
 	(name ? " #{name.inspect}" : '') +
-	" from #{source_composite.mapping.name} to #{composite.mapping.name}" +
+	" from #{(sc = source_composite) ? sc.mapping.name : 'NO-SOURCE'} to #{composite.mapping.name}" +
 	(absorption ? " over #{absorption.inspect}" : '')
       end
     end
