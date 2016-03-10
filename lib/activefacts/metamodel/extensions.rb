@@ -1860,6 +1860,12 @@ module ActiveFacts
       end
     end
 
+    class SurrogateKey
+      def is_identifying
+	!parent.parent
+      end
+    end
+
     class ValueField
       def inspect
 	"#{self.class.basename} #{object_type.name.inspect}"
@@ -1895,7 +1901,7 @@ module ActiveFacts
 	@rank_key ||=
 	  case self
 	  when SurrogateKey
-	    if !parent.parent
+	    if is_identifying
 	      [RANK_SURROGATE]	# an injected PK
 	    else
 	      [RANK_MANDATORY, name]	# an FK

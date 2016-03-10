@@ -487,6 +487,7 @@ Scoping is a kind of Mapping;
 Injection is a kind of Mapping;
 Value Field is a kind of Injection;
 Surrogate Key is a kind of Injection;
+Valid From is a kind of Injection;
 
 /* Access Paths */
 Access Path is identified by Guid where

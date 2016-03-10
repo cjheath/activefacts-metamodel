@@ -51,7 +51,7 @@ module ActiveFacts
           if ForeignKey === access_path
             if access_path.all_index_field.size == access_path.all_foreign_key_field.size
               access_path.all_index_field.to_a.zip(access_path.all_foreign_key_field.to_a).each do |index_field, foreign_key_field|
-                report.call(access_path, "#{index_field.inspect} must have matching target type") unless index_field.component.class == foreign_key_field.component.class
+                report.call(access_path, "Column #{foreign_key_field.component.column_name}(#{foreign_key_field.component.class.basename}) does not match #{index_field.component.column_name}(#{index_field.component.class.basename})") unless index_field.component.class == foreign_key_field.component.class
                 unless index_field.component.class == foreign_key_field.component.class
                   report.call(access_path, "#{index_field.inspect} must have component type matching #{foreign_key_field.inspect}")
                 else
@@ -99,6 +99,9 @@ module ActiveFacts
               # Nothing to check here
 
             when SurrogateKey
+              # Nothing to check here
+
+            when ValidFrom
               # Nothing to check here
 
             when Injection
