@@ -1582,9 +1582,9 @@ module ActiveFacts
 	trace :composition, inspect do
 	  if is_a?(ForeignKey)
 	    # First list any fields in a foreign key
-	    all_foreign_key_field.sort_by(&:ordinal).each do |fk|
-	      raise "Internal error: Foreign key not in foreign table!" if fk.component.root != source_composite
-	      trace :composition, fk.inspect
+	    all_foreign_key_field.sort_by(&:ordinal).each do |fkf|
+	      $stderr.puts "Internal error: Foreign key field to #{fkf.component.column_name} is in #{fkf.component.root.mapping.name} not #{source_composite.mapping.name}!" if fkf.component.root != source_composite
+	      trace :composition, fkf.inspect
 	    end
 	  end
 	  # Now list the fields in the primary key

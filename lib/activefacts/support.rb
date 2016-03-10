@@ -67,7 +67,7 @@ class String
 
     def titlewords
       map do |word|
-	word[0].upcase+word[1..-1].downcase
+        word[0].upcase+word[1..-1].downcase
       end
     end
 
@@ -77,7 +77,7 @@ class String
 
     def capwords
       map do |word|
-	word[0].upcase+word[1..-1]
+        word[0].upcase+word[1..-1]
       end
     end
 
@@ -88,11 +88,11 @@ class String
     def camelwords
       count = 0
       map do |word|
-	if (count += 1) == 1
-	  word
-	else
-	  word[0].upcase+word[1..-1].downcase
-	end
+        if (count += 1) == 1
+          word
+        else
+          word[0].upcase+word[1..-1].downcase
+        end
       end
     end
 
@@ -102,7 +102,7 @@ class String
 
     def snakewords
       map do |w|
-	w.downcase
+        w.downcase
       end
     end
 
