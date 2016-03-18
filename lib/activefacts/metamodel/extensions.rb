@@ -163,8 +163,8 @@ module ActiveFacts
 
     class Topic
       def precursors
-	# Precursors of a topic are the topics of all precursors of items in this topic
-	all_concept.map{|c| c.precursors }.flatten.uniq.map{|c| c.topic}.uniq-[self]
+        # Precursors of a topic are the topics of all precursors of items in this topic
+        all_concept.map{|c| c.precursors }.flatten.uniq.map{|c| c.topic}.uniq-[self]
       end
     end
 
@@ -225,7 +225,7 @@ module ActiveFacts
       end
 
       def is_unary
-	all_role.size == 1
+        all_role.size == 1
       end
 
       def internal_presence_constraints
@@ -265,7 +265,7 @@ module ActiveFacts
       # Mirror Role defines this, but it's more convenient not to have to type-check.
       # A Role that's not a Mirror Role is its own base role.
       def base_role
-	self
+        self
       end
 
       def describe(highlight = nil)
@@ -273,7 +273,7 @@ module ActiveFacts
       end
 
       def is_mandatory
-	return true if fact_type.is_a?(LinkFactType) # Handle objectification roles
+        return true if fact_type.is_a?(LinkFactType) # Handle objectification roles
         all_role_ref.detect{|rr|
           rs = rr.role_sequence
           rs.all_role_ref.size == 1 and
@@ -290,7 +290,7 @@ module ActiveFacts
       # Return true if this role is functional (has only one instance wrt its player)
       # A role in an objectified fact type is deemed to refer to the implicit role of the objectification.
       def is_functional
-	return true if fact_type.is_a?(LinkFactType) # Handle objectification roles
+        return true if fact_type.is_a?(LinkFactType) # Handle objectification roles
 
         fact_type.entity_type or
         fact_type.all_role.size != 2 or
@@ -306,46 +306,46 @@ module ActiveFacts
               return pc if pc.max_frequency == 1 and !pc.enforcement   # Alethic uniqueness constraint
             end
         }
-	nil
+        nil
       end
 
       def is_identifying
-	uc = uniqueness_constraint and uc.is_preferred_identifier
+        uc = uniqueness_constraint and uc.is_preferred_identifier
       end
 
       # Is there are internal uniqueness constraint on this role only?
       def is_unique
-	return true if fact_type.is_a?(LinkFactType) or		# Handle objectification roles
-	  fact_type.all_role.size == 1				# and unary roles
+        return true if fact_type.is_a?(LinkFactType) or         # Handle objectification roles
+          fact_type.all_role.size == 1                          # and unary roles
 
-	uniqueness_constraint ? true : false
+        uniqueness_constraint ? true : false
       end
 
       def unique
-	raise "REVISIT: unique is deprecated. Call is_unique instead"
+        raise "REVISIT: unique is deprecated. Call is_unique instead"
       end
 
       def name
         role_name or
-	is_mirror_role && base_role.role_name or
-	fact_type.is_unary && unary_name or
-	String::Words.new(preferred_reference.role_name nil).capwords*' ' or
-	object_type.name
+        is_mirror_role && base_role.role_name or
+        fact_type.is_unary && unary_name or
+        String::Words.new(preferred_reference.role_name nil).capwords*' ' or
+        object_type.name
       end
 
       def unary_name
-	fact_type.
-	preferred_reading.
-	text.
-	gsub(/(.*)\{[0-9]\}(.*)/) do
-	  if $1.empty? or $2.empty?
-	    "#{$1} #{$2}"
-	  else
-	    "#{$1} #{object_type.name} #{$2}"
-	  end
-	end.
-	words.
-	titlewords*' '
+        fact_type.
+        preferred_reading.
+        text.
+        gsub(/(.*)\{[0-9]\}(.*)/) do
+          if $1.empty? or $2.empty?
+            "#{$1} #{$2}"
+          else
+            "#{$1} #{object_type.name} #{$2}"
+          end
+        end.
+        words.
+        titlewords*' '
       end
 
       def is_link_role
@@ -353,37 +353,37 @@ module ActiveFacts
       end
 
       def is_mirror_role
-	is_a?(MirrorRole)
+        is_a?(MirrorRole)
       end
 
       def is_objectification_role
-	is_link_role && !is_mirror_role
+        is_link_role && !is_mirror_role
       end
 
       def counterpart
-	case fact_type.all_role.size
-	when 1
-	  self
-	when 2
-	  (fact_type.all_role.to_a-[self])[0]
-	else
-	  nil # raise "counterpart roles are undefined in n-ary fact types"
-	end
+        case fact_type.all_role.size
+        when 1
+          self
+        when 2
+          (fact_type.all_role.to_a-[self])[0]
+        else
+          nil # raise "counterpart roles are undefined in n-ary fact types"
+        end
       end
 
       # return an array of all the constraints on this role (not including ValueConstraint on a ValueType player)
       def all_constraint
-	(
-	  Array(role_value_constraint) +
-	  all_role_ref.to_a.flat_map do |rr|
-	    rr.role_sequence.all_presence_constraint.to_a +
-	    rr.role_sequence.all_subset_constraint_as_superset_role_sequence +
-	    rr.role_sequence.all_subset_constraint_as_subset_role_sequence +
-	    rr.role_sequence.all_set_comparison_roles.map(&:set_comparison_constraint)
-	  end +
-	  all_ring_constraint.to_a +
-	  all_ring_constraint_as_other_role.to_a
-	).uniq
+        (
+          Array(role_value_constraint) +
+          all_role_ref.to_a.flat_map do |rr|
+            rr.role_sequence.all_presence_constraint.to_a +
+            rr.role_sequence.all_subset_constraint_as_superset_role_sequence +
+            rr.role_sequence.all_subset_constraint_as_subset_role_sequence +
+            rr.role_sequence.all_set_comparison_roles.map(&:set_comparison_constraint)
+          end +
+          all_ring_constraint.to_a +
+          all_ring_constraint_as_other_role.to_a
+        ).uniq
       end
     end
 
@@ -412,35 +412,35 @@ module ActiveFacts
       end
 
       def cql_leading_adjective
-	if leading_adjective
-	  # 'foo' => "foo-"
-	  # 'foo bar' => "foo- bar "
-	  # 'foo-bar' => "foo-- bar "
-	  # 'foo-bar baz' => "foo-- bar baz "
-	  # 'bat foo-bar baz' => "bat- foo-bar baz "
-	  leading_adjective.strip.
-	    sub(/[- ]|$/, '-\0 ').sub(/  /, ' ').sub(/[^-]$/, '\0 ').sub(/-  $/,'-')
-	else
-	  ''
-	end
+        if leading_adjective
+          # 'foo' => "foo-"
+          # 'foo bar' => "foo- bar "
+          # 'foo-bar' => "foo-- bar "
+          # 'foo-bar baz' => "foo-- bar baz "
+          # 'bat foo-bar baz' => "bat- foo-bar baz "
+          leading_adjective.strip.
+            sub(/[- ]|$/, '-\0 ').sub(/  /, ' ').sub(/[^-]$/, '\0 ').sub(/-  $/,'-')
+        else
+          ''
+        end
       end
 
       def cql_trailing_adjective
-	if trailing_adjective
-	  # 'foo' => "-foo"
-	  # 'foo bar' => " foo -bar"
-	  # 'foo-bar' => " foo --bar"
-	  # 'foo-bar baz' => " foo-bar -baz"
-	  # 'bat foo-bar baz' => " bat foo-bar -baz"
-	  trailing_adjective.
-	    strip.
-	    sub(/(?<a>.*) (?<b>[^- ]+$)|(?<a>.*)(?<b>-[^- ]*)$|(?<a>)(?<b>.*)/) {
-	      " #{$~[:a]} -#{$~[:b]}"
-	    }.
-	    sub(/^ *-/, '-')  # A leading space is not needed if the hyphen is at the start
-	else
-	  ''
-	end
+        if trailing_adjective
+          # 'foo' => "-foo"
+          # 'foo bar' => " foo -bar"
+          # 'foo-bar' => " foo --bar"
+          # 'foo-bar baz' => " foo-bar -baz"
+          # 'bat foo-bar baz' => " bat foo-bar -baz"
+          trailing_adjective.
+            strip.
+            sub(/(?<a>.*) (?<b>[^- ]+$)|(?<a>.*)(?<b>-[^- ]*)$|(?<a>)(?<b>.*)/) {
+              " #{$~[:a]} -#{$~[:b]}"
+            }.
+            sub(/^ *-/, '-')  # A leading space is not needed if the hyphen is at the start
+        else
+          ''
+        end
       end
 
       def cql_name
@@ -450,9 +450,9 @@ module ActiveFacts
           role.role_name
         else
           # Where an adjective has multiple words, the hyphen is inserted outside the outermost space, leaving the space
-	  cql_leading_adjective +
+          cql_leading_adjective +
             role.object_type.name+
-	    cql_trailing_adjective
+            cql_trailing_adjective
         end
       end
     end
@@ -461,8 +461,8 @@ module ActiveFacts
       def describe(highlighted_role_ref = nil)
         "("+
           all_role_ref_in_order.map{|rr| rr.role.name + (highlighted_role_ref == rr ? '*' : '') }*", " +
-	  " in " +
-	  all_role_ref.map(&:role).map(&:fact_type).uniq.map(&:default_reading).map(&:inspect)*', ' +
+          " in " +
+          all_role_ref.map(&:role).map(&:fact_type).uniq.map(&:default_reading).map(&:inspect)*', ' +
         ")"
       end
 
@@ -476,17 +476,21 @@ module ActiveFacts
       attr_reader :injected_surrogate_role
 
       def is_separate
-	is_independent or concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'separate'}
+        is_independent or concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'separate'}
+      end
+
+      def is_static
+        concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'static'}
       end
 
       def all_role_transitive
-	supertypes_transitive.flat_map(&:all_role)
+        supertypes_transitive.flat_map(&:all_role)
       end
     end
 
     class ValueType
       def all_supertype
-	Array(supertype)
+        Array(supertype)
       end
 
       def supertypes_transitive
@@ -527,20 +531,20 @@ module ActiveFacts
       end
 
       def assimilation
-	ti = identifying_type_inheritance and ti.assimilation
+        ti = identifying_type_inheritance and ti.assimilation
       end
 
       def is_separate
-	super || !['absorbed', nil].include?(assimilation)
+        super || !['absorbed', nil].include?(assimilation)
       end
 
       def preferred_identifier
         return @preferred_identifier if @preferred_identifier
         if fact_type
-	  # Objectified unaries are identified by the ID of the object that plays the role:
-	  if fact_type.all_role.size == 1
-	    return @preferred_identifier = fact_type.all_role.single.object_type.preferred_identifier
-	  end
+          # Objectified unaries are identified by the ID of the object that plays the role:
+          if fact_type.all_role.size == 1
+            return @preferred_identifier = fact_type.all_role.single.object_type.preferred_identifier
+          end
 
           # When compiling a fact instance, the delayed creation of a preferred identifier might be necessary
           if c = fact_type.check_and_add_spanning_uniqueness_constraint
@@ -601,7 +605,7 @@ module ActiveFacts
                   ftroles = Array(role.fact_type.all_role)
 
                   # Skip roles in ternary and higher fact types, they're objectified
-		  # REVISIT: This next line prevents a unary being used as a preferred_identifier:
+                  # REVISIT: This next line prevents a unary being used as a preferred_identifier:
                   next if ftroles.size != 2
 
                   trace :pi, "Considering role in #{role.fact_type.describe(role)}"
@@ -696,11 +700,11 @@ module ActiveFacts
       end
 
       def preferred_identifier_roles
-	preferred_identifier.role_sequence.all_role_ref_in_order.map(&:role)
+        preferred_identifier.role_sequence.all_role_ref_in_order.map(&:role)
       end
 
       def rank_in_preferred_identifier(role)
-	preferred_identifier_roles.index(role)
+        preferred_identifier_roles.index(role)
       end
 
       # An array of all direct subtypes:
@@ -727,7 +731,7 @@ module ActiveFacts
       end
 
       def all_supertype
-	supertypes
+        supertypes
       end
 
       # An array of all direct subtypes
@@ -744,13 +748,13 @@ module ActiveFacts
 
       def identifying_type_inheritance
         all_type_inheritance_as_subtype.detect do |ti|
-	  ti.provides_identification
-	end
+          ti.provides_identification
+        end
       end
 
       # A subtype does not have a identifying_supertype if it defines its own identifier
       def identifying_supertype
-	ti = identifying_type_inheritance and ti.supertype
+        ti = identifying_type_inheritance and ti.supertype
       end
 
       def common_supertype(other)
@@ -761,54 +765,54 @@ module ActiveFacts
       end
 
       def add_supertype(supertype, is_identifying_supertype, assimilation)
-	inheritance_fact = constellation.TypeInheritance(self, supertype, :concept => :new)
+        inheritance_fact = constellation.TypeInheritance(self, supertype, :concept => :new)
 
-	inheritance_fact.assimilation = assimilation
+        inheritance_fact.assimilation = assimilation
 
-	# Create a reading:
-	sub_role = constellation.Role(inheritance_fact, 0, :object_type => self, :concept => :new)
-	super_role = constellation.Role(inheritance_fact, 1, :object_type => supertype, :concept => :new)
+        # Create a reading:
+        sub_role = constellation.Role(inheritance_fact, 0, :object_type => self, :concept => :new)
+        super_role = constellation.Role(inheritance_fact, 1, :object_type => supertype, :concept => :new)
 
-	rs = constellation.RoleSequence(:new)
-	constellation.RoleRef(rs, 0, :role => sub_role)
-	constellation.RoleRef(rs, 1, :role => super_role)
-	constellation.Reading(inheritance_fact, 0, :role_sequence => rs, :text => "{0} is a kind of {1}", :is_negative => false)
+        rs = constellation.RoleSequence(:new)
+        constellation.RoleRef(rs, 0, :role => sub_role)
+        constellation.RoleRef(rs, 1, :role => super_role)
+        constellation.Reading(inheritance_fact, 0, :role_sequence => rs, :text => "{0} is a kind of {1}", :is_negative => false)
 
-	rs2 = constellation.RoleSequence(:new)
-	constellation.RoleRef(rs2, 0, :role => super_role)
-	constellation.RoleRef(rs2, 1, :role => sub_role)
-	# Decide in which order to include is a/is an. Provide both, but in order.
-	n = 'aeioh'.include?(sub_role.object_type.name.downcase[0]) ? 'n' : ''
-	constellation.Reading(inheritance_fact, 2, :role_sequence => rs2, :text => "{0} is a#{n} {1}", :is_negative => false)
+        rs2 = constellation.RoleSequence(:new)
+        constellation.RoleRef(rs2, 0, :role => super_role)
+        constellation.RoleRef(rs2, 1, :role => sub_role)
+        # Decide in which order to include is a/is an. Provide both, but in order.
+        n = 'aeioh'.include?(sub_role.object_type.name.downcase[0]) ? 'n' : ''
+        constellation.Reading(inheritance_fact, 2, :role_sequence => rs2, :text => "{0} is a#{n} {1}", :is_negative => false)
 
-	if is_identifying_supertype
-	  inheritance_fact.provides_identification = true
-	end
+        if is_identifying_supertype
+          inheritance_fact.provides_identification = true
+        end
 
-	# Create uniqueness constraints over the subtyping fact type.
-	p1rs = constellation.RoleSequence(:new)
-	constellation.RoleRef(p1rs, 0).role = sub_role
-	pc1 = constellation.PresenceConstraint(:new, :vocabulary => vocabulary)
-	pc1.name = "#{name}MustHaveSupertype#{supertype.name}"
-	pc1.role_sequence = p1rs
-	pc1.is_mandatory = true   # A subtype instance must have a supertype instance
-	pc1.min_frequency = 1
-	pc1.max_frequency = 1
-	pc1.is_preferred_identifier = false
-	trace :constraint, "Made new subtype PC GUID=#{pc1.concept.guid} min=1 max=1 over #{p1rs.describe}"
+        # Create uniqueness constraints over the subtyping fact type.
+        p1rs = constellation.RoleSequence(:new)
+        constellation.RoleRef(p1rs, 0).role = sub_role
+        pc1 = constellation.PresenceConstraint(:new, :vocabulary => vocabulary)
+        pc1.name = "#{name}MustHaveSupertype#{supertype.name}"
+        pc1.role_sequence = p1rs
+        pc1.is_mandatory = true   # A subtype instance must have a supertype instance
+        pc1.min_frequency = 1
+        pc1.max_frequency = 1
+        pc1.is_preferred_identifier = false
+        trace :constraint, "Made new subtype PC GUID=#{pc1.concept.guid} min=1 max=1 over #{p1rs.describe}"
 
-	p2rs = constellation.RoleSequence(:new)
-	constellation.RoleRef(p2rs, 0).role = super_role
-	pc2 = constellation.PresenceConstraint(:new, :vocabulary => vocabulary)
-	pc2.name = "#{supertype.name}MayBeA#{name}"
-	pc2.role_sequence = p2rs
-	pc2.is_mandatory = false
-	pc2.min_frequency = 0
-	pc2.max_frequency = 1
-	# The supertype role often identifies the subtype:
-	pc2.is_preferred_identifier = inheritance_fact.provides_identification
-	trace :supertype, "identification of #{name} via supertype #{supertype.name} was #{inheritance_fact.provides_identification ? '' : 'not '}added"
-	trace :constraint, "Made new supertype PC GUID=#{pc2.concept.guid} min=1 max=1 over #{p2rs.describe}"
+        p2rs = constellation.RoleSequence(:new)
+        constellation.RoleRef(p2rs, 0).role = super_role
+        pc2 = constellation.PresenceConstraint(:new, :vocabulary => vocabulary)
+        pc2.name = "#{supertype.name}MayBeA#{name}"
+        pc2.role_sequence = p2rs
+        pc2.is_mandatory = false
+        pc2.min_frequency = 0
+        pc2.max_frequency = 1
+        # The supertype role often identifies the subtype:
+        pc2.is_preferred_identifier = inheritance_fact.provides_identification
+        trace :supertype, "identification of #{name} via supertype #{supertype.name} was #{inheritance_fact.provides_identification ? '' : 'not '}added"
+        trace :constraint, "Made new supertype PC GUID=#{pc2.concept.guid} min=1 max=1 over #{p2rs.describe}"
       end
 
       # This entity type has just objectified a fact type.
@@ -973,7 +977,7 @@ module ActiveFacts
       end
 
       def all_constrained_role
-	Array(role_as_role_value_constraint) # Empty unless it's a role value constraint
+        Array(role_as_role_value_constraint) # Empty unless it's a role value constraint
       end
     end
 
@@ -1047,11 +1051,11 @@ module ActiveFacts
       end
 
       def covers_role role
-	role_sequence.all_role_ref.map(&:role).include?(role)
+        role_sequence.all_role_ref.map(&:role).include?(role)
       end
 
       def all_constrained_role
-	role_sequence.all_role_ref.map(&:role)
+        role_sequence.all_role_ref.map(&:role)
       end
     end
 
@@ -1065,8 +1069,8 @@ module ActiveFacts
       end
 
       def all_constrained_role
-	subset_role_sequence.all_role_ref.map(&:role) +
-	superset_role_sequence.all_role_ref.map(&:role)
+        subset_role_sequence.all_role_ref.map(&:role) +
+        superset_role_sequence.all_role_ref.map(&:role)
       end
     end
 
@@ -1074,8 +1078,8 @@ module ActiveFacts
       def describe
         "("+
           role_sequence.all_role_ref_in_order.map{|rr| rr.role.name }*", " +
-	  " in " +
-	  role_sequence.all_role_ref.map(&:role).map(&:fact_type).uniq.map(&:default_reading).map(&:inspect)*', ' +
+          " in " +
+          role_sequence.all_role_ref.map(&:role).map(&:fact_type).uniq.map(&:default_reading).map(&:inspect)*', ' +
         ")"
       end
     end
@@ -1084,30 +1088,30 @@ module ActiveFacts
       def describe
         self.class.basename+'(' +
         all_set_comparison_roles.map do |scr|
-	  '['+
+          '['+
           scr.role_sequence.all_role_ref.map{|rr|
-	    rr.role.fact_type.describe(rr.role)
-	  }*',' +
-	  ']'
+            rr.role.fact_type.describe(rr.role)
+          }*',' +
+          ']'
         end*',' +
         ')'
       end
 
       def all_constrained_role
-	all_set_comparison_roles.map(&:role_sequence).flat_map(&:all_role_ref).map(&:role).uniq
+        all_set_comparison_roles.map(&:role_sequence).flat_map(&:all_role_ref).map(&:role).uniq
       end
     end
 
     class SetEqualityConstraint
       def describe
-	all_set_comparison_roles.map(&:describe) * " if and only if "
+        all_set_comparison_roles.map(&:describe) * " if and only if "
       end
     end
 
     class SetExclusionConstraint
       def describe
-	(is_mandatory ? "exactly one of " : "at most one of ") +
-	all_set_comparison_roles.map(&:describe) * " or "
+        (is_mandatory ? "exactly one of " : "at most one of ") +
+        all_set_comparison_roles.map(&:describe) * " or "
       end
     end
 
@@ -1123,7 +1127,7 @@ module ActiveFacts
       end
 
       def all_constrained_role
-	[role, other_role]
+        [role, other_role]
       end
     end
 
@@ -1263,45 +1267,45 @@ module ActiveFacts
 
     class LinkFactType
       def all_reading
-	if super.size == 0
-	  # REVISIT: Should we create reading orders independently?
-	  # No user-defined readings have been defined, so it's time to stop being lazy:
-	  objectification_role, mirror_role = *all_role_in_order
-	  rs = constellation.RoleSequence(:new)
-	  rr0 = constellation.RoleRef(rs, 0, :role => objectification_role)
-	  rr1 = constellation.RoleRef(rs, 1, :role => mirror_role)
-	  r0 = constellation.Reading(self, 0, :role_sequence => rs, :text => "{0} involves {1}", :is_negative => false)  # REVISIT: This assumes English!
-	  r1 = constellation.Reading(self, 1, :role_sequence => rs, :text => "{1} is involved in {0}", :is_negative => false)
-	end
-	@all_reading
+        if super.size == 0
+          # REVISIT: Should we create reading orders independently?
+          # No user-defined readings have been defined, so it's time to stop being lazy:
+          objectification_role, mirror_role = *all_role_in_order
+          rs = constellation.RoleSequence(:new)
+          rr0 = constellation.RoleRef(rs, 0, :role => objectification_role)
+          rr1 = constellation.RoleRef(rs, 1, :role => mirror_role)
+          r0 = constellation.Reading(self, 0, :role_sequence => rs, :text => "{0} involves {1}", :is_negative => false)  # REVISIT: This assumes English!
+          r1 = constellation.Reading(self, 1, :role_sequence => rs, :text => "{1} is involved in {0}", :is_negative => false)
+        end
+        @all_reading
       end
     end
 
     class MirrorRole
       def is_mandatory
-	base_role.is_mandatory 
+        base_role.is_mandatory 
       end
 
       def is_unique
-	base_role.is_unique
+        base_role.is_unique
       end
 
       def is_functional
-	base_role.is_functional
+        base_role.is_functional
       end
 
       def uniqueness_constraint
-	raise "A MirrorRole should not be asked for its uniqueness constraints"
+        raise "A MirrorRole should not be asked for its uniqueness constraints"
       end
 
       %w{all_ring_constraint_as_other_role all_ring_constraint all_role_value role_value_constraint
       }.each do |accessor|
-	define_method(accessor.to_sym) do
-	  base_role.send(accessor.to_sym)
-	end
-	define_method("#{accessor}=".to_sym) do |*a|
-	  raise "REVISIT: It's a bad idea to try to set #{accessor} for a MirrorRole"
-	end
+        define_method(accessor.to_sym) do
+          base_role.send(accessor.to_sym)
+        end
+        define_method("#{accessor}=".to_sym) do |*a|
+          raise "REVISIT: It's a bad idea to try to set #{accessor} for a MirrorRole"
+        end
       end
     end
 
@@ -1351,7 +1355,7 @@ module ActiveFacts
           if fact_type.entity_type
             objectification_role_supertypes =
               fact_type.entity_type.supertypes_transitive+object_type.supertypes_transitive
-	    # Find the objectification role here:
+            # Find the objectification role here:
             objectification_role = role.link_fact_type.all_role.detect{|r| !r.is_a?(MirrorRole)}
           else
             objectification_role_supertypes = counterpart_role_supertypes
@@ -1504,64 +1508,64 @@ module ActiveFacts
 
     class Composition
       def all_composite_by_name
-	all_composite.keys.sort_by do |key|
+        all_composite.keys.sort_by do |key|
           @constellation.Composite[key].mapping.name
         end.map do |key|
           composite = @constellation.Composite[key]
-	  yield composite if block_given?
-	  composite
-	end
+          yield composite if block_given?
+          composite
+        end
       end
     end
 
     class Composite
       def inspect
-	"Composite #{mapping.inspect}"
+        "Composite #{mapping.inspect}"
       end
 
       def all_index
-	all_access_path.
-	select{|ap| ap.is_a?(Index)}.
-	sort_by{|ap| [ap.composite_as_primary_index ? 0 : 1] + Array(ap.name)+ap.all_index_field.map(&:inspect) }  # REVISIT: Fix hack for stable ordering
+        all_access_path.
+        select{|ap| ap.is_a?(Index)}.
+        sort_by{|ap| [ap.composite_as_primary_index ? 0 : 1] + Array(ap.name)+ap.all_index_field.map(&:inspect) }  # REVISIT: Fix hack for stable ordering
       end
 
       def show_trace
-	trace :composition, inspect do
-	  trace :composition?, "Columns" do
-	    mapping.show_trace
-	  end
+        trace :composition, inspect do
+          trace :composition?, "Columns" do
+            mapping.show_trace
+          end
 
-	  indices = all_index
-	  unless indices.empty?
-	    trace :composition, "Indices" do
-	      indices.each do |ap|
-		ap.show_trace
-	      end
-	    end
-	  end
+          indices = all_index
+          unless indices.empty?
+            trace :composition, "Indices" do
+              indices.each do |ap|
+                ap.show_trace
+              end
+            end
+          end
 
-	  inbound = all_access_path.
-	    select{|ap| ap.is_a?(ForeignKey)}.
-	    sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_foreign_key_field.map(&:inspect)+fk.all_index_field.map(&:inspect) }
-	  unless inbound.empty?
-	    trace :composition, "Foreign keys inbound" do
-	      inbound.each do |fk|
-		fk.show_trace
-	      end
-	    end
-	  end
+          inbound = all_access_path.
+            select{|ap| ap.is_a?(ForeignKey)}.
+            sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_foreign_key_field.map(&:inspect)+fk.all_index_field.map(&:inspect) }
+          unless inbound.empty?
+            trace :composition, "Foreign keys inbound" do
+              inbound.each do |fk|
+                fk.show_trace
+              end
+            end
+          end
 
-	  outbound =
-	    all_foreign_key_as_source_composite.
-	    sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_index_field.map(&:inspect)+fk.all_foreign_key_field.map(&:inspect) }
-	  unless outbound.empty?
-	    trace :composition, "Foreign keys outbound" do
-	      outbound.each do |fk|
-		fk.show_trace
-	      end
-	    end
-	  end
-	end
+          outbound =
+            all_foreign_key_as_source_composite.
+            sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_index_field.map(&:inspect)+fk.all_foreign_key_field.map(&:inspect) }
+          unless outbound.empty?
+            trace :composition, "Foreign keys outbound" do
+              outbound.each do |fk|
+                fk.show_trace
+              end
+            end
+          end
+        end
       end
 
       # Provide a stable ordering for indices, based on the ordering of columns by rank:
@@ -1579,78 +1583,78 @@ module ActiveFacts
 
     class AccessPath
       def show_trace
-	trace :composition, inspect do
-	  if is_a?(ForeignKey)
-	    # First list any fields in a foreign key
-	    all_foreign_key_field.sort_by(&:ordinal).each do |fkf|
-	      $stderr.puts "Internal error: Foreign key field to #{fkf.component.column_name} is in #{fkf.component.root.mapping.name} not #{source_composite.mapping.name}!" if fkf.component.root != source_composite
-	      trace :composition, fkf.inspect
-	    end
-	  end
-	  # Now list the fields in the primary key
-	  all_index_field.sort_by(&:ordinal).each do |ak|
-	    trace :composition, ak.inspect
-	  end
-	end
+        trace :composition, inspect do
+          if is_a?(ForeignKey)
+            # First list any fields in a foreign key
+            all_foreign_key_field.sort_by(&:ordinal).each do |fkf|
+              $stderr.puts "Internal error: Foreign key field to #{fkf.component.column_name} is in #{fkf.component.root.mapping.name} not #{source_composite.mapping.name}!" if fkf.component.root != source_composite
+              trace :composition, fkf.inspect
+            end
+          end
+          # Now list the fields in the primary key
+          all_index_field.sort_by(&:ordinal).each do |ak|
+            trace :composition, ak.inspect
+          end
+        end
       end
 
       def position_in_index component
-	all_index_field.sort_by(&:ordinal).map(&:component).index(component)
+        all_index_field.sort_by(&:ordinal).map(&:component).index(component)
       end
     end
 
     class Index
       def inspect
-	case
-	when !is_unique
-	  'Non-unique index'
-	when composite_as_primary_index
-	  'Primary index'
-	else
-	  'Unique index'
-	end +
-	(name ? " #{name.inspect}" : '') +
-	" to #{composite.mapping.name}" +
-	(presence_constraint ? " over #{presence_constraint.describe}" : '')
+        case
+        when !is_unique
+          'Non-unique index'
+        when composite_as_primary_index
+          'Primary index'
+        else
+          'Unique index'
+        end +
+        (name ? " #{name.inspect}" : '') +
+        " to #{composite.mapping.name}" +
+        (presence_constraint ? " over #{presence_constraint.describe}" : '')
       end
     end
 
     class ForeignKey
       def inspect
-	"Foreign Key" +
-	(name ? " #{name.inspect}" : '') +
-	" from #{(sc = source_composite) ? sc.mapping.name : 'NO-SOURCE'} to #{composite.mapping.name}" +
-	(absorption ? " over #{absorption.inspect}" : '')
+        "Foreign Key" +
+        (name ? " #{name.inspect}" : '') +
+        " from #{(sc = source_composite) ? sc.mapping.name : 'NO-SOURCE'} to #{composite.mapping.name}" +
+        (absorption ? " over #{absorption.inspect}" : '')
       end
     end
 
     class IndexField
       def inspect
-	"IndexField part #{ordinal} in #{component.root.mapping.name} references #{component.inspect}" +
-	(value ? " discriminated by #{value.inspect}" : '')
+        "IndexField part #{ordinal} in #{component.root.mapping.name} references #{component.inspect}" +
+        (value ? " discriminated by #{value.inspect}" : '')
       end
     end
 
     class ForeignKeyField
       def inspect
-	operation = value ? "filters by value #{value} of" : "is"
-	"ForeignKeyField part #{ordinal} in #{component.root.mapping.name} #{operation} #{component.inspect}" +
-	(value ? " discriminated by #{value.inspect}" : '')
+        operation = value ? "filters by value #{value} of" : "is"
+        "ForeignKeyField part #{ordinal} in #{component.root.mapping.name} #{operation} #{component.inspect}" +
+        (value ? " discriminated by #{value.inspect}" : '')
       end
     end
 
     class Mapping
       def inspect
-	"#{self.class.basename} (#{rank_kind})#{parent ? " in #{parent.name}" :''} of #{name && name != '' ? name : '<anonymous>'}"
+        "#{self.class.basename} (#{rank_kind})#{parent ? " in #{parent.name}" :''} of #{name && name != '' ? name : '<anonymous>'}"
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}" do
-	  yield if block_given?
-	  all_member.sort_by{|member| [member.ordinal, member.name]}.each do |member|
-	    member.show_trace
-	  end
-	end
+        trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}" do
+          yield if block_given?
+          all_member.sort_by{|member| [member.ordinal, member.name]}.each do |member|
+            member.show_trace
+          end
+        end
       end
 
       # Recompute a contiguous member ranking fron zero, based on current membership:
@@ -1658,7 +1662,7 @@ module ActiveFacts
         all_member.each(&:uncache_rank_key)
         next_rank = 0
         all_member.
-	sort_by(&:rank_key).
+        sort_by(&:rank_key).
         each do |member|
           member.ordinal = next_rank
           next_rank += 1
@@ -1666,7 +1670,7 @@ module ActiveFacts
       end
 
       def root
-	composite || parent && parent.root
+        composite || parent && parent.root
       end
 
       def leaves
@@ -1681,198 +1685,198 @@ module ActiveFacts
       end
 
       def is_mandatory
-	true
+        true
       end
 
       def path_mandatory
-	true
+        true
       end
     end
 
     class Nesting
       def show_trace
-	# The index role has a counterpart played by the parent object in the enclosing Absorption
-	reading = index_role.fact_type.default_reading
-	trace :composition, "#{ordinal}: Nesting under #{index_role.object_type.name}#{key_name ? " (as #{key_name.inspect})" : ''} in #{reading.inspect}}"
+        # The index role has a counterpart played by the parent object in the enclosing Absorption
+        reading = index_role.fact_type.default_reading
+        trace :composition, "#{ordinal}: Nesting under #{index_role.object_type.name}#{key_name ? " (as #{key_name.inspect})" : ''} in #{reading.inspect}}"
       end
     end
 
     class Absorption
       def inspect_reading
-	parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand.inspect
+        parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand.inspect
       end
 
       def inspect
-	"#{super}#{full_absorption ? ' (full)' : ''
-	} in #{inspect_reading}#{
-	  # If we have a related forward absorption, we're by definition a reverse absorption
-	  if forward_absorption
-	    ' (reverse)'
-	   else
-	      # If we have a related reverse absorption, we're by definition a forward absorption
-	      reverse_absorption ? ' (forward)' : ''
-	  end
-	}"
+        "#{super}#{full_absorption ? ' (full)' : ''
+        } in #{inspect_reading}#{
+          # If we have a related forward absorption, we're by definition a reverse absorption
+          if forward_absorption
+            ' (reverse)'
+           else
+              # If we have a related reverse absorption, we're by definition a forward absorption
+              reverse_absorption ? ' (forward)' : ''
+          end
+        }"
       end
 
       def show_trace
-	super() do
-	  if nesting_mode || all_nesting.size > 0
-	    trace :composition, "Nested using #{nesting_mode || 'unspecified'} mode" do
-	      all_nesting.sort_by(&:ordinal).each(&:show_trace)
-	    end
-	  end
-	end
+        super() do
+          if nesting_mode || all_nesting.size > 0
+            trace :composition, "Nested using #{nesting_mode || 'unspecified'} mode" do
+              all_nesting.sort_by(&:ordinal).each(&:show_trace)
+            end
+          end
+        end
       end
 
       def is_type_inheritance
-	child_role.fact_type.is_a?(TypeInheritance) && child_role.fact_type
+        child_role.fact_type.is_a?(TypeInheritance) && child_role.fact_type
       end
 
       def is_supertype_absorption
-	is_type_inheritance && child_role.fact_type.supertype == object_type
+        is_type_inheritance && child_role.fact_type.supertype == object_type
       end
 
       def is_subtype_absorption
-	is_type_inheritance && parent_role.fact_type.supertype == object_type
+        is_type_inheritance && parent_role.fact_type.supertype == object_type
       end
 
       def is_preferred_direction
-	return child_role.is_mirror_role if child_role.is_mirror_role != parent_role.is_mirror_role
+        return child_role.is_mirror_role if child_role.is_mirror_role != parent_role.is_mirror_role
 
-	# Prefer to absorb the one into the many:
-	p_un = parent_role.is_unique
-	c_un = child_role.is_unique
-	return p_un if p_un != c_un
+        # Prefer to absorb the one into the many:
+        p_un = parent_role.is_unique
+        c_un = child_role.is_unique
+        return p_un if p_un != c_un
 
-	# Prefer to absorb a subtype into the supertype (opposite if separate or partitioned)
-	if (ti = child_role.fact_type).is_a?(TypeInheritance)
-	  is_subtype = child_role == ti.subtype_role  # Supertype absorbing subtype
-	  subtype = ti.subtype_role.object_type	      # Subtype doesn't want to be absorbed?
-	  # REVISIT: We need fewer ways to say this:
-	  child_separate = ["separate", "partitioned"].include?(ti.assimilation) ||
-	    subtype.is_independent ||
-	    subtype.concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'separate'}
-	  return !is_subtype != !child_separate
-	end
+        # Prefer to absorb a subtype into the supertype (opposite if separate or partitioned)
+        if (ti = child_role.fact_type).is_a?(TypeInheritance)
+          is_subtype = child_role == ti.subtype_role  # Supertype absorbing subtype
+          subtype = ti.subtype_role.object_type       # Subtype doesn't want to be absorbed?
+          # REVISIT: We need fewer ways to say this:
+          child_separate = ["separate", "partitioned"].include?(ti.assimilation) ||
+            subtype.is_independent ||
+            subtype.concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'separate'}
+          return !is_subtype != !child_separate
+        end
 
-	if p_un && c_un
-	  # Prefer to absorb a ValueType into an EntityType rather than the other way around:
-	  pvt = parent_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
-	  cvt = child_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
-	  return cvt if pvt != cvt
+        if p_un && c_un
+          # Prefer to absorb a ValueType into an EntityType rather than the other way around:
+          pvt = parent_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
+          cvt = child_role.object_type.is_a?(ActiveFacts::Metamodel::ValueType)
+          return cvt if pvt != cvt
 
-	  if !pvt
-	    # Force the decision if one EntityType identifies another
-	    return true if child_role.base_role.is_identifying  # Parent is identified by child role, correct
-	    return false if parent_role.base_role.is_identifying # Child is identified by parent role, incorrect
-	  end
+          if !pvt
+            # Force the decision if one EntityType identifies another
+            return true if child_role.base_role.is_identifying  # Parent is identified by child role, correct
+            return false if parent_role.base_role.is_identifying # Child is identified by parent role, incorrect
+          end
 
-	  # Primary absorption absorbs the object playing the mandatory role into the non-mandatory:
-	  return child_role.is_mandatory if !parent_role.is_mandatory != !child_role.is_mandatory
-	end
+          # Primary absorption absorbs the object playing the mandatory role into the non-mandatory:
+          return child_role.is_mandatory if !parent_role.is_mandatory != !child_role.is_mandatory
+        end
 
-	if parent_role.object_type.is_a?(ActiveFacts::Metamodel::EntityType) &&
-	     child_role.object_type.is_a?(ActiveFacts::Metamodel::EntityType)
-	  # Prefer to absorb an identifying element into the EntityType it identifies
-	  return true if parent_role.object_type.preferred_identifier.
-	    role_sequence.all_role_ref.map(&:role).detect{|r|
-	      r.object_type == child_role.object_type
-	    }
-	  return false if child_role.object_type.preferred_identifier.
-	    role_sequence.all_role_ref.map(&:role).detect{|r|
-	      r.object_type == parent_role.object_type
-	    }
-	end
+        if parent_role.object_type.is_a?(ActiveFacts::Metamodel::EntityType) &&
+             child_role.object_type.is_a?(ActiveFacts::Metamodel::EntityType)
+          # Prefer to absorb an identifying element into the EntityType it identifies
+          return true if parent_role.object_type.preferred_identifier.
+            role_sequence.all_role_ref.map(&:role).detect{|r|
+              r.object_type == child_role.object_type
+            }
+          return false if child_role.object_type.preferred_identifier.
+            role_sequence.all_role_ref.map(&:role).detect{|r|
+              r.object_type == parent_role.object_type
+            }
+        end
 
-	# For stability, absorb a later-named role into an earlier-named one:
-	return parent_role.name < child_role.name
+        # For stability, absorb a later-named role into an earlier-named one:
+        return parent_role.name < child_role.name
       end
 
       def flip!
-	raise "REVISIT: Need to flip FullAbsorption on #{inspect}" if full_absorption or reverse_absorption && reverse_absorption.full_absorption or forward_absorption && forward_absorption.full_absorption
-	if (other = forward_absorption)
-	  # We point at them - make them point at us instead
-	  self.forward_absorption = nil
-	  self.reverse_absorption = other
-	elsif (other = reverse_absorption)
-	  # They point at us - make us point at them instead
-	  self.reverse_absorption = nil
-	  self.forward_absorption = other
-	else
-	  raise "Absorption cannot be flipped as it has no reverse"
-	end
+        raise "REVISIT: Need to flip FullAbsorption on #{inspect}" if full_absorption or reverse_absorption && reverse_absorption.full_absorption or forward_absorption && forward_absorption.full_absorption
+        if (other = forward_absorption)
+          # We point at them - make them point at us instead
+          self.forward_absorption = nil
+          self.reverse_absorption = other
+        elsif (other = reverse_absorption)
+          # They point at us - make us point at them instead
+          self.reverse_absorption = nil
+          self.forward_absorption = other
+        else
+          raise "Absorption cannot be flipped as it has no reverse"
+        end
       end
 
       def all_role
-	([child_role, parent_role] + all_nesting.map(&:index_role)).flat_map{|role| [role, role.base_role]}.uniq
+        ([child_role, parent_role] + all_nesting.map(&:index_role)).flat_map{|role| [role, role.base_role]}.uniq
       end
 
       def value_constraints
-	return [] unless object_type.is_a?(ValueType)
-	object_type.supertypes_transitive.flat_map{|vt| Array(vt.value_constraint)}
+        return [] unless object_type.is_a?(ValueType)
+        object_type.supertypes_transitive.flat_map{|vt| Array(vt.value_constraint)}
       end
 
       def is_mandatory
-	parent_role.is_mandatory
+        parent_role.is_mandatory
       end
 
       def path_mandatory
-	is_mandatory && parent.path_mandatory
+        is_mandatory && parent.path_mandatory
       end
     end
 
     class FullAbsorption
       def inspect
-	"Full #{absorption.inspect}"
+        "Full #{absorption.inspect}"
       end
     end
 
     class Indicator
       def inspect
-	"#{self.class.basename} #{role.fact_type.default_reading.inspect}"
+        "#{self.class.basename} #{role.fact_type.default_reading.inspect}"
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? "(as #{name.inspect})" : ''}"
+        trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? "(as #{name.inspect})" : ''}"
       end
 
       def all_role
-	[role, role.base_role].uniq
+        [role, role.base_role].uniq
       end
 
       def is_mandatory
-	false
+        false
       end
     end
 
     class Discriminator
       def inspect
-	"#{self.class.basename} between #{all_discriminated_role.map{|dr|dr.fact_type.default_reading.inspect}*', '}"
+        "#{self.class.basename} between #{all_discriminated_role.map{|dr|dr.fact_type.default_reading.inspect}*', '}"
       end
 
       def show_trace
-	trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name.inspect})" : ''}"
+        trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect} #{name ? " (as #{name.inspect})" : ''}"
       end
 
       def all_role
-	all_discriminated_role.map(&:role).flat_map{|role| [role, role.base_role]}.uniq
+        all_discriminated_role.map(&:role).flat_map{|role| [role, role.base_role]}.uniq
       end
     end
 
     class SurrogateKey
       def is_identifying
-	!parent.parent
+        !parent.parent
       end
     end
 
     class ValueField
       def inspect
-	"#{self.class.basename} #{object_type.name.inspect}"
+        "#{self.class.basename} #{object_type.name.inspect}"
       end
 
       def show_trace
-	trace :composition, "#{ordinal}: #{inspect}#{name ? " (as #{name.inspect})" : ''}"
+        trace :composition, "#{ordinal}: #{inspect}#{name ? " (as #{name.inspect})" : ''}"
       end
     end
 
@@ -1880,128 +1884,128 @@ module ActiveFacts
       # The ranking key of a component indicates its importance to its parent:
       # Ranking assigns a total order, but is computed in groups:
       RANK_SURROGATE = 0
-      RANK_SUPER = 1		# Supertypes, with the identifying supertype first, others alphabetical
-      RANK_IDENT = 2		# Identifying components (absorptions, indicator), in order of the identifier
-      RANK_VALUE = 3		# A ValueField
-      RANK_INJECTION = 4	# Injections, in alphabetical order
-      RANK_DISCRIMINATOR = 5	# Discriminator components, in alphabetical order
-      RANK_FOREIGN = 6		# REVISIT: Foreign key components
-      RANK_INDICATOR = 7	# Indicators in alphabetical order
-      RANK_MANDATORY = 8	# Absorption: unique mandatory
-      RANK_NON_MANDATORY = 9	# Absorption: unique optional
-      RANK_MULTIPLE = 10	# Absorption: manifold
-      RANK_SUBTYPE = 11		# Subtypes in alphabetical order
-      RANK_SCOPING = 12		# Scoping in alphabetical order
+      RANK_SUPER = 1            # Supertypes, with the identifying supertype first, others alphabetical
+      RANK_IDENT = 2            # Identifying components (absorptions, indicator), in order of the identifier
+      RANK_VALUE = 3            # A ValueField
+      RANK_INJECTION = 4        # Injections, in alphabetical order
+      RANK_DISCRIMINATOR = 5    # Discriminator components, in alphabetical order
+      RANK_FOREIGN = 6          # REVISIT: Foreign key components
+      RANK_INDICATOR = 7        # Indicators in alphabetical order
+      RANK_MANDATORY = 8        # Absorption: unique mandatory
+      RANK_NON_MANDATORY = 9    # Absorption: unique optional
+      RANK_MULTIPLE = 10        # Absorption: manifold
+      RANK_SUBTYPE = 11         # Subtypes in alphabetical order
+      RANK_SCOPING = 12         # Scoping in alphabetical order
 
       def uncache_rank_key
-	@rank_key = nil
+        @rank_key = nil
       end
 
       def rank_key
-	@rank_key ||=
-	  case self
-	  when SurrogateKey
-	    if is_identifying
-	      [RANK_SURROGATE]	# an injected PK
-	    else
-	      [RANK_MANDATORY, name]	# an FK
-	    end
+        @rank_key ||=
+          case self
+          when SurrogateKey
+            if is_identifying
+              [RANK_SURROGATE]  # an injected PK
+            else
+              [RANK_MANDATORY, name]    # an FK
+            end
 
-	  when Indicator
-	    if (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
-	      [RANK_IDENT, position]     # An identifying unary
-	    else
-	      [RANK_INDICATOR, name || role.name]	      # A non-identifying unary
-	    end
+          when Indicator
+            if (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
+              [RANK_IDENT, position]     # An identifying unary
+            else
+              [RANK_INDICATOR, name || role.name]             # A non-identifying unary
+            end
 
-	  when Discriminator
-	    [RANK_DISCRIMINATOR, name || child_role.name]
+          when Discriminator
+            [RANK_DISCRIMINATOR, name || child_role.name]
 
-	  when ValueField
-	    [RANK_IDENT]
+          when ValueField
+            [RANK_IDENT]
 
-	  when Injection
-	    [RANK_INJECTION, name]	      # REVISIT: Injection not fully elaborated. A different sub-key for ranking may be needed
+          when Injection
+            [RANK_INJECTION, name]            # REVISIT: Injection not fully elaborated. A different sub-key for ranking may be needed
 
-	  when Absorption
-	    if is_type_inheritance
-	      # We are traversing a type inheritance fact type. Is this object_type the subtype or supertype?
-	      if is_supertype_absorption
-		# What's the rank of this supertype?
-		tis = parent_role.object_type.all_type_inheritance_as_subtype.sort_by{|ti| ti.provides_identification ? '' : ti.supertype.name }
-		[RANK_SUPER, child_role.fact_type.provides_identification ? 0 : 1+tis.index(parent_role.fact_type)]
-	      else
-		# What's the rank of this subtype?
-		tis = parent_role.object_type.all_type_inheritance_as_supertype.sort_by{|ti| ti.subtype.name }
-		[RANK_SUBTYPE, tis.index(parent_role.fact_type)]
-	      end
-	    elsif (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
-	      [RANK_IDENT, position]
-	    else
-	      if parent_role.is_unique
-		[parent_role.is_mandatory ? RANK_MANDATORY : RANK_NON_MANDATORY, name || child_role.name]
-	      else
-		[RANK_MULTIPLE, name || child_role.name, parent_role.name]
-	      end
-	    end
+          when Absorption
+            if is_type_inheritance
+              # We are traversing a type inheritance fact type. Is this object_type the subtype or supertype?
+              if is_supertype_absorption
+                # What's the rank of this supertype?
+                tis = parent_role.object_type.all_type_inheritance_as_subtype.sort_by{|ti| ti.provides_identification ? '' : ti.supertype.name }
+                [RANK_SUPER, child_role.fact_type.provides_identification ? 0 : 1+tis.index(parent_role.fact_type)]
+              else
+                # What's the rank of this subtype?
+                tis = parent_role.object_type.all_type_inheritance_as_supertype.sort_by{|ti| ti.subtype.name }
+                [RANK_SUBTYPE, tis.index(parent_role.fact_type)]
+              end
+            elsif (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
+              [RANK_IDENT, position]
+            else
+              if parent_role.is_unique
+                [parent_role.is_mandatory ? RANK_MANDATORY : RANK_NON_MANDATORY, name || child_role.name]
+              else
+                [RANK_MULTIPLE, name || child_role.name, parent_role.name]
+              end
+            end
 
-	  when Scoping
-	    [RANK_SCOPING, name || object_type.name]
+          when Scoping
+            [RANK_SCOPING, name || object_type.name]
 
-	  else
-	    raise "unexpected #{self.class.basename} in Component#rank_key"
-	  end
+          else
+            raise "unexpected #{self.class.basename} in Component#rank_key"
+          end
       end
 
       def primary_index_components
-	root and
-	ix = root.primary_index and				# Primary index has been decided
-	root.primary_index.all_index_field.size > 0 and		# has been populated and
-	ix = root.primary_index and
-	ixfs = ix.all_index_field.sort_by(&:ordinal) and
-	ixfs.map(&:component)
+        root and
+        ix = root.primary_index and                             # Primary index has been decided
+        root.primary_index.all_index_field.size > 0 and         # has been populated and
+        ix = root.primary_index and
+        ixfs = ix.all_index_field.sort_by(&:ordinal) and
+        ixfs.map(&:component)
       end
 
       def parent_entity_type
-	parent &&
-	  parent.object_type.is_a?(EntityType) &&
-	  parent.object_type
+        parent &&
+          parent.object_type.is_a?(EntityType) &&
+          parent.object_type
       end
 
       def rank_kind
-	return "top" unless parent  # E.g. a Mapping that is a Composite
-	case rank_key[0]
-	when RANK_SURROGATE;	"surrogate"
-	when RANK_SUPER;	"supertype"
-	when RANK_IDENT;	"existential"
-	when RANK_VALUE;	"self-value"
-	when RANK_INJECTION;	"injection"
-	when RANK_DISCRIMINATOR;"discriminator"
-	when RANK_FOREIGN;	"foreignkey"
-	when RANK_INDICATOR;	"indicator"
-	when RANK_MANDATORY;	"mandatory"
-	when RANK_NON_MANDATORY;"optional"
-	when RANK_MULTIPLE;	"multiple"
-	when RANK_SUBTYPE;	"subtype"
-	when RANK_SCOPING;	"scoping"
-	end
+        return "top" unless parent  # E.g. a Mapping that is a Composite
+        case rank_key[0]
+        when RANK_SURROGATE;    "surrogate"
+        when RANK_SUPER;        "supertype"
+        when RANK_IDENT;        "existential"
+        when RANK_VALUE;        "self-value"
+        when RANK_INJECTION;    "injection"
+        when RANK_DISCRIMINATOR;"discriminator"
+        when RANK_FOREIGN;      "foreignkey"
+        when RANK_INDICATOR;    "indicator"
+        when RANK_MANDATORY;    "mandatory"
+        when RANK_NON_MANDATORY;"optional"
+        when RANK_MULTIPLE;     "multiple"
+        when RANK_SUBTYPE;      "subtype"
+        when RANK_SCOPING;      "scoping"
+        end
       end
 
       def root
-	parent.root
+        parent.root
       end
 
       def depth
-	parent ? 1+parent.depth : 0
+        parent ? 1+parent.depth : 0
       end
 
       def inspect
-	"#{self.class.basename}"
+        "#{self.class.basename}"
       end
 
       def show_trace
-	raise "Implemented in subclasses"
-	# trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}#{name ? " (as #{name.inspect})" : ''}"
+        raise "Implemented in subclasses"
+        # trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}#{name ? " (as #{name.inspect})" : ''}"
       end
 
       def leaves
@@ -2013,15 +2017,15 @@ module ActiveFacts
       end
 
       def is_mandatory
-	parent.is_mandatory
+        parent.is_mandatory
       end
 
       def path_mandatory
-	parent.path_mandatory
+        parent.path_mandatory
       end
 
       def all_role
-	[]
+        []
       end
 
       def rank_path
