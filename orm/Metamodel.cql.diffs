@@ -19,13 +19,13 @@
 ! 	Component is a Mapping,
   	Component is an Indicator,
 ***************
-*** 556,560 ****
+*** 578,582 ****
   either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
 - for each Mapping at most one of these holds:
-- 	Mapping(1) is an Absorption(2) and Absorption(1) flattens,
+- 	Absorption(1) flattens and Mapping(1) is an Absorption(2),
 - 	Mapping projects Composite;
   for each Instance at most one of these holds:
---- 556,557 ----
+--- 578,579 ----
 ***************
 *** 562,563 ****
 --- 559,563 ----
@@ -43,28 +43,22 @@
   Role Value is of Instance that is of Object Type
 --- 565,566 ----
 ***************
-*** 580,583 ****
-  	Variable is restricted by Role of Step;
-! Absorption traverses from parent Role that is played by Object Type and Mapping(1) is a kind of Component(1) and Mapping(1) is an Absorption
-! 	only if Member belongs to Mapping(2) that represents Object Type;
-  Composite has primary Index
---- 577,582 ----
-  	Variable is restricted by Role of Step;
-! Absorption traverses from parent Role that is played by Object Type
-! 	only if Absorption is a kind of Mapping(1) that contains Component that is a Mapping(2) that represents Object Type;
-! Absorption traverses to child Role that is played by Object Type
-! 	only if Absorption is a kind of Mapping that represents Object Type;
-  Composite has primary Index
-***************
-*** 586,589 ****
-  	only if Index is unique;
-- Absorption traverses to child Role that is played by Object Type and Absorption is a kind of Mapping(2)
-- 	only if Mapping(1) represents Object Type;
-  Presence Constraint is preferred identifier
---- 585,586 ----
-***************
 *** 597,599 ****
   either Agreement was reached by Agent or Agreement was on Date;
 - either Component projects Name or Absorption flattens;
   each Concept occurs at most one time in
 --- 594,595 ----
+***************
+*** 599,600 ****
+--- 599,602 ----
+  	Variable is restricted by Role of Step;
++ Absorption traverses to child Role that is played by Object Type
++ 	only if Absorption is a kind of Mapping that represents Object Type;
+  Composite has primary Index
+***************
+*** 603,606 ****
+  	only if Index is unique;
+- Absorption traverses to child Role that is played by Object Type and Absorption is a kind of Mapping(2)
+- 	only if Mapping(1) represents Object Type;
+  Presence Constraint is preferred identifier
+--- 605,606 ----

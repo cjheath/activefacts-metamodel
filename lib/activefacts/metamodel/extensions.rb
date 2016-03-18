@@ -479,6 +479,10 @@ module ActiveFacts
 	is_independent or concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'separate'}
       end
 
+      def is_static
+        concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'static'}
+      end
+
       def all_role_transitive
 	supertypes_transitive.flat_map(&:all_role)
       end
@@ -1352,6 +1356,7 @@ module ActiveFacts
             objectification_role_supertypes =
               fact_type.entity_type.supertypes_transitive+object_type.supertypes_transitive
 	    # Find the objectification role here:
+	    return nil unless role.link_fact_type   # REVISIT: Link Fact Types are missing; happens from half-baked surrogate transform
             objectification_role = role.link_fact_type.all_role.detect{|r| !r.is_a?(MirrorRole)}
           else
             objectification_role_supertypes = counterpart_role_supertypes
@@ -1908,7 +1913,9 @@ module ActiveFacts
 	    end
 
 	  when Indicator
-	    if (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(role.base_role))
+	    if (p = parent_entity_type) and
+		p.preferred_identifier and
+		(position = p.rank_in_preferred_identifier(role.base_role))
 	      [RANK_IDENT, position]     # An identifying unary
 	    else
 	      [RANK_INDICATOR, name || role.name]	      # A non-identifying unary
