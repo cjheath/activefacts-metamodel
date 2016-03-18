@@ -1674,11 +1674,11 @@ module ActiveFacts
 	composite || parent && parent.root
       end
 
-      def leaves
+      def all_leaf
         re_rank
         all_member.sort_by(&:ordinal).flat_map do |member|
           if member.is_a?(Mapping) && member.all_member.size > 0
-            member.leaves
+            member.all_leaf
           else
             member
           end
