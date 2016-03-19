@@ -7,7 +7,7 @@ module ActiveFacts
       one_to_one      :guid, mandatory: true              # Component has Guid, see Guid#component
       has_one         :name                               # Component projects Name, see Name#all_component
       has_one         :ordinal                            # Component has Ordinal rank, see Ordinal#all_component
-      has_one         :parent, class: "Mapping", counterpart: :member  # Member belongs to Parent, see Mapping#all_member
+      has_one         :parent, class: Component, counterpart: :member  # Member belongs to Parent, see Component#all_member
     end
 
     class Mapping < Component
@@ -437,6 +437,7 @@ module ActiveFacts
 
     class EntityType < DomainObjectType
       one_to_one      :fact_type                          # Entity Type objectifies Fact Type, see FactType#entity_type
+      has_one         :implicitly_objectified_fact_type, class: FactType  # Entity Type implicitly objectifies implicitly- objectified Fact Type, see FactType#all_entity_type_as_implicitly_objectified_fact_type
     end
 
     class Instance
@@ -651,6 +652,10 @@ module ActiveFacts
     end
 
     class SurrogateKey < Injection
+    end
+
+    class TemporalMapping < Mapping
+      has_one         :value_type, mandatory: true        # Temporal Mapping records time using Value Type, see ValueType#all_temporal_mapping
     end
 
     class TypeInheritance < FactType

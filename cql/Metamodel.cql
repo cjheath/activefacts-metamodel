@@ -382,6 +382,7 @@ Domain Object Type is a kind of Object Type;
 Entity Type is a kind of Domain Object Type;
 Entity Type objectifies at most one Fact Type,
 	Fact Type is objectified as at most one Entity Type;
+Entity Type implicitly objectifies at most one implicitly- objectified Fact Type;
 
 Type Inheritance is a kind of Fact Type identified by Subtype and Supertype where
 	Entity Type (as Subtype) is subtype of super-Entity Type (as Supertype) [acyclic, intransitive],
@@ -424,6 +425,8 @@ Composition is called one Name,
 Component is identified by Guid where
 	Component has one Guid,
 	Guid is of at most one Component;
+Component (as Member) belongs to at most one Component (as Parent) [acyclic, stronglyintransitive],
+	Parent contains Member;
 Component projects at most one Name;
 Component has at most one Ordinal rank;
 
@@ -437,14 +440,15 @@ Discriminated Role is where
 
 Mapping is a kind of Component;
 Mapping represents one Object Type;
-Component (as Member) belongs to at most one Mapping (as Parent),
-	Parent contains Member [acyclic, stronglyintransitive];
 
 Composite is identified by Mapping where
 	Mapping projects at most one Composite,
 	Composite consists of one Mapping;
 Composition contains Composite,
 	Composite belongs to one Composition;
+
+Temporal Mapping is a kind of Mapping;
+Temporal Mapping records time using one Value Type;
 
 Absorption is a kind of Mapping;
 Absorption traverses to one child-Role;
@@ -453,8 +457,10 @@ forward-Absorption is matched by at most one reverse-Absorption,
 	reverse-Absorption is reverse of at most one forward-Absorption;
 Absorption flattens;
 
+/*
 some Absorption traverses from some parent- Role(1) and that Role(1) is played by some Object Type
-	only if that Absorption is a kind of Mapping(1) that contains some Component that is a Mapping(2) that represents that Object Type;
+	only if that Absorption is a kind of Component(2) that contains some Component(3) that is a Mapping that represents that Object Type;
+*/
 some Absorption traverses to some child- Role(1) and that Role(1) is played by some Object Type
 	only if that Absorption is a kind of Mapping that represents that Object Type;
 
@@ -547,7 +553,7 @@ Absorption is nested under index Role in Ordinal position
 /*
  * Constraints:
  */
-either Component belongs to Mapping(1) or Component is a Mapping(2) that projects Composite but not both;
+either Component(1) belongs to Component(2) or Component(1) is a Mapping that projects some Composite but not both;
 for each Component exactly one of these holds:
 	Component is a Mapping,
 	Component is an Indicator,
@@ -615,10 +621,10 @@ Variable is for Object Type that plays Role
 	if and only if
 	Variable is restricted by Role of Step;
 /*
-Absorption traverses from parent Role that is played by Object Type and Mapping(1) is a kind of Component(2) and Mapping(1) is an Absorption
-	only if Member belongs to Mapping(2) that represents Object Type;
-Absorption traverses to child Role that is played by Object Type and Absorption is a kind of Mapping(2)
-	only if Mapping(1) represents Object Type;
+some Absorption traverses from some parent Role that is played by some Object Type
+	only if that Absorption contains some Component that is a Mapping(2) that represents that Object Type;
+some Absorption traverses to some child Role that is played by some Object Type
+	only if that Absorption is a kind of Mapping that represents that Object Type;
 */
 Presence Constraint is preferred identifier
 	only if Presence Constraint has max Frequency;

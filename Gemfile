@@ -9,4 +9,5 @@ if this_file =~ %r{\A#{ENV['HOME']}}i
   gem 'activefacts-cql', path: dir+'/cql'
   gem 'activefacts-compositions', path: dir+'/compositions'
   gem 'activefacts-api', path: dir+'/api'
+  gem 'activefacts-orm', path: dir+'/orm'
 end
