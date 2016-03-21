@@ -1867,6 +1867,9 @@ module ActiveFacts
 
     class SurrogateKey
       def is_identifying
+	if pk = root.primary_index
+	  return pk.all_index_field.detect{|ixf| ixf.component == self}
+	end
 	!parent.parent
       end
     end
