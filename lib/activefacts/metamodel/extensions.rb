@@ -1295,7 +1295,7 @@ module ActiveFacts
 
     class MirrorRole
       def is_mandatory
-        base_role.is_mandatory 
+        base_role.is_mandatory
       end
 
       def is_unique
@@ -1862,6 +1862,17 @@ module ActiveFacts
       def is_mandatory
         false
       end
+
+      def comment
+        c = parent.comment
+        if c != ''
+          c +' that '
+        elsif name =~ /\b#{parent.name}\b/
+          ''
+        else
+          parent.name+' '
+        end + name
+      end
     end
 
     class Discriminator
@@ -1885,6 +1896,11 @@ module ActiveFacts
         end
         !parent.parent
       end
+
+      def comment
+        return 'surrogate key' unless parent
+        ((c = parent.comment) != '' ? c : parent.name + ' surrogate key')
+      end
     end
 
     class ValueField
@@ -1894,6 +1910,10 @@ module ActiveFacts
 
       def show_trace
         trace :composition, "#{ordinal}: #{inspect}#{name ? " (as #{name.inspect})" : ''}"
+      end
+
+      def comment
+        (c = parent && parent.comment) && c != '' ? c : name
       end
     end
 
@@ -2050,6 +2070,27 @@ module ActiveFacts
       def rank_path
         (parent ? parent.rank_path+[ordinal] : [ordinal])
       end
+
+      def comment
+        return '' unless parent
+        ((c = parent.comment) != '' ? c +' and ' : '') + name
+      end
     end
+
+    class Absorption
+      def comment
+        return '' unless parent
+        prefix = parent.comment
+        reading = parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand([], false)
+        maybe = parent_role.is_mandatory ? '' : 'maybe '
+        parent_name = parent.name
+        if prefix[(-parent_name.size-1)..-1] == ' '+parent_name && reading[0..parent_name.size] == parent_name+' '
+          prefix+' that ' + maybe + reading[parent_name.size+1..-1]
+        else
+          (prefix.empty? ? '' : prefix+' and ') + maybe + reading
+        end
+      end
+    end
+
   end
 end
