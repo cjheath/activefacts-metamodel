@@ -1705,6 +1705,18 @@ module ActiveFacts
       def path_mandatory
         true
       end
+
+      def is_auto_assigned
+        # It's auto-assigned if it's an auto-assigned value type and it's in its root's primary_index and is not a foreign key field
+        if root and
+            (a = object_type.is_auto_assigned) and
+            (root.primary_index.all_index_field.detect{|ixf| ixf.component == self}) and
+            (!all_foreign_key_field.detect{|fkf| fkf.foreign_key.source_composite == self.root})
+          a
+        else
+          nil
+        end
+      end
     end
 
     class Nesting
@@ -1897,6 +1909,13 @@ module ActiveFacts
         !parent.parent
       end
 
+      def is_auto_assigned
+        # It's auto-assigned if it's in its root's primary_index and is not a foreign key field
+        root and
+          (root.primary_index.all_index_field.detect{|ixf| ixf.component == self}) and
+          (!all_foreign_key_field.detect{|fkf| fkf.foreign_key.source_composite == self.root})
+      end
+
       def comment
         return 'surrogate key' unless parent
         ((c = parent.comment) != '' ? c : parent.name + ' surrogate key')
@@ -1991,6 +2010,9 @@ module ActiveFacts
           when Scoping
             [RANK_SCOPING, name || object_type.name]
 
+          when Mapping
+            [ name ]
+
           else
             raise "unexpected #{self.class.basename} in Component#rank_key"
           end
@@ -2069,6 +2091,10 @@ module ActiveFacts
 
       def rank_path
         (parent ? parent.rank_path+[ordinal] : [ordinal])
+      end
+
+      def is_auto_assigned
+        false
       end
 
       def comment
