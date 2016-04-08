@@ -2018,6 +2018,7 @@ module ActiveFacts
           end
       end
 
+      # REVISIT: This should be a method on Composite, called here as root.primary_index_components
       def primary_index_components
         root and
         ix = root.primary_index and                             # Primary index has been decided
@@ -2082,6 +2083,7 @@ module ActiveFacts
       end
 
       def path_mandatory
+        # REVISIT: is_mandatory &&
         parent.path_mandatory
       end
 

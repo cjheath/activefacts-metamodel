@@ -80,6 +80,15 @@ module ActiveFacts
         def choose_integer_type min, max
           integer_ranges.detect{|type_name, vmin, vmax, bits| min >= vmin && max <= vmax}
         end
+
+        def boolean_type
+        end
+
+        def surrogate_type
+        end
+
+        def valid_from_type
+        end
       end
 
       class DefaultContext < Context
@@ -103,7 +112,7 @@ module ActiveFacts
             when /([a-z ]|\b)Small([a-z ]|\b)/i,
               /([a-z ]|\b)Short([a-z ]|\b)/i
               16
-            when /([a-z ]|\b)Big([a-z ]|\b)/i,
+            when /([a-z ]|\b)Big([a-z ]|\b)/i
               64
             else
               32
@@ -111,6 +120,18 @@ module ActiveFacts
           else
             nil
           end
+        end
+
+        def boolean_type
+          'CHAR'
+        end
+
+        def surrogate_type
+          'BIGINT'
+        end
+
+        def valid_from_type
+          'TIMESTAMP'
         end
       end
 
@@ -159,6 +180,80 @@ module ActiveFacts
         TypeMapping
       end
 
+    end
+
+    class Component
+      def in_primary_index
+        root.primary_index.all_index_field.detect{|ixf| ixf.component == self}
+      end
+
+      def in_foreign_key
+        all_foreign_key_field.detect{|fkf| fkf.foreign_key.source_composite == root}
+      end
+
+      def data_type context = DataType::DefaultContext.new
+        case self
+        when Indicator
+          context.boolean_type
+
+        when SurrogateKey
+          [ context.surrogate_type,
+            if in_primary_index and !in_foreign_key
+              {auto_assign: true}
+            else
+              {}
+            end.
+            merge!({mandatory: path_mandatory})
+          ]
+
+        when ValidFrom
+          context.valid_from_type
+
+        when ValueField, Absorption
+          vt = self.object_type
+          while vt.is_a?(EntityType)
+            rr = vt.preferred_identifier.role_sequence.all_role_ref.single
+            raise "Can't produce a column for composite #{inspect}" unless rr
+            value_constraint = narrow_value_constraint(value_constraint, rr.role.role_value_constraint)
+            vt = rr.role.object_type
+          end
+          raise "A column can only be produced from a ValueType not a #{vt.class.basename}" unless vt.is_a?(ValueType)
+
+          if is_a?(Absorption)
+            value_constraint = narrow_value_constraint(value_constraint, child_role.role_value_constraint)
+          end
+
+          stype = vt
+          begin
+            vt = stype
+            # REVISIT: Check for length and scale shortening
+            length ||= vt.length
+            scale ||= vt.scale
+            unless parent.parent and parent.foreign_key
+              # No need to enforce value constraints that are already enforced by a foreign key
+              value_constraint = narrow_value_constraint(value_constraint, vt.value_constraint)
+            end
+          end while stype = vt.supertype
+
+          [ vt.name,
+            (length ? {length: length} : {}).
+            merge!(scale ? {scale: scale} : {}).
+            merge!({ auto_assign: (in_primary_index and !in_foreign_key and vt.is_auto_assigned) }).
+            merge!({mandatory: path_mandatory}).
+            merge!(value_constraint ? {value_constraint: value_constraint} : {})
+          ]
+
+        when Injection
+          object_type.name
+        else
+          raise "Can't make a column from #{component}"
+        end
+      end
+
+      def narrow_value_constraint(value_constraint, nested_value_constraint)
+        # REVISIT: Need to calculate the constrant narrowing
+        return nested_value_constraint || value_constraint
+      end
     end
   end
 end
