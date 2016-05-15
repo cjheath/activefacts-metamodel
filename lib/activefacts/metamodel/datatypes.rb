@@ -159,8 +159,13 @@ module ActiveFacts
           max = int_max if !max || length && int_max < max
         end
         best = context.choose_integer_type(min, max)
+        unless best || length
+          # Use the largest available integer size
+          best = context.integer_ranges.last
+        end
+
         # Use a context-defined integer size if one suits, otherwise the requested size:
-        best && [best[0], best[3]] || length
+        best && [best[0], best[3]] || [ 'int', length ]
       end
 
     private
