@@ -1850,6 +1850,19 @@ module ActiveFacts
       def path_mandatory
         is_mandatory && parent.path_mandatory
       end
+
+      def comment
+        return '' unless parent
+        prefix = parent.comment
+        reading = parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand([], false)
+        maybe = parent_role.is_mandatory ? '' : 'maybe '
+        parent_name = parent.name
+        if prefix[(-parent_name.size-1)..-1] == ' '+parent_name && reading[0..parent_name.size] == parent_name+' '
+          prefix+' that ' + maybe + reading[parent_name.size+1..-1]
+        else
+          (prefix.empty? ? '' : prefix+' and ') + maybe + reading
+        end
+      end
     end
 
     class FullAbsorption
@@ -2102,21 +2115,6 @@ module ActiveFacts
       def comment
         return '' unless parent
         ((c = parent.comment) != '' ? c +' and ' : '') + name
-      end
-    end
-
-    class Absorption
-      def comment
-        return '' unless parent
-        prefix = parent.comment
-        reading = parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand([], false)
-        maybe = parent_role.is_mandatory ? '' : 'maybe '
-        parent_name = parent.name
-        if prefix[(-parent_name.size-1)..-1] == ' '+parent_name && reading[0..parent_name.size] == parent_name+' '
-          prefix+' that ' + maybe + reading[parent_name.size+1..-1]
-        else
-          (prefix.empty? ? '' : prefix+' and ') + maybe + reading
-        end
       end
     end
 
