@@ -121,7 +121,17 @@ class String
 
   def words
     Words.new(
-      self.split(/(?:[^[:alnum:]]+|(?<=[[:alnum:]])(?=[[:upper:]][[:lower:]]))/).reject{|w| w == '' }
+      self.
+      split(
+        %r{     # Split and discard any group of non-alphanumeric characters:
+          (?:[^[:alnum:]]+)
+          |     # Split between an uppercase and a preceding lowercase or digit:
+          (?<=[[:lower:][:digit:]])(?=[[:upper:]])
+          |     # Split between any alphanumeric and a following upper-lower pair:
+          (?<=[[:alnum:]])(?=[[:upper:]][[:lower:]])
+        }x
+      ).
+      reject{|w| w == '' }
     )
   end
 end
