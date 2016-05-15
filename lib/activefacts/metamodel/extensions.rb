@@ -1503,7 +1503,7 @@ module ActiveFacts
         ) +
         context_note_kind.gsub(/_/, ' ') +
         ' ' +
-        discussion +
+        description +
         ( if agreement
             ', as agreed ' +
             (agreement.date ? ' on '+agreement.date.iso8601.inspect+' ' : '') +

@@ -11,7 +11,7 @@ Assimilation is written as String restricted to {'absorbed', 'partitioned', 'sep
 Context Note Kind is written as String restricted to {'as_opposed_to', 'because', 'so_that', 'to_avoid'};
 Date is written as Date;
 Denominator is written as Unsigned Integer(32);
-Discussion is written as String;
+Description is written as String;
 Display Role Names Setting is written as String restricted to {'false', 'true'};
 Enforcement Code is written as String(16);
 Ephemera URL is written as String;
@@ -57,6 +57,7 @@ Coefficient is identified by Numerator and Denominator and Coefficient is precis
 Concept is identified by Guid where
 	Concept has one Guid,
 	Guid is of at most one Concept;
+Concept has at most one informal-Description;
 
 Concept Annotation is where
 	Concept has mapping-Annotation,
@@ -71,8 +72,8 @@ Context Note is identified by Concept where
 	Context Note is an instance of one Concept;
 Context Note has one Context Note Kind,
 	Context Note Kind is of Context Note;
-Context Note has one Discussion,
-	Discussion is for Context Note;
+Context Note has one Description,
+	Description is for Context Note;
 Context Note applies to at most one relevant-Concept,
 	Concept has Context Note;
 
@@ -293,7 +294,6 @@ Object Type is an instance of one Concept;
 Object Type uses at most one Pronoun;
 Object Type plays Role,
 	Role is played by one Object Type;
-Object Type is independent;
 Variable is for one Object Type,
 	Object Type is referenced in Variable;
 
@@ -378,6 +378,7 @@ Allowed Range is where
 	Value Constraint allows Value Range;
 
 Domain Object Type is a kind of Object Type;
+Domain Object Type is independent;
 
 Entity Type is a kind of Domain Object Type;
 Entity Type objectifies at most one Fact Type,
@@ -514,8 +515,8 @@ Composite has at most one primary-Index,
 	Index is primary for at most one Composite;
 Index is primary for Composite
 	only if Index is unique;
-identified Composite has primary Access Path
-	only if Composite is reached through Access Path;
+Composite has primary Index
+	only if Composite is reached through Access Path that is an Index;
 
 Index Field is where
 	Access Path for Ordinal field uses one Component,

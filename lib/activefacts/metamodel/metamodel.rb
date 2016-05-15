@@ -90,7 +90,6 @@ module ActiveFacts
       identified_by   :vocabulary, :name
       has_one         :vocabulary, mandatory: true        # Object Type belongs to Vocabulary, see Vocabulary#all_object_type
       has_one         :name, mandatory: true              # Object Type is called Name, see Name#all_object_type
-      maybe           :is_independent                     # Is Independent
       has_one         :pronoun                            # Object Type uses Pronoun, see Pronoun#all_object_type
     end
 
@@ -101,6 +100,10 @@ module ActiveFacts
     end
 
     class NestingMode < String
+      value_type
+    end
+
+    class Description < String
       value_type
     end
 
@@ -128,6 +131,7 @@ module ActiveFacts
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Concept has Guid, see Guid#concept
       has_one         :implication_rule                   # Concept is implied by Implication Rule, see ImplicationRule#all_concept
+      has_one         :informal_description, class: Description  # Concept has informal-Description, see Description#all_concept_as_informal_description
       one_to_one      :object_type                        # Object Type is an instance of Concept, see ObjectType#concept
       one_to_one      :population                         # Population is an instance of Concept, see Population#concept
       one_to_one      :role                               # Role is an instance of Concept, see Role#concept
@@ -151,6 +155,7 @@ module ActiveFacts
     end
 
     class DomainObjectType < ObjectType
+      maybe           :is_independent                     # Is Independent
     end
 
     class Length < UnsignedInteger
@@ -306,7 +311,7 @@ module ActiveFacts
     class Aggregation
       identified_by   :aggregate, :aggregated_variable
       has_one         :aggregate, mandatory: true         # Aggregation involves Aggregate, see Aggregate#all_aggregation
-      has_one         :aggregated_variable, mandatory: true, class: Variable  # Aggregation involves Variable, see Variable#all_aggregation_as_aggregated_variable
+      has_one         :aggregated_variable, mandatory: true, class: Variable  # Aggregation involves aggregated-Variable, see Variable#all_aggregation_as_aggregated_variable
       has_one         :variable, mandatory: true          # Aggregation involves Variable, see Variable#all_aggregation
     end
 
@@ -314,15 +319,11 @@ module ActiveFacts
       value_type
     end
 
-    class Discussion < String
-      value_type
-    end
-
     class ContextNote
       identified_by   :concept
       one_to_one      :concept, mandatory: true           # Context Note is an instance of Concept, see Concept#context_note
       has_one         :context_note_kind, mandatory: true  # Context Note has Context Note Kind, see ContextNoteKind#all_context_note
-      has_one         :discussion, mandatory: true        # Context Note has Discussion, see Discussion#all_context_note
+      has_one         :description, mandatory: true       # Context Note has Description, see Description#all_context_note
       has_one         :relevant_concept, class: Concept   # Context Note applies to relevant-Concept, see Concept#all_context_note_as_relevant_concept
     end
 
@@ -365,7 +366,7 @@ module ActiveFacts
     class ConceptAnnotation
       identified_by   :concept, :mapping_annotation
       has_one         :concept, mandatory: true           # Concept Annotation involves Concept, see Concept#all_concept_annotation
-      has_one         :mapping_annotation, mandatory: true, class: Annotation  # Concept Annotation involves Annotation, see Annotation#all_concept_annotation_as_mapping_annotation
+      has_one         :mapping_annotation, mandatory: true, class: Annotation  # Concept Annotation involves mapping-Annotation, see Annotation#all_concept_annotation_as_mapping_annotation
     end
 
     class Shape
@@ -399,8 +400,8 @@ module ActiveFacts
 
     class Derivation
       identified_by   :derived_unit, :base_unit
-      has_one         :derived_unit, mandatory: true, class: Unit  # Derivation involves Unit, see Unit#all_derivation_as_derived_unit
-      has_one         :base_unit, mandatory: true, class: Unit  # Derivation involves Unit, see Unit#all_derivation_as_base_unit
+      has_one         :derived_unit, mandatory: true, class: Unit  # Derivation involves Derived Unit, see Unit#all_derivation_as_derived_unit
+      has_one         :base_unit, mandatory: true, class: Unit  # Derivation involves Base Unit, see Unit#all_derivation_as_base_unit
       has_one         :exponent                           # Derivation has Exponent, see Exponent#all_derivation
     end
 
@@ -514,13 +515,13 @@ module ActiveFacts
     class LeafConstraint
       identified_by   :component, :leaf_constraint
       has_one         :component, mandatory: true         # Leaf Constraint involves Component, see Component#all_leaf_constraint
-      has_one         :leaf_constraint, mandatory: true, class: Constraint  # Leaf Constraint involves Constraint, see Constraint#all_leaf_constraint_as_leaf_constraint
+      has_one         :leaf_constraint, mandatory: true, class: Constraint  # Leaf Constraint involves leaf-Constraint, see Constraint#all_leaf_constraint_as_leaf_constraint
     end
 
     class LocalConstraint
       identified_by   :composite, :local_constraint
       has_one         :composite, mandatory: true         # Local Constraint involves Composite, see Composite#all_local_constraint
-      has_one         :local_constraint, mandatory: true, class: Constraint  # Local Constraint involves Constraint, see Constraint#all_local_constraint_as_local_constraint
+      has_one         :local_constraint, mandatory: true, class: Constraint  # Local Constraint involves local-Constraint, see Constraint#all_local_constraint_as_local_constraint
     end
 
     class X < SignedInteger
@@ -549,7 +550,7 @@ module ActiveFacts
       identified_by   :absorption, :ordinal
       has_one         :absorption, mandatory: true        # Nesting involves Absorption, see Absorption#all_nesting
       has_one         :ordinal, mandatory: true           # Nesting involves Ordinal, see Ordinal#all_nesting
-      has_one         :index_role, mandatory: true, class: Role  # Nesting involves Role, see Role#all_nesting_as_index_role
+      has_one         :index_role, mandatory: true, class: Role  # Nesting involves index-Role, see Role#all_nesting_as_index_role
       has_one         :key_name, class: Name              # Nesting has key-Name, see Name#all_nesting_as_key_name
     end
 
@@ -643,7 +644,7 @@ module ActiveFacts
     class SpanningConstraint
       identified_by   :composite, :spanning_constraint
       has_one         :composite, mandatory: true         # Spanning Constraint involves Composite, see Composite#all_spanning_constraint
-      has_one         :spanning_constraint, mandatory: true, class: Constraint  # Spanning Constraint involves Constraint, see Constraint#all_spanning_constraint_as_spanning_constraint
+      has_one         :spanning_constraint, mandatory: true, class: Constraint  # Spanning Constraint involves spanning-Constraint, see Constraint#all_spanning_constraint_as_spanning_constraint
     end
 
     class SubsetConstraint < SetConstraint
@@ -660,8 +661,8 @@ module ActiveFacts
 
     class TypeInheritance < FactType
       identified_by   :subtype, :supertype
-      has_one         :subtype, mandatory: true, class: EntityType  # Type Inheritance involves Entity Type, see EntityType#all_type_inheritance_as_subtype
-      has_one         :supertype, mandatory: true, class: EntityType  # Type Inheritance involves Entity Type, see EntityType#all_type_inheritance_as_supertype
+      has_one         :subtype, mandatory: true, class: EntityType  # Type Inheritance involves Subtype, see EntityType#all_type_inheritance_as_subtype
+      has_one         :supertype, mandatory: true, class: EntityType  # Type Inheritance involves Supertype, see EntityType#all_type_inheritance_as_supertype
       maybe           :provides_identification            # Provides Identification
       has_one         :assimilation                       # Type Inheritance uses Assimilation, see Assimilation#all_type_inheritance
     end
