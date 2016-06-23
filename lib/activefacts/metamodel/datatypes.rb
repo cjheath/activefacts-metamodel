@@ -10,19 +10,11 @@ module ActiveFacts
     class DataType
       TypeNames = %w{
         Boolean
-        Integer
-        Real
-        Decimal
-        Money
-        Char
-        String
-        Text
-        Date
-        Time
-        DateTime
-        Timestamp
+        Integer Real Decimal Money
+        Char String Text
+        Date Time DateTime Timestamp
         Binary
-      }
+      }.freeze
 
       TypeNames.each_with_index do |name, i|
         DataType.const_set("TYPE_"+name, i)
