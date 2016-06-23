@@ -5,6 +5,7 @@ module ActiveFacts
     class Component
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Component has Guid, see Guid#component
+      maybe           :has_absolute_name                  # Has Absolute Name
       has_one         :name                               # Component projects Name, see Name#all_component
       has_one         :ordinal                            # Component has Ordinal rank, see Ordinal#all_component
       has_one         :parent, class: Component, counterpart: :member  # Member belongs to Parent, see Component#all_member
@@ -12,6 +13,7 @@ module ActiveFacts
 
     class Mapping < Component
       has_one         :object_type, mandatory: true       # Mapping represents Object Type, see ObjectType#all_mapping
+      has_one         :native_type_name, class: "Name"    # Mapping uses native- type Name, see Name#all_mapping_as_native_type_name
     end
 
     class AccessPath
@@ -363,18 +365,22 @@ module ActiveFacts
       value_type
     end
 
+    class Shape
+      identified_by   :guid
+      one_to_one      :guid, mandatory: true              # Shape has Guid, see Guid#shape
+      has_one         :orm_diagram, mandatory: true, class: "ORMDiagram"  # Shape is in ORM Diagram, see ORMDiagram#all_shape_as_orm_diagram
+      has_one         :location                           # Shape is at Location, see Location#all_shape
+    end
+
+    class ComponentShape < Shape
+      has_one         :component                          # Component Shape is for Component, see Component#all_component_shape
+      has_one         :parent_component_shape, class: ComponentShape  # Component Shape is contained in parent-Component Shape, see ComponentShape#all_component_shape_as_parent_component_shape
+    end
+
     class ConceptAnnotation
       identified_by   :concept, :mapping_annotation
       has_one         :concept, mandatory: true           # Concept Annotation involves Concept, see Concept#all_concept_annotation
       has_one         :mapping_annotation, mandatory: true, class: Annotation  # Concept Annotation involves mapping-Annotation, see Annotation#all_concept_annotation_as_mapping_annotation
-    end
-
-    class Shape
-      identified_by   :guid
-      one_to_one      :guid, mandatory: true              # Shape has Guid, see Guid#shape
-      maybe           :is_expanded                        # Is Expanded
-      has_one         :orm_diagram, mandatory: true, class: "ORMDiagram"  # Shape is in ORM Diagram, see ORMDiagram#all_shape_as_orm_diagram
-      has_one         :location                           # Shape is at Location, see Location#all_shape
     end
 
     class ConstraintShape < Shape
@@ -507,6 +513,8 @@ module ActiveFacts
 
     class Indicator < Component
       has_one         :role, mandatory: true              # Indicator indicates Role played, see Role#all_indicator
+      has_one         :false_value, class: Value          # Indicator uses false-Value, see Value#all_indicator_as_false_value
+      has_one         :true_value, class: Value           # Indicator uses true-Value, see Value#all_indicator_as_true_value
     end
 
     class Injection < Mapping
@@ -558,7 +566,7 @@ module ActiveFacts
     end
 
     class ObjectTypeShape < Shape
-      maybe           :has_expanded_reference_mode        # Has Expanded Reference Mode
+      maybe           :is_expanded                        # Is Expanded
       has_one         :object_type, mandatory: true       # Object Type Shape is for Object Type, see ObjectType#all_object_type_shape
     end
 

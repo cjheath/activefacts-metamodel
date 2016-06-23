@@ -13,3 +13,4 @@ bin
 *.rej
 *.orig
 *.diff
+Metamodel.old.cql

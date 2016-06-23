@@ -29,8 +29,8 @@ task :cql do
   # This means that SOME PATCHES WILL FAIL
   system "afgen --cql orm/Metamodel.orm > Metamodel.cql"
   system "patch < orm/Metamodel.cql.diffs"
-  system "afgen --cql cql/Metamodel.cql 2>/dev/null >Metamodel.cql.cql"
-  system "diff -b -C 1 Metamodel.cql Metamodel.cql.cql | tee Metamodel.cql.diffs"
+  system "afgen --cql cql/Metamodel.cql 2>/dev/null >Metamodel.old.cql"
+  system "diff -b -C 1  Metamodel.old.cql Metamodel.cql | tee Metamodel.cql.diffs"
 end
 
 desc "Generate new Ruby from the CQL file"

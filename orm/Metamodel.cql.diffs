@@ -1,5 +1,5 @@
-*** Metamodel.cql	2016-01-29 17:17:37.000000000 +1100
---- Metamodel.cql.cql	2016-01-29 17:17:51.000000000 +1100
+*** Metamodel.cql.orig	2016-06-23 13:42:35.000000000 +1000
+--- Metamodel.cql	2016-06-23 13:44:05.000000000 +1000
 ***************
 *** 19,21 ****
   Frequency is written as Unsigned Integer(32);
@@ -10,55 +10,72 @@
 ! Guid is written as Guid auto-assigned at assert;
   Implication Rule Name is written as String;
 ***************
-*** 509,511 ****
+*** 149,151 ****
+  Mapping is a kind of Component;
+! Mapping uses at most one nativetype-Name;
+  
+--- 149,151 ----
+  Mapping is a kind of Component;
+! Mapping uses at most one native- type Name;
+  
+***************
+*** 496,498 ****
+  	Fact Type is objectified as at most one Entity Type;
+! Entity Type implicitly objectifies at most one implicitlyobjectified-Fact Type;
+  
+--- 496,498 ----
+  	Fact Type is objectified as at most one Entity Type;
+! Entity Type implicitly objectifies at most one implicitly- objectified Fact Type;
+  
+***************
+*** 541,543 ****
   for each Component exactly one of these holds:
 ! 	Component is a Mapping that projects Composite,
   	Component is an Indicator,
---- 509,511 ----
+--- 541,543 ----
   for each Component exactly one of these holds:
 ! 	Component is a Mapping,
   	Component is an Indicator,
 ***************
-*** 578,582 ****
+*** 589,593 ****
   either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
 - for each Mapping at most one of these holds:
 - 	Absorption(1) flattens and Mapping(1) is an Absorption(2),
 - 	Mapping projects Composite;
   for each Instance at most one of these holds:
---- 578,579 ----
+--- 589,590 ----
 ***************
-*** 562,563 ****
---- 559,563 ----
+*** 595,596 ****
+--- 592,596 ----
   	Instance objectifies Fact;
 + for each Mapping at most one of these holds:
 + 	Mapping is an Absorption that flattens,
 + 	Mapping projects Composite;
   Absorption is nested under index Role in Ordinal position
 ***************
-*** 565,569 ****
+*** 598,602 ****
   	Absorption uses Nesting Mode;
 - Object Type is involved in Full Absorption that applies to Absorption that is a kind of Mapping(2)
 - 	if and only if
 - 	Mapping(1) represents Object Type;
   Role Value is of Instance that is of Object Type
---- 565,566 ----
+--- 598,599 ----
 ***************
-*** 597,599 ****
-  either Agreement was reached by Agent or Agreement was on Date;
-- either Component projects Name or Absorption flattens;
-  each Concept occurs at most one time in
---- 594,595 ----
-***************
-*** 599,600 ****
---- 599,602 ----
-  	Variable is restricted by Role of Step;
-+ Absorption traverses to child Role that is played by Object Type
-+ 	only if Absorption is a kind of Mapping that represents Object Type;
-  Composite has primary Index
-***************
-*** 603,606 ****
+*** 615,618 ****
   	only if Index is unique;
 - Absorption traverses to child Role that is played by Object Type and Absorption is a kind of Mapping(2)
 - 	only if Mapping(1) represents Object Type;
   Presence Constraint is preferred identifier
---- 605,606 ----
+--- 612,613 ----
+***************
+*** 626,629 ****
+  either Agreement was reached by Agent or Agreement was on Date;
+- either Component projects Name or Absorption flattens;
+  each Concept occurs at most one time in
+  	Object Type is an instance of Concept;
+--- 621,625 ----
+  either Agreement was reached by Agent or Agreement was on Date;
+  each Concept occurs at most one time in
++ Absorption traverses to child Role that is played by Object Type
++ 	only if Absorption is a kind of Mapping that represents Object Type;
+  	Object Type is an instance of Concept;

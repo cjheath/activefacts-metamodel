@@ -159,12 +159,6 @@ Instance plays Role Value,
 
 Set Constraint is a kind of Constraint;
 
-Shape is identified by Guid where
-	Shape has one Guid,
-	Guid is of at most one Shape;
-Shape is at at most one Location;
-Shape is expanded;
-
 Step is identified by Guid where
 	Step has one Guid,
 	Guid is of at most one Step;
@@ -247,9 +241,6 @@ Bound is identified by Value and Bound is inclusive where
 	Value is of at least one Bound,
 	Bound is inclusive;
 
-Constraint Shape is a kind of Shape;
-Constraint Shape is for one Constraint;
-
 Context According To is where
 	Context Note is according to Agent,
 	Agent claims Context Note;
@@ -263,28 +254,9 @@ Derivation is where
 	Unit (as Derived Unit) is derived from base-Unit (as Base Unit) [acyclic, intransitive];
 Derivation has at most one Exponent;
 
-Diagram is identified by Vocabulary and Name where
-	Diagram is for one Vocabulary,
-	Vocabulary contains Diagram,
-	Diagram is called one Name,
-	Name is of Diagram;
-
-Fact Type Shape is a kind of Shape;
-Fact Type Shape has at most one Display Role Names Setting;
-Fact Type Shape is for one Fact Type,
-	Fact Type has Fact Type Shape;
-Fact Type Shape has at most one Rotation Setting;
-
 Mirror Role is a kind of Role;
 Mirror Role is for at most one Role (as Base Role),
 	Base Role implies at most one Mirror Role;
-
-Model Note Shape is a kind of Shape;
-Model Note Shape is for one Context Note;
-
-ORM Diagram is a kind of Diagram;
-Shape is in one ORM Diagram,
-	ORM Diagram includes Shape;
 
 Object Type is identified by Vocabulary and Name where
 	Object Type belongs to one Vocabulary,
@@ -296,15 +268,6 @@ Object Type plays Role,
 	Role is played by one Object Type;
 Variable is for one Object Type,
 	Object Type is referenced in Variable;
-
-Object Type Shape is a kind of Shape;
-Object Type Shape is for one Object Type,
-	Object Type has Object Type Shape;
-Object Type Shape has expanded reference mode;
-
-Objectified Fact Type Name Shape is a kind of Shape;
-Objectified Fact Type Name Shape is for one Fact Type Shape,
-	Fact Type Shape has at most one Objectified Fact Type Name Shape;
 
 Play is where
 	Variable is restricted by Role of Step,
@@ -323,23 +286,6 @@ Population includes Instance,
 	Instance belongs to one Population;
 Population includes Role Value,
 	Role Value belongs to one Population;
-
-Reading Shape is a kind of Shape;
-Fact Type Shape has at most one Reading Shape,
-	Reading Shape is for one Fact Type Shape;
-Reading Shape is for one Reading,
-	Reading has Reading Shape;
-
-Ring Constraint Shape is a kind of Constraint Shape;
-Ring Constraint Shape is attached to one Fact Type Shape;
-
-Role Display is where
-	Fact Type Shape displays Role in Ordinal position,
-	Fact Type Shape displays in Ordinal position one Role;
-
-Role Name Shape is a kind of Shape;
-Role Name Shape is for one Role Display,
-	Role Display has at most one Role Name Shape;
 
 Role Ref is where
 	Role Sequence in Ordinal position includes one Role,
@@ -363,12 +309,6 @@ Set Equality Constraint is a kind of Set Comparison Constraint;
 
 Set Exclusion Constraint is a kind of Set Comparison Constraint;
 Set Exclusion Constraint is mandatory;
-
-Value Constraint Shape is a kind of Constraint Shape;
-Role Display has at most one Value Constraint Shape,
-	Value Constraint Shape is for at most one Role Display;
-Value Constraint Shape is for at most one Object Type Shape,
-	Object Type Shape has Value Constraint Shape;
 
 Value Range is identified by minimum-Bound and maximum-Bound where
 	Value Range has at most one minimum-Bound,
@@ -430,9 +370,12 @@ Component (as Member) belongs to at most one Component (as Parent) [acyclic, str
 	Parent contains Member;
 Component projects at most one Name;
 Component has at most one Ordinal rank;
+Component has absolute name;
 
 Indicator is a kind of Component;
 Indicator indicates one Role played;
+Indicator uses at most one false-Value;
+Indicator uses at most one true-Value;
 
 Discriminator is a kind of Component;
 Discriminated Role is where
@@ -441,6 +384,7 @@ Discriminated Role is where
 
 Mapping is a kind of Component;
 Mapping represents one Object Type;
+Mapping uses at most one native- type Name;
 
 Composite is identified by Mapping where
 	Mapping projects at most one Composite,
@@ -552,6 +496,88 @@ Absorption is nested under index Role in Ordinal position
 	that Absorption uses some Nesting Mode;
 
 /*
+ * Diagrams
+ */
+Diagram is identified by Vocabulary and Name where
+	Diagram is for one Vocabulary,
+	Vocabulary contains Diagram,
+	Diagram is called one Name,
+	Name is of Diagram;
+ORM Diagram is a kind of Diagram;
+
+Shape is identified by Guid where
+	Shape has one Guid,
+	Guid is of at most one Shape;
+Shape is in one ORM Diagram,
+	ORM Diagram includes Shape;
+Shape is at at most one Location;
+
+each combination ORM Diagram, Location occurs at most one time in
+	Shape is in ORM Diagram,
+	Shape is at Location;
+
+Fact Type Shape is a kind of Shape;
+Fact Type Shape has at most one Display Role Names Setting;
+Fact Type Shape is for one Fact Type,
+	Fact Type has Fact Type Shape;
+Fact Type Shape has at most one Rotation Setting;
+
+Object Type Shape is a kind of Shape;
+Object Type Shape is for one Object Type,
+	Object Type has Object Type Shape;
+Object Type Shape is expanded;
+
+Objectified Fact Type Name Shape is a kind of Shape;
+Objectified Fact Type Name Shape is for one Fact Type Shape,
+	Fact Type Shape has at most one Objectified Fact Type Name Shape;
+
+Constraint Shape is a kind of Shape;
+Constraint Shape is for one Constraint;
+
+Model Note Shape is a kind of Shape;
+Model Note Shape is for one Context Note;
+
+Reading Shape is a kind of Shape;
+Fact Type Shape has at most one Reading Shape,
+	Reading Shape is for one Fact Type Shape;
+Reading Shape is for one Reading,
+	Reading has Reading Shape;
+
+Ring Constraint Shape is a kind of Constraint Shape;
+Ring Constraint Shape is attached to one Fact Type Shape;
+
+Role Display is where
+	Fact Type Shape displays Role in Ordinal position,
+	Fact Type Shape displays in Ordinal position one Role;
+
+Role Name Shape is a kind of Shape;
+Role Name Shape is for one Role Display,
+	Role Display has at most one Role Name Shape;
+
+Value Constraint Shape is a kind of Constraint Shape;
+Role Display has at most one Value Constraint Shape,
+	Value Constraint Shape is for at most one Role Display;
+Value Constraint Shape is for at most one Object Type Shape,
+	Object Type Shape has Value Constraint Shape;
+
+Component Shape is a kind of Shape;
+Component Shape is for at most one Component;
+parent- Component Shape contains Component Shape,
+	Component Shape is contained in at most one parent- Component Shape;
+
+either Constraint Shape is a Ring Constraint Shape or Constraint Shape is a Value Constraint Shape but not both;
+for each Shape exactly one of these holds:
+	Shape is an Object Type Shape,
+	Shape is a Fact Type Shape,
+	Shape is a Constraint Shape,
+	Shape is an Objectified Fact Type Name Shape,
+	Shape is a Reading Shape,
+	Shape is a Role Name Shape,
+	Shape is a Model Note Shape,
+	Shape is a Component Shape;
+either Value Constraint Shape is for Object Type Shape or Value Constraint Shape is for Role Display but not both;
+
+/*
  * Constraints:
  */
 either Component(1) belongs to Component(2) or Component(1) is a Mapping that projects some Composite but not both;
@@ -570,7 +596,6 @@ for each Concept exactly one of these holds:
 	Fact is an instance of Concept,
 	Population is an instance of Concept,
 	Query is an instance of Concept;
-either Constraint Shape is a Ring Constraint Shape or Constraint Shape is a Value Constraint Shape but not both;
 for each Constraint exactly one of these holds:
 	Constraint is a Set Constraint,
 	Constraint is a Presence Constraint,
@@ -590,17 +615,8 @@ for each Role Sequence exactly one of these holds:
 	Role Sequence is Ordinal in Set Comparison Constraint;
 either Set Comparison Constraint is a Set Exclusion Constraint or Set Comparison Constraint is a Set Equality Constraint but not both;
 either Set Constraint is a Set Comparison Constraint or Set Constraint is a Subset Constraint but not both;
-for each Shape exactly one of these holds:
-	Shape is an Object Type Shape,
-	Shape is a Fact Type Shape,
-	Shape is a Constraint Shape,
-	Shape is an Objectified Fact Type Name Shape,
-	Shape is a Reading Shape,
-	Shape is a Role Name Shape,
-	Shape is a Model Note Shape;
 either Unit uses coefficient from Ephemera URL or Unit has Coefficient but not both;
 either Unit is fundamental or Unit is derived from base-Unit but not both;
-either Value Constraint Shape is for Object Type Shape or Value Constraint Shape is for Role Display but not both;
 either Value Constraint allows Value Range or Value Constraint requires matching Regular Expression but not both;
 either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
 for each Mapping at most one of these holds:
@@ -648,9 +664,6 @@ each combination Discriminator, Value occurs one time in
 each combination Entity Type(1), Type Inheritance occurs at most one time in
 	Entity Type(1) is subtype of super Entity Type(2),
 	Type Inheritance provides identification;
-each combination ORM Diagram, Location occurs at most one time in
-	Shape is in ORM Diagram,
-	Shape is at Location;
 each Presence Constraint occurs at least one time in
 	Presence Constraint has min Frequency(2),
 	Presence Constraint has max Frequency(1),
