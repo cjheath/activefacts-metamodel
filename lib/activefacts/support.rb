@@ -131,7 +131,9 @@ class String
           (?<=[[:alnum:]])(?=[[:upper:]][[:lower:]])
         }x
       ).
-      reject{|w| w == '' }
+      reject{|w| w == '' }.
+      # Any word that starts with a digit gets an _
+      map{|w| w =~ /^[^_[:alpha:]]/ ? '_'+w : w}
     )
   end
 end
