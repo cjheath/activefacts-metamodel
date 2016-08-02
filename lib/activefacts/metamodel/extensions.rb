@@ -1914,41 +1914,6 @@ module ActiveFacts
       end
     end
 
-    class SurrogateKey
-      def is_identifying
-        if pk = root.primary_index
-          return pk.all_index_field.detect{|ixf| ixf.component == self}
-        end
-        !parent.parent
-      end
-
-      def is_auto_assigned
-        # It's auto-assigned if it's in its root's primary_index and is not a foreign key field
-        root and
-          (root.primary_index.all_index_field.detect{|ixf| ixf.component == self}) and
-          (!all_foreign_key_field.detect{|fkf| fkf.foreign_key.source_composite == self.root})
-      end
-
-      def comment
-        return 'surrogate key' unless parent
-        ((c = parent.comment) != '' ? c : parent.name + ' surrogate key')
-      end
-    end
-
-    class ValueField
-      def inspect
-        "#{self.class.basename} #{object_type.name.inspect}"
-      end
-
-      def show_trace
-        trace :composition, "#{ordinal}: #{inspect}#{name ? " (as #{name.inspect})" : ''}"
-      end
-
-      def comment
-        (c = parent && parent.comment) && c != '' ? c : name
-      end
-    end
-
     class Component
       # The ranking key of a component indicates its importance to its parent:
       # Ranking assigns a total order, but is computed in groups:
@@ -2115,6 +2080,53 @@ module ActiveFacts
       def comment
         return '' unless parent
         ((c = parent.comment) != '' ? c +' and ' : '') + name
+      end
+    end
+
+    class Scoping
+      def path_mandatory
+        parent.path_mandatory
+      end
+    end
+
+    class Injection
+      def path_mandatory
+        parent.path_mandatory
+      end
+    end
+
+    class ValueField
+      def inspect
+        "#{self.class.basename} #{object_type.name.inspect}"
+      end
+
+      def show_trace
+        trace :composition, "#{ordinal}: #{inspect}#{name ? " (as #{name.inspect})" : ''}"
+      end
+
+      def comment
+        (c = parent && parent.comment) && c != '' ? c : name
+      end
+    end
+
+    class SurrogateKey
+      def is_identifying
+        if pk = root.primary_index
+          return pk.all_index_field.detect{|ixf| ixf.component == self}
+        end
+        !parent.parent
+      end
+
+      def is_auto_assigned
+        # It's auto-assigned if it's in its root's primary_index and is not a foreign key field
+        root and
+          (root.primary_index.all_index_field.detect{|ixf| ixf.component == self}) and
+          (!all_foreign_key_field.detect{|fkf| fkf.foreign_key.source_composite == self.root})
+      end
+
+      def comment
+        return 'surrogate key' unless parent
+        ((c = parent.comment) != '' ? c : parent.name + ' surrogate key')
       end
     end
 
