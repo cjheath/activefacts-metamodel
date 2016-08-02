@@ -196,7 +196,7 @@ module ActiveFacts
         when SurrogateKey
           [ context.surrogate_type,
             if in_primary_index and !in_foreign_key
-              {auto_assign: true}
+              {auto_assign: "commit"}
             else
               {}
             end.
@@ -207,6 +207,7 @@ module ActiveFacts
           context.valid_from_type
 
         when ValueField, Absorption
+          # Walk up the entity type identifiers (must be single-part) to a value type:
           vt = self.object_type
           while vt.is_a?(EntityType)
             rr = vt.preferred_identifier.role_sequence.all_role_ref.single
@@ -220,12 +221,15 @@ module ActiveFacts
             value_constraint = narrow_value_constraint(value_constraint, child_role.role_value_constraint)
           end
 
+          # Gather up the characteristics from the value supertype hierarchy:
+          is_auto_assigned = false
           stype = vt
           begin
             vt = stype
             # REVISIT: Check for length and scale shortening
             length ||= vt.length
             scale ||= vt.scale
+            is_auto_assigned ||= vt.is_auto_assigned
             unless parent.parent and parent.foreign_key
               # No need to enforce value constraints that are already enforced by a foreign key
               value_constraint = narrow_value_constraint(value_constraint, vt.value_constraint)
@@ -235,7 +239,7 @@ module ActiveFacts
           [ vt.name,
             (length ? {length: length} : {}).
             merge!(scale ? {scale: scale} : {}).
-            merge!({ auto_assign: (in_primary_index and !in_foreign_key and vt.is_auto_assigned) }).
+            merge!({ auto_assign: (in_primary_index and !in_foreign_key and is_auto_assigned) }).
             merge!({mandatory: path_mandatory}).
             merge!(value_constraint ? {value_constraint: value_constraint} : {})
           ]
