@@ -181,7 +181,8 @@ module ActiveFacts
 
     class Component
       def in_primary_index
-        root.primary_index.all_index_field.detect{|ixf| ixf.component == self}
+        primary_index = root.primary_index and
+        primary_index.all_index_field.detect{|ixf| ixf.component == self}
       end
 
       def in_foreign_key
