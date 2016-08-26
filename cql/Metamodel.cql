@@ -113,6 +113,8 @@ Presence Constraint is preferred identifier;
 
 Query is identified by Concept where
 	Query is an instance of one Concept;
+Query specifies at most one Fact Type (as Derived Fact Type),
+	Derived Fact Type directs Query;
 
 Reading is identified by Fact Type and Ordinal where
 	Fact Type has Reading,
