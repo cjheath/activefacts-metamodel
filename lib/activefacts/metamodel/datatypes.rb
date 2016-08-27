@@ -181,8 +181,8 @@ module ActiveFacts
 
     class Component
       def in_primary_index
-        pi = root.primary_index
-        pi.all_index_field.detect{|ixf| ixf.component == self} if pi
+        primary_index = root.primary_index and
+        primary_index.all_index_field.detect{|ixf| ixf.component == self}
       end
 
       def in_foreign_key
