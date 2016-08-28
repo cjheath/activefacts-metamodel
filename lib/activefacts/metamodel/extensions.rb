@@ -543,7 +543,8 @@ module ActiveFacts
         if fact_type
           # Objectified unaries are identified by the ID of the object that plays the role:
           if fact_type.all_role.size == 1
-            return @preferred_identifier = fact_type.all_role.single.object_type.preferred_identifier
+            entity_type = fact_type.all_role.single.object_type
+            return @preferred_identifier = entity_type.preferred_identifier
           end
 
           # When compiling a fact instance, the delayed creation of a preferred identifier might be necessary
@@ -813,6 +814,7 @@ module ActiveFacts
         pc2.is_preferred_identifier = inheritance_fact.provides_identification
         trace :supertype, "identification of #{name} via supertype #{supertype.name} was #{inheritance_fact.provides_identification ? '' : 'not '}added"
         trace :constraint, "Made new supertype PC GUID=#{pc2.concept.guid} min=1 max=1 over #{p2rs.describe}"
+        inheritance_fact
       end
 
       # This entity type has just objectified a fact type.
@@ -1290,6 +1292,10 @@ module ActiveFacts
           r1 = constellation.Reading(self, 1, :role_sequence => rs, :text => "{1} is involved in {0}", :is_negative => false)
         end
         @all_reading
+      end
+
+      def objectification_role
+        (all_role.to_a-[implying_role.mirror_role_as_base_role])[0]
       end
     end
 
@@ -2081,6 +2087,10 @@ module ActiveFacts
         return '' unless parent
         ((c = parent.comment) != '' ? c +' and ' : '') + name
       end
+
+      def fork_to_new_parent parent
+        @constellation.fork self, guid: :new, parent: parent
+      end
     end
 
     class Scoping
@@ -2106,6 +2116,11 @@ module ActiveFacts
 
       def comment
         (c = parent && parent.comment) && c != '' ? c : name
+      end
+
+      def fork_to_new_parent parent
+        # When we fork from a ValueField, we want to use the name of the ValueType, not the ValueField name
+        @constellation.fork self, guid: :new, parent: parent, name: object_type.name
       end
     end
 
