@@ -507,7 +507,7 @@ module ActiveFacts
       end
 
       def common_supertype(other)
-        return nil unless other.is_?(ActiveFacts::Metamodel::ValueType)
+        return nil unless other.is_a?(ActiveFacts::Metamodel::ValueType)
         return self if other.supertypes_transitive.include?(self)
         return other if supertypes_transitive.include(other)
         nil
