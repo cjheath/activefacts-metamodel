@@ -223,7 +223,7 @@ module ActiveFacts
     class Query
       identified_by   :concept
       one_to_one      :concept, mandatory: true           # Query is an instance of Concept, see Concept#query
-      has_one         :derived_fact_type, class: FactType  # Query specifies Derived Fact Type, see FactType#all_query_as_derived_fact_type
+      has_one         :derived_fact_type, class: FactType  # Query projects Derived Fact Type, see FactType#all_query_as_derived_fact_type
     end
 
     class AlternativeSet
