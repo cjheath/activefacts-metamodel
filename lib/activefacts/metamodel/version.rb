@@ -1,5 +1,5 @@
 module ActiveFacts
   module Metamodel
-    VERSION = "1.9.11"
+    VERSION = "1.9.12"
   end
 end
