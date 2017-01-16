@@ -140,9 +140,15 @@ module ActiveFacts
       has_one         :topic                              # Concept belongs to Topic, see Topic#all_concept
     end
 
+    class Query
+      identified_by   :concept
+      one_to_one      :concept, mandatory: true           # Query is an instance of Concept, see Concept#query
+    end
+
     class FactType
       identified_by   :concept
       one_to_one      :concept, mandatory: true           # Fact Type is an instance of Concept, see Concept#fact_type
+      one_to_one      :query, counterpart: :derived_fact_type  # derived-Fact Type is projected from Query, see Query#derived_fact_type
     end
 
     class LinkFactType < FactType
@@ -218,12 +224,6 @@ module ActiveFacts
     class ValueConstraint < Constraint
       has_one         :regular_expression                 # Value Constraint requires matching Regular Expression, see RegularExpression#all_value_constraint
       one_to_one      :value_type                         # Value Constraint constrains Value Type, see ValueType#value_constraint
-    end
-
-    class Query
-      identified_by   :concept
-      one_to_one      :concept, mandatory: true           # Query is an instance of Concept, see Concept#query
-      has_one         :derived_fact_type, class: FactType  # Query projects Derived Fact Type, see FactType#all_query_as_derived_fact_type
     end
 
     class AlternativeSet
@@ -502,6 +502,12 @@ module ActiveFacts
       has_one         :ordinal, mandatory: true           # Foreign Key Field involves Ordinal, see Ordinal#all_foreign_key_field
       has_one         :component, mandatory: true         # Foreign Key Field involves Component, see Component#all_foreign_key_field
       has_one         :value                              # Foreign Key Field is discriminated by Value, see Value#all_foreign_key_field
+    end
+
+    class Import
+      identified_by   :topic, :precursor_topic
+      has_one         :topic, mandatory: true             # Import involves Topic, see Topic#all_import
+      has_one         :precursor_topic, mandatory: true, class: Topic  # Import involves precursor-Topic, see Topic#all_import_as_precursor_topic
     end
 
     class IndexField

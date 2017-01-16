@@ -181,6 +181,9 @@ Topic is identified by topic-Name where
 Concept belongs to at most one Topic,
 	Topic contains Concept;
 
+Import is where
+    Topic imports precursor- Topic;
+
 Unit is identified by Concept where
 	Unit is an instance of one Concept;
 Ephemera URL provides Unit coefficient,
@@ -431,7 +434,7 @@ Leaf Constraint is where
 Local Constraint is where
 	Composite contains local-Constraint,
 	local-Constraint connects leaves of Composite;
- 
+
 Spanning Constraint is where
 	Composite has spanning-Constraint,
 	Constraint spans Composite;
