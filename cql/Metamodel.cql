@@ -183,6 +183,7 @@ Concept belongs to at most one Topic,
 
 Import is where
     Topic imports precursor- Topic;
+Import has at most one role- Name (as Import Role);
 
 Unit is identified by Concept where
 	Unit is an instance of one Concept;
@@ -226,6 +227,7 @@ Variable has at most one role-Name,
 
 Vocabulary is identified by Name where
 	Vocabulary is called one Name;
+Vocabulary is transform;
 Vocabulary contains Constraint,
 	Constraint belongs to at most one Vocabulary;
 Vocabulary includes Unit,
