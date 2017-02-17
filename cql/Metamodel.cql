@@ -184,6 +184,7 @@ Concept belongs to at most one Topic,
 Import is where
     Topic imports precursor- Topic;
 Import has at most one role- Name (as Import Role);
+Import has one file-Name;
 
 Unit is identified by Concept where
 	Unit is an instance of one Concept;

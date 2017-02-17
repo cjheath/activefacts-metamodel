@@ -509,6 +509,7 @@ module ActiveFacts
       identified_by   :topic, :precursor_topic
       has_one         :topic, mandatory: true             # Import involves Topic, see Topic#all_import
       has_one         :precursor_topic, mandatory: true, class: Topic  # Import involves precursor-Topic, see Topic#all_import_as_precursor_topic
+      has_one         :file_name, mandatory: true, class: Name  # Import has file-Name, see Name#all_import_as_file_name
       has_one         :import_role, class: Name           # Import has Import Role, see Name#all_import_as_import_role
     end
 
