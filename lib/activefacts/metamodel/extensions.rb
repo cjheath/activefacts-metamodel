@@ -1236,10 +1236,6 @@ module ActiveFacts
         end
       end
 
-      def all_step
-        all_variable.map{|var| var.all_step.to_a}.flatten.uniq
-      end
-
       # Check all parts of this query for validity
       def validate
         show

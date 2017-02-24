@@ -234,8 +234,9 @@ module ActiveFacts
     end
 
     class Step
-      identified_by   :guid
-      one_to_one      :guid, mandatory: true              # Step has Guid, see Guid#step
+      identified_by   :query, :ordinal
+      has_one         :query, mandatory: true             # Step is in Query, see Query#all_step
+      has_one         :ordinal, mandatory: true           # Step has Ordinal position, see Ordinal#all_step
       maybe           :is_disallowed                      # Is Disallowed
       maybe           :is_optional                        # Is Optional
       has_one         :fact_type, mandatory: true         # Step specifies Fact Type, see FactType#all_step

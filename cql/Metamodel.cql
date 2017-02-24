@@ -161,9 +161,10 @@ Instance plays Role Value,
 
 Set Constraint is a kind of Constraint;
 
-Step is identified by Guid where
-	Step has one Guid,
-	Guid is of at most one Step;
+Step is identified by Query and Ordinal where
+    Query includes at least one Step,
+    Step is in one Query,
+    Step has one Ordinal position;
 Step falls under at most one Alternative Set,
 	Alternative Set covers at least one Step;
 Step specifies one Fact Type,
