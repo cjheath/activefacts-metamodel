@@ -2136,8 +2136,13 @@ module ActiveFacts
       end
 
       def comment
-        return 'surrogate key' unless parent
-        ((c = parent.comment) != '' ? c : parent.name + ' surrogate key')
+        if parent && (c = parent.comment) != ''
+          return c
+        end
+        if fkf = all_foreign_key_field.single
+          return fkf.foreign_key.composite.mapping.name + ' surrogate key'
+        end
+        (parent ? parent.name + ' ' : '') + 'surrogate key'
       end
     end
 
