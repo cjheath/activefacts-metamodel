@@ -83,10 +83,15 @@ module ActiveFacts
       value_type      length: 20
     end
 
+    class VersionNumber < String
+      value_type      length: 32
+    end
+
     class Vocabulary
       identified_by   :name
       one_to_one      :name, mandatory: true              # Vocabulary is called Name, see Name#vocabulary
       maybe           :is_transform                       # Is Transform
+      has_one         :version_number                     # Vocabulary has semantic Version Number, see VersionNumber#all_vocabulary
     end
 
     class ObjectType
@@ -506,12 +511,17 @@ module ActiveFacts
       has_one         :value                              # Foreign Key Field is discriminated by Value, see Value#all_foreign_key_field
     end
 
+    class VersionPattern < String
+      value_type      length: 64
+    end
+
     class Import
       identified_by   :topic, :precursor_topic
       has_one         :topic, mandatory: true             # Import involves Topic, see Topic#all_import
       has_one         :precursor_topic, mandatory: true, class: Topic  # Import involves precursor-Topic, see Topic#all_import_as_precursor_topic
       has_one         :file_name, mandatory: true, class: Name  # Import has file-Name, see Name#all_import_as_file_name
       has_one         :import_role, class: Name           # Import has Import Role, see Name#all_import_as_import_role
+      has_one         :version_pattern                    # Import has semantic Version Pattern, see VersionPattern#all_import
     end
 
     class IndexField

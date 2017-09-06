@@ -34,6 +34,8 @@ Scale is written as Unsigned Integer(32);
 Subscript is written as Unsigned Integer(16);
 Text is written as String(256);
 Transaction Phase is written as String restricted to {'assert', 'commit'};
+Version Number is written as String(32);
+Version Pattern is written as String(64);
 X is written as Signed Integer(32);
 Y is written as Signed Integer(32);
 
@@ -186,6 +188,7 @@ Import is where
     Topic imports precursor- Topic;
 Import has at most one role- Name (as Import Role);
 Import has one file-Name;
+Import has semantic at most one Version Pattern;
 
 Unit is identified by Concept where
 	Unit is an instance of one Concept;
@@ -230,6 +233,7 @@ Variable has at most one role-Name,
 Vocabulary is identified by Name where
 	Vocabulary is called one Name;
 Vocabulary is transform;
+Vocabulary has semantic at most one Version Number;
 Vocabulary contains Constraint,
 	Constraint belongs to at most one Vocabulary;
 Vocabulary includes Unit,
@@ -415,8 +419,11 @@ Absorption flattens;
 some Absorption traverses from some parent- Role(1) and that Role(1) is played by some Object Type
 	only if that Absorption is a kind of Component(2) that contains some Component(3) that is a Mapping that represents that Object Type;
 */
+
+/*
 some Absorption traverses to some child- Role(1) and that Role(1) is played by some Object Type
 	only if that Absorption is a kind of Mapping that represents that Object Type;
+*/
 
 Full Absorption is where
 	Composition fully absorbs Object Type;
@@ -468,8 +475,11 @@ Composite has at most one primary-Index,
 	Index is primary for at most one Composite;
 Index is primary for Composite
 	only if Index is unique;
+
+/*
 Composite has primary Index
 	only if Composite is reached through Access Path that is an Index;
+*/
 
 Index Field is where
 	Access Path for Ordinal field uses one Component,
@@ -589,7 +599,11 @@ either Value Constraint Shape is for Object Type Shape or Value Constraint Shape
 /*
  * Constraints:
  */
+
+/*
 either Component(1) belongs to Component(2) or Component(1) is a Mapping that projects some Composite but not both;
+*/
+
 for each Component exactly one of these holds:
 	Component is a Mapping,
 	Component is an Indicator,
@@ -628,12 +642,15 @@ either Unit uses coefficient from Ephemera URL or Unit has Coefficient but not b
 either Unit is fundamental or Unit is derived from base-Unit but not both;
 either Value Constraint allows Value Range or Value Constraint requires matching Regular Expression but not both;
 either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
+/*
 for each Mapping at most one of these holds:
 	Mapping is an Absorption that flattens,
 	Mapping projects Composite;
+*/
 for each Instance at most one of these holds:
 	Instance has Value,
 	Instance objectifies Fact;
+/*
 Role Value is of Instance that is of Object Type
 	if and only if
 	Role Value is of Role that is played by Object Type;
@@ -646,12 +663,10 @@ Step specifies Fact Type that contains Role
 Variable is for Object Type that plays Role
 	if and only if
 	Variable is restricted by Role of Step;
-/*
 some Absorption traverses from some parent Role that is played by some Object Type
 	only if that Absorption contains some Component that is a Mapping(2) that represents that Object Type;
 some Absorption traverses to some child Role that is played by some Object Type
 	only if that Absorption is a kind of Mapping that represents that Object Type;
-*/
 Presence Constraint is preferred identifier
 	only if Presence Constraint has max Frequency;
 Value Type has Scale
@@ -659,6 +674,7 @@ Value Type has Scale
 Variable matches nesting over Step
 	only if Variable is for Object Type and Step specifies Fact Type;
 either Agreement was reached by Agent or Agreement was on Date;
+*/
 // either Component projects Name or Component is some Absorption that flattens;
 each Concept occurs at most one time in
 	Object Type is an instance of Concept;
