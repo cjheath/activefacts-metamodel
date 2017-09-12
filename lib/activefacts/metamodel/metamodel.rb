@@ -385,6 +385,23 @@ module ActiveFacts
       has_one         :parent_component_shape, class: ComponentShape  # Component Shape is contained in parent-Component Shape, see ComponentShape#all_component_shape_as_parent_component_shape
     end
 
+    class TransformRule
+      identified_by   :guid
+      one_to_one      :guid, mandatory: true              # Transform Rule has Guid, see Guid#transform_rule
+      has_one         :target_object_type, mandatory: true, class: ObjectType  # Transform Rule maps to target-Object Type, see ObjectType#all_transform_rule_as_target_object_type
+    end
+
+    class CompoundTransformRule < TransformRule
+      has_one         :source_object_type, class: ObjectType  # Compound Transform Rule maps from source-Object Type, see ObjectType#all_compound_transform_rule_as_source_object_type
+      has_one         :source_query, class: Query         # Compound Transform Rule maps from source-Query, see Query#all_compound_transform_rule_as_source_query
+    end
+
+    class CompoundTransformPart
+      identified_by   :compound_transform_rule, :transform_rule
+      has_one         :compound_transform_rule, mandatory: true  # Compound Transform Part involves Compound Transform Rule, see CompoundTransformRule#all_compound_transform_part
+      has_one         :transform_rule, mandatory: true    # Compound Transform Part involves Transform Rule, see TransformRule#all_compound_transform_part
+    end
+
     class ConceptAnnotation
       identified_by   :concept, :mapping_annotation
       has_one         :concept, mandatory: true           # Concept Annotation involves Concept, see Concept#all_concept_annotation
@@ -453,6 +470,28 @@ module ActiveFacts
     class EntityType < DomainObjectType
       one_to_one      :fact_type                          # Entity Type objectifies Fact Type, see FactType#entity_type
       has_one         :implicitly_objectified_fact_type, class: FactType  # Entity Type implicitly objectifies implicitly- objectified Fact Type, see FactType#all_entity_type_as_implicitly_objectified_fact_type
+    end
+
+    class ExpressionType < String
+      value_type
+    end
+
+    class LiteralString < String
+      value_type
+    end
+
+    class OperatorString < String
+      value_type
+    end
+
+    class Expression
+      identified_by   :guid
+      one_to_one      :guid, mandatory: true              # Expression has Guid, see Guid#expression
+      has_one         :expression_type, mandatory: true   # Expression has Expression Type, see ExpressionType#all_expression
+      has_one         :first_operand, class: Expression   # Expression has First Operand, see Expression#all_expression_as_first_operand
+      has_one         :literal_string                     # Expression has Literal String, see LiteralString#all_expression
+      has_one         :object_type                        # Expression has Object Type, see ObjectType#all_expression
+      has_one         :operator_string                    # Expression has Operator String, see OperatorString#all_expression
     end
 
     class Instance
@@ -688,6 +727,12 @@ module ActiveFacts
       has_one         :value_type, mandatory: true        # Temporal Mapping records time using Value Type, see ValueType#all_temporal_mapping
     end
 
+    class Transformation
+      identified_by   :concept
+      one_to_one      :concept, mandatory: true           # Transformation is an instance of Concept, see Concept#transformation
+      has_one         :compound_transform_rule, mandatory: true  # Transformation implements Compound Transform Rule, see CompoundTransformRule#all_transformation
+    end
+
     class TypeInheritance < FactType
       identified_by   :subtype, :supertype
       has_one         :subtype, mandatory: true, class: EntityType  # Type Inheritance involves Subtype, see EntityType#all_type_inheritance_as_subtype
@@ -700,6 +745,10 @@ module ActiveFacts
     end
 
     class ValueField < Injection
+    end
+
+    class ValueTransformRule < TransformRule
+      has_one         :expression, mandatory: true        # Value Transform Rule maps from Expression, see Expression#all_value_transform_rule
     end
 
     class ValueTypeParameter

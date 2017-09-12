@@ -81,6 +81,8 @@ module ActiveFacts
         when context_note; "ContextNote#{context_note.verbalise}"
         when unit; "Unit #{unit.describe}"
         when population; "Population: #{population.name}"
+        when transformation
+          "Transformation: #{(sot = transformation.compound_transform_rule.source_object_type) ? sot.name : 'Query'}"
         else
           raise "ROGUE CONCEPT OF NO TYPE"
         end
@@ -98,6 +100,7 @@ module ActiveFacts
         when context_note; context_note
         when unit; unit
         when population; population
+        when transformation; transformation
         else
           raise "ROGUE CONCEPT OF NO TYPE"
         end
