@@ -536,24 +536,25 @@ Expression has at most one first- op Expression;
 Expression has at most one second- op Expression;
 Expression has at most one third- op Expression;
 
-each Transform Rule is identified by Guid where
-	Transform Rule has one Guid,
-	Guid is of at most one Transform Rule;
-Transform Rule maps to one target- Object Type;
+each Transform Matching is identified by Guid where
+	Transform Matching has one Guid,
+	Guid is of at most one Transform Matching;
+Transform Matching maps to one target- Object Type;
 
-each Simple Transform Rule is a kind of Transform Rule;
-Simple Transform Rule maps from one Expression;
+each Simple Transform Matching is a kind of Transform Matching;
+Simple Transform Matching maps from one Expression;
 
-each Compound Transform Rule is a kind of Transform Rule;
-Compound Transform Rule maps from at most one source- Object Type;
-Compound Transform Rule maps from at most one source- Query;
+each Compound Transform Matching is a kind of Transform Matching;
+Compound Transform Matching maps from at most one source- Object Type;
+Compound Transform Matching maps from at most one source- Query;
 
-each Transform Part is where
-    Compound Transform Rule maps according to Transform Rule;
+Compound Transform Matching consists of Transform Matching,
+    Transform Matching is a part of at most one Compound Transform Matching;
 
-each Transformation is independent identified by Concept where
-    Transformation is an instance of one Concept;
-Transformation implements one Compound Transform Rule;
+each Transform Rule is independent identified by Concept where
+    Transform Rule is an instance of one Concept;
+Transform Rule implements one Compound Transform Matching,
+    Compound Transform Matching is implemented by at most one Transform Rule;
 
 /*
  * Diagrams

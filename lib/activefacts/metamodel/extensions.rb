@@ -81,7 +81,7 @@ module ActiveFacts
         when context_note; "ContextNote#{context_note.verbalise}"
         when unit; "Unit #{unit.describe}"
         when population; "Population: #{population.name}"
-        when transformation; "Transformation: #{transformation.describe}"
+        when transform_rule; "Transform Rule: #{transform_rule.describe}"
         else
           raise "ROGUE CONCEPT OF NO TYPE"
         end
@@ -2149,24 +2149,24 @@ module ActiveFacts
     end
 
     #
-    # Transformations
+    # Transform Rules
     #
 
-    class Transformation
+    class TransformRule
       def describe
-        compound_transform_rule.describe
+        compound_transform_matching.describe
       end
     end
 
-    class CompoundTransformRule
+    class CompoundTransformMatching
       def describe
         tname = target_object_type.name
         src = (sot = source_object_type) ? sot.name : 'Query'
-        "#{tname} <== #{src} {" + all_transform_part.map{|tp| tp.transform_rule.describe}.sort * ', ' + '}'
+        "#{tname} <== #{src} {" + all_transform_matching.map{|tm| tm.describe}.sort * ', ' + '}'
       end
     end
 
-    class SimpleTransformRule
+    class SimpleTransformMatching
       def describe
         tname = target_object_type.name
         src = (sot = expression.object_type) ? sot.name : 'Expr'

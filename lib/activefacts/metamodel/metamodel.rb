@@ -385,15 +385,22 @@ module ActiveFacts
       has_one         :parent_component_shape, class: ComponentShape  # Component Shape is contained in parent-Component Shape, see ComponentShape#all_component_shape_as_parent_component_shape
     end
 
-    class TransformRule
+    class TransformMatching
       identified_by   :guid
-      one_to_one      :guid, mandatory: true              # Transform Rule has Guid, see Guid#transform_rule
-      has_one         :target_object_type, mandatory: true, class: ObjectType  # Transform Rule maps to target-Object Type, see ObjectType#all_transform_rule_as_target_object_type
+      one_to_one      :guid, mandatory: true              # Transform Matching has Guid, see Guid#transform_matching
+      has_one         :target_object_type, mandatory: true, class: ObjectType  # Transform Matching maps to target-Object Type, see ObjectType#all_transform_matching_as_target_object_type
+      has_one         :compound_transform_matching        # Transform Matching is a part of Compound Transform Matching, see CompoundTransformMatching#all_transform_matching
     end
 
-    class CompoundTransformRule < TransformRule
-      has_one         :source_object_type, class: ObjectType  # Compound Transform Rule maps from source-Object Type, see ObjectType#all_compound_transform_rule_as_source_object_type
-      has_one         :source_query, class: Query         # Compound Transform Rule maps from source-Query, see Query#all_compound_transform_rule_as_source_query
+    class TransformRule
+      identified_by   :concept
+      one_to_one      :concept, mandatory: true           # Transform Rule is an instance of Concept, see Concept#transform_rule
+    end
+
+    class CompoundTransformMatching < TransformMatching
+      has_one         :source_object_type, class: ObjectType  # Compound Transform Matching maps from source-Object Type, see ObjectType#all_compound_transform_matching_as_source_object_type
+      has_one         :source_query, class: Query         # Compound Transform Matching maps from source-Query, see Query#all_compound_transform_matching_as_source_query
+      one_to_one      :transform_rule                     # Compound Transform Matching is implemented by Transform Rule, see TransformRule#compound_transform_matching
     end
 
     class ConceptAnnotation
@@ -705,8 +712,8 @@ module ActiveFacts
       maybe           :is_mandatory                       # Is Mandatory
     end
 
-    class SimpleTransformRule < TransformRule
-      has_one         :expression, mandatory: true        # Simple Transform Rule maps from Expression, see Expression#all_simple_transform_rule
+    class SimpleTransformMatching < TransformMatching
+      has_one         :expression, mandatory: true        # Simple Transform Matching maps from Expression, see Expression#all_simple_transform_matching
     end
 
     class SpanningConstraint
@@ -725,18 +732,6 @@ module ActiveFacts
 
     class TemporalMapping < Mapping
       has_one         :value_type, mandatory: true        # Temporal Mapping records time using Value Type, see ValueType#all_temporal_mapping
-    end
-
-    class TransformPart
-      identified_by   :compound_transform_rule, :transform_rule
-      has_one         :compound_transform_rule, mandatory: true  # Transform Part involves Compound Transform Rule, see CompoundTransformRule#all_transform_part
-      has_one         :transform_rule, mandatory: true    # Transform Part involves Transform Rule, see TransformRule#all_transform_part
-    end
-
-    class Transformation
-      identified_by   :concept
-      one_to_one      :concept, mandatory: true           # Transformation is an instance of Concept, see Concept#transformation
-      has_one         :compound_transform_rule, mandatory: true  # Transformation implements Compound Transform Rule, see CompoundTransformRule#all_transformation
     end
 
     class TypeInheritance < FactType
