@@ -396,12 +396,6 @@ module ActiveFacts
       has_one         :source_query, class: Query         # Compound Transform Rule maps from source-Query, see Query#all_compound_transform_rule_as_source_query
     end
 
-    class CompoundTransformPart
-      identified_by   :compound_transform_rule, :transform_rule
-      has_one         :compound_transform_rule, mandatory: true  # Compound Transform Part involves Compound Transform Rule, see CompoundTransformRule#all_compound_transform_part
-      has_one         :transform_rule, mandatory: true    # Compound Transform Part involves Transform Rule, see TransformRule#all_compound_transform_part
-    end
-
     class ConceptAnnotation
       identified_by   :concept, :mapping_annotation
       has_one         :concept, mandatory: true           # Concept Annotation involves Concept, see Concept#all_concept_annotation
@@ -488,10 +482,12 @@ module ActiveFacts
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Expression has Guid, see Guid#expression
       has_one         :expression_type, mandatory: true   # Expression has Expression Type, see ExpressionType#all_expression
-      has_one         :first_operand, class: Expression   # Expression has First Operand, see Expression#all_expression_as_first_operand
+      has_one         :first_op_expression, class: Expression  # Expression has first- op Expression, see Expression#all_expression_as_first_op_expression
       has_one         :literal_string                     # Expression has Literal String, see LiteralString#all_expression
       has_one         :object_type                        # Expression has Object Type, see ObjectType#all_expression
       has_one         :operator_string                    # Expression has Operator String, see OperatorString#all_expression
+      has_one         :second_op_expression, class: Expression  # Expression has second- op Expression, see Expression#all_expression_as_second_op_expression
+      has_one         :third_op_expression, class: Expression  # Expression has third- op Expression, see Expression#all_expression_as_third_op_expression
     end
 
     class Instance
@@ -709,6 +705,10 @@ module ActiveFacts
       maybe           :is_mandatory                       # Is Mandatory
     end
 
+    class SimpleTransformRule < TransformRule
+      has_one         :expression, mandatory: true        # Simple Transform Rule maps from Expression, see Expression#all_simple_transform_rule
+    end
+
     class SpanningConstraint
       identified_by   :composite, :spanning_constraint
       has_one         :composite, mandatory: true         # Spanning Constraint involves Composite, see Composite#all_spanning_constraint
@@ -725,6 +725,12 @@ module ActiveFacts
 
     class TemporalMapping < Mapping
       has_one         :value_type, mandatory: true        # Temporal Mapping records time using Value Type, see ValueType#all_temporal_mapping
+    end
+
+    class TransformPart
+      identified_by   :compound_transform_rule, :transform_rule
+      has_one         :compound_transform_rule, mandatory: true  # Transform Part involves Compound Transform Rule, see CompoundTransformRule#all_transform_part
+      has_one         :transform_rule, mandatory: true    # Transform Part involves Transform Rule, see TransformRule#all_transform_part
     end
 
     class Transformation
@@ -745,10 +751,6 @@ module ActiveFacts
     end
 
     class ValueField < Injection
-    end
-
-    class ValueTransformRule < TransformRule
-      has_one         :expression, mandatory: true        # Value Transform Rule maps from Expression, see Expression#all_value_transform_rule
     end
 
     class ValueTypeParameter

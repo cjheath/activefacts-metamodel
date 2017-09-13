@@ -532,30 +532,28 @@ Expression has one Expression Type;
 Expression has at most one Literal String;
 Expression has at most one Object Type;
 Expression has at most one Operator String;
-Expression has at most one Expression (as First Operand);
-Expression has at most one Expression (as Second Operand);
-Expression has at most one Expression (as Third Operand);
+Expression has at most one first- op Expression;
+Expression has at most one second- op Expression;
+Expression has at most one third- op Expression;
 
 each Transform Rule is identified by Guid where
 	Transform Rule has one Guid,
 	Guid is of at most one Transform Rule;
 Transform Rule maps to one target- Object Type;
 
-each Value Transform Rule is a kind of Transform Rule;
-Value Transform Rule maps from one Expression;
+each Simple Transform Rule is a kind of Transform Rule;
+Simple Transform Rule maps from one Expression;
 
 each Compound Transform Rule is a kind of Transform Rule;
 Compound Transform Rule maps from at most one source- Object Type;
 Compound Transform Rule maps from at most one source- Query;
 
-each Compound Transform Part is where
-    Compound Transform Rule maps according to Transform Rule,
-    Transform Rule is a map for one Compound Transform Rule;
+each Transform Part is where
+    Compound Transform Rule maps according to Transform Rule;
 
 each Transformation is independent identified by Concept where
     Transformation is an instance of one Concept;
-Transformation implements one Compound Transform Rule,
-    Compound Transform Rule is implemented by at most one Transformation;
+Transformation implements one Compound Transform Rule;
 
 /*
  * Diagrams

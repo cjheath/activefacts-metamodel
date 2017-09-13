@@ -81,8 +81,7 @@ module ActiveFacts
         when context_note; "ContextNote#{context_note.verbalise}"
         when unit; "Unit #{unit.describe}"
         when population; "Population: #{population.name}"
-        when transformation
-          "Transformation: #{(sot = transformation.compound_transform_rule.source_object_type) ? sot.name : 'Query'}"
+        when transformation; "Transformation: #{transformation.describe}"
         else
           raise "ROGUE CONCEPT OF NO TYPE"
         end
@@ -2146,6 +2145,32 @@ module ActiveFacts
           return fkf.foreign_key.composite.mapping.name + ' surrogate key'
         end
         (parent ? parent.name + ' ' : '') + 'surrogate key'
+      end
+    end
+
+    #
+    # Transformations
+    #
+
+    class Transformation
+      def describe
+        compound_transform_rule.describe
+      end
+    end
+
+    class CompoundTransformRule
+      def describe
+        tname = target_object_type.name
+        src = (sot = source_object_type) ? sot.name : 'Query'
+        "#{tname} <== #{src} {" + all_transform_part.map{|tp| tp.transform_rule.describe}.sort * ', ' + '}'
+      end
+    end
+
+    class SimpleTransformRule
+      def describe
+        tname = target_object_type.name
+        src = (sot = expression.object_type) ? sot.name : 'Expr'
+        "#{tname} <-- #{src}"
       end
     end
 
