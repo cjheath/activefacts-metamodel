@@ -99,7 +99,7 @@ module ActiveFacts
         when context_note; context_note
         when unit; unit
         when population; population
-        when transformation; transformation
+        when transform_rule; transform_rule
         else
           raise "ROGUE CONCEPT OF NO TYPE"
         end
@@ -2160,17 +2160,25 @@ module ActiveFacts
 
     class CompoundTransformMatching
       def describe
-        tname = target_object_type.name
+        targ = all_transform_target_ref.map do |tr|
+          (tr.leading_adjective ? tr.leading_adjective + ' ' : '') +
+            tr.target_object_type.name + (tr.trailing_adjective ? ' ' + tr.trailing_adjective : '')
+        end * ' . '
         src = (sot = source_object_type) ? sot.name : 'Query'
-        "#{tname} <== #{src} {" + all_transform_matching.map{|tm| tm.describe}.sort * ', ' + '}'
+
+        "#{targ} <== #{src} {" + all_transform_matching.map{|tm| tm.describe}.sort * ', ' + '}'
       end
     end
 
     class SimpleTransformMatching
       def describe
-        tname = target_object_type.name
-        src = (sot = expression.object_type) ? sot.name : 'Expr'
-        "#{tname} <-- #{src}"
+        targ = all_transform_target_ref.map do |tr|
+          (tr.leading_adjective ? tr.leading_adjective + ' ' : '') +
+            tr.target_object_type.name + (tr.trailing_adjective ? ' ' + tr.trailing_adjective : '')
+        end * ' . '
+        src = expression ? ((ot = expression.object_type) ? ot.name : 'Expr') : ''
+
+        "#{targ} <-- #{src}"
       end
     end
 

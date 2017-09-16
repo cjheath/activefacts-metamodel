@@ -388,7 +388,6 @@ module ActiveFacts
     class TransformMatching
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Transform Matching has Guid, see Guid#transform_matching
-      has_one         :target_object_type, mandatory: true, class: ObjectType  # Transform Matching maps to target-Object Type, see ObjectType#all_transform_matching_as_target_object_type
       has_one         :compound_transform_matching        # Transform Matching is a part of Compound Transform Matching, see CompoundTransformMatching#all_transform_matching
     end
 
@@ -713,7 +712,7 @@ module ActiveFacts
     end
 
     class SimpleTransformMatching < TransformMatching
-      has_one         :expression, mandatory: true        # Simple Transform Matching maps from Expression, see Expression#all_simple_transform_matching
+      has_one         :expression                         # Simple Transform Matching maps from Expression, see Expression#all_simple_transform_matching
     end
 
     class SpanningConstraint
@@ -732,6 +731,15 @@ module ActiveFacts
 
     class TemporalMapping < Mapping
       has_one         :value_type, mandatory: true        # Temporal Mapping records time using Value Type, see ValueType#all_temporal_mapping
+    end
+
+    class TransformTargetRef
+      identified_by   :transform_matching, :ordinal
+      has_one         :transform_matching, mandatory: true  # Transform Target Ref involves Transform Matching, see TransformMatching#all_transform_target_ref
+      has_one         :ordinal, mandatory: true           # Transform Target Ref involves Ordinal, see Ordinal#all_transform_target_ref
+      has_one         :target_object_type, mandatory: true, class: ObjectType  # Transform Target Ref involves target-Object Type, see ObjectType#all_transform_target_ref_as_target_object_type
+      has_one         :leading_adjective, class: Adjective  # Transform Target Ref has leading-Adjective, see Adjective#all_transform_target_ref_as_leading_adjective
+      has_one         :trailing_adjective, class: Adjective  # Transform Target Ref has trailing-Adjective, see Adjective#all_transform_target_ref_as_trailing_adjective
     end
 
     class TypeInheritance < FactType

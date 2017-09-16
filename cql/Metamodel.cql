@@ -539,10 +539,16 @@ Expression has at most one third- op Expression;
 each Transform Matching is identified by Guid where
 	Transform Matching has one Guid,
 	Guid is of at most one Transform Matching;
-Transform Matching maps to one target- Object Type;
+
+Transform Target Ref is where
+    Transform Matching in Ordinal position maps to one target- Object Type,
+    target- Object Type is in Transform Matching in one Ordinal place;
+
+Transform Target Ref has at most one leading- Adjective;
+Transform Target Ref has at most one trailing- Adjective;
 
 each Simple Transform Matching is a kind of Transform Matching;
-Simple Transform Matching maps from one Expression;
+Simple Transform Matching maps from at most one Expression;
 
 each Compound Transform Matching is a kind of Transform Matching;
 Compound Transform Matching maps from at most one source- Object Type;
