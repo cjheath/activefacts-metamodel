@@ -520,9 +520,13 @@ Absorption is nested under index Role in Ordinal position
  * Transformations
  */
 
-each Expression Type is written as String restricted to {'Literal', 'Object', 'Unary', 'Binary', 'Ternary'};
+each Expression Type is written as String restricted to {'Literal', 'Role', 'Unary', 'Binary', 'Ternary'};
 each Literal String is written as String;
-each Operator String is written as String;
+each Operator is written as String restricted to {
+    'and', 'or', 'not',
+    '=', '!=', 'count', 'max', 'min', 'total', 'avg', '<', '<=', '=>', '>',
+    '?', '+', '-', '*', '/', '0-', '1/'
+};
 
 each Expression is identified by Guid where
 	Expression has one Guid,
@@ -530,37 +534,43 @@ each Expression is identified by Guid where
 
 Expression has one Expression Type;
 Expression has at most one Literal String;
-Expression has at most one Object Type;
-Expression has at most one Operator String;
-Expression has at most one first- op Expression;
-Expression has at most one second- op Expression;
-Expression has at most one third- op Expression;
+Expression has at most one Operator;
+Expression has at most one first- operand Expression;
+Expression has at most one second- operand Expression;
+Expression has at most one third- operand Expression;
+
+Expression Object Ref is where
+    Expression in Ordinal position maps to one Object Type,
+    Object Type is in Expression in one Ordinal place;
+
+Expression Object Ref has at most one leading- Adjective;
+Expression Object Ref has at most one trailing- Adjective;
 
 each Transform Matching is identified by Guid where
 	Transform Matching has one Guid,
 	Guid is of at most one Transform Matching;
 
 Transform Target Ref is where
-    Transform Matching in Ordinal position maps to one target- Object Type,
-    target- Object Type is in Transform Matching in one Ordinal place;
+    Transform Matching in Ordinal position maps to one Object Type,
+    Object Type is in Transform Matching in one Ordinal place;
 
 Transform Target Ref has at most one leading- Adjective;
 Transform Target Ref has at most one trailing- Adjective;
 
-each Simple Transform Matching is a kind of Transform Matching;
-Simple Transform Matching maps from at most one Expression;
+each Simple Matching is a kind of Transform Matching;
+Simple Matching maps from at most one Expression;
 
-each Compound Transform Matching is a kind of Transform Matching;
-Compound Transform Matching maps from at most one source- Object Type;
-Compound Transform Matching maps from at most one source- Query;
+each Compound Matching is a kind of Transform Matching;
+Compound Matching maps from at most one source- Object Type;
+Compound Matching maps from at most one source- Query;
 
-Compound Transform Matching consists of Transform Matching,
-    Transform Matching is a part of at most one Compound Transform Matching;
+Compound Matching consists of Transform Matching,
+    Transform Matching is a part of at most one Compound Matching;
 
 each Transform Rule is independent identified by Concept where
     Transform Rule is an instance of one Concept;
-Transform Rule implements one Compound Transform Matching,
-    Compound Transform Matching is implemented by at most one Transform Rule;
+Transform Rule implements one Compound Matching,
+    Compound Matching is implemented by at most one Transform Rule;
 
 /*
  * Diagrams

@@ -2154,15 +2154,15 @@ module ActiveFacts
 
     class TransformRule
       def describe
-        compound_transform_matching.describe
+        compound_matching.describe
       end
     end
 
-    class CompoundTransformMatching
+    class CompoundMatching
       def describe
         targ = all_transform_target_ref.map do |tr|
           (tr.leading_adjective ? tr.leading_adjective + ' ' : '') +
-            tr.target_object_type.name + (tr.trailing_adjective ? ' ' + tr.trailing_adjective : '')
+            tr.object_type.name + (tr.trailing_adjective ? ' ' + tr.trailing_adjective : '')
         end * ' . '
         src = (sot = source_object_type) ? sot.name : 'Query'
 
@@ -2170,13 +2170,13 @@ module ActiveFacts
       end
     end
 
-    class SimpleTransformMatching
+    class SimpleMatching
       def describe
         targ = all_transform_target_ref.map do |tr|
           (tr.leading_adjective ? tr.leading_adjective + ' ' : '') +
-            tr.target_object_type.name + (tr.trailing_adjective ? ' ' + tr.trailing_adjective : '')
+            tr.object_type.name + (tr.trailing_adjective ? ' ' + tr.trailing_adjective : '')
         end * ' . '
-        src = expression ? ((ot = expression.object_type) ? ot.name : 'Expr') : ''
+        src = expression ? ((et = expression.expression_type) ? et : 'Expr') : ''
 
         "#{targ} <-- #{src}"
       end

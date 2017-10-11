@@ -388,7 +388,7 @@ module ActiveFacts
     class TransformMatching
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Transform Matching has Guid, see Guid#transform_matching
-      has_one         :compound_transform_matching        # Transform Matching is a part of Compound Transform Matching, see CompoundTransformMatching#all_transform_matching
+      has_one         :compound_matching                  # Transform Matching is a part of Compound Matching, see CompoundMatching#all_transform_matching
     end
 
     class TransformRule
@@ -396,10 +396,10 @@ module ActiveFacts
       one_to_one      :concept, mandatory: true           # Transform Rule is an instance of Concept, see Concept#transform_rule
     end
 
-    class CompoundTransformMatching < TransformMatching
-      has_one         :source_object_type, class: ObjectType  # Compound Transform Matching maps from source-Object Type, see ObjectType#all_compound_transform_matching_as_source_object_type
-      has_one         :source_query, class: Query         # Compound Transform Matching maps from source-Query, see Query#all_compound_transform_matching_as_source_query
-      one_to_one      :transform_rule                     # Compound Transform Matching is implemented by Transform Rule, see TransformRule#compound_transform_matching
+    class CompoundMatching < TransformMatching
+      has_one         :source_object_type, class: ObjectType  # Compound Matching maps from source-Object Type, see ObjectType#all_compound_matching_as_source_object_type
+      has_one         :source_query, class: Query         # Compound Matching maps from source-Query, see Query#all_compound_matching_as_source_query
+      one_to_one      :transform_rule                     # Compound Matching is implemented by Transform Rule, see TransformRule#compound_matching
     end
 
     class ConceptAnnotation
@@ -480,7 +480,7 @@ module ActiveFacts
       value_type
     end
 
-    class OperatorString < String
+    class Operator < String
       value_type
     end
 
@@ -488,12 +488,20 @@ module ActiveFacts
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Expression has Guid, see Guid#expression
       has_one         :expression_type, mandatory: true   # Expression has Expression Type, see ExpressionType#all_expression
-      has_one         :first_op_expression, class: Expression  # Expression has first- op Expression, see Expression#all_expression_as_first_op_expression
+      has_one         :first_operand_expression, class: Expression  # Expression has first- operand Expression, see Expression#all_expression_as_first_operand_expression
       has_one         :literal_string                     # Expression has Literal String, see LiteralString#all_expression
-      has_one         :object_type                        # Expression has Object Type, see ObjectType#all_expression
-      has_one         :operator_string                    # Expression has Operator String, see OperatorString#all_expression
-      has_one         :second_op_expression, class: Expression  # Expression has second- op Expression, see Expression#all_expression_as_second_op_expression
-      has_one         :third_op_expression, class: Expression  # Expression has third- op Expression, see Expression#all_expression_as_third_op_expression
+      has_one         :operator                           # Expression has Operator, see Operator#all_expression
+      has_one         :second_operand_expression, class: Expression  # Expression has second- operand Expression, see Expression#all_expression_as_second_operand_expression
+      has_one         :third_operand_expression, class: Expression  # Expression has third- operand Expression, see Expression#all_expression_as_third_operand_expression
+    end
+
+    class ExpressionObjectRef
+      identified_by   :expression, :ordinal
+      has_one         :expression, mandatory: true        # Expression Object Ref involves Expression, see Expression#all_expression_object_ref
+      has_one         :ordinal, mandatory: true           # Expression Object Ref involves Ordinal, see Ordinal#all_expression_object_ref
+      has_one         :object_type, mandatory: true       # Expression Object Ref involves Object Type, see ObjectType#all_expression_object_ref
+      has_one         :leading_adjective, class: Adjective  # Expression Object Ref has leading-Adjective, see Adjective#all_expression_object_ref_as_leading_adjective
+      has_one         :trailing_adjective, class: Adjective  # Expression Object Ref has trailing-Adjective, see Adjective#all_expression_object_ref_as_trailing_adjective
     end
 
     class Instance
@@ -711,8 +719,8 @@ module ActiveFacts
       maybe           :is_mandatory                       # Is Mandatory
     end
 
-    class SimpleTransformMatching < TransformMatching
-      has_one         :expression                         # Simple Transform Matching maps from Expression, see Expression#all_simple_transform_matching
+    class SimpleMatching < TransformMatching
+      has_one         :expression                         # Simple Matching maps from Expression, see Expression#all_simple_matching
     end
 
     class SpanningConstraint
@@ -737,7 +745,7 @@ module ActiveFacts
       identified_by   :transform_matching, :ordinal
       has_one         :transform_matching, mandatory: true  # Transform Target Ref involves Transform Matching, see TransformMatching#all_transform_target_ref
       has_one         :ordinal, mandatory: true           # Transform Target Ref involves Ordinal, see Ordinal#all_transform_target_ref
-      has_one         :target_object_type, mandatory: true, class: ObjectType  # Transform Target Ref involves target-Object Type, see ObjectType#all_transform_target_ref_as_target_object_type
+      has_one         :object_type, mandatory: true       # Transform Target Ref involves Object Type, see ObjectType#all_transform_target_ref
       has_one         :leading_adjective, class: Adjective  # Transform Target Ref has leading-Adjective, see Adjective#all_transform_target_ref_as_leading_adjective
       has_one         :trailing_adjective, class: Adjective  # Transform Target Ref has trailing-Adjective, see Adjective#all_transform_target_ref_as_trailing_adjective
     end
