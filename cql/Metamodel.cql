@@ -377,6 +377,7 @@ Composition is identified by Guid where
 	Guid is of at most one Composition;
 Composition is called one Name,
 	Name is of at most one Composition;
+Composition is a one compositor- Name composition;
 
 Component is identified by Guid where
 	Component has one Guid,

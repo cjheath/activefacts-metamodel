@@ -34,6 +34,7 @@ module ActiveFacts
     class Composition
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Composition has Guid, see Guid#composition
+      has_one         :compositor_name, mandatory: true, class: Name  # Composition is a compositor-Name composition, see Name#all_composition_as_compositor_name
       one_to_one      :name, mandatory: true              # Composition is called Name, see Name#composition
     end
 
