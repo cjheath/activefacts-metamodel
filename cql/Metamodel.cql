@@ -34,6 +34,8 @@ Scale is written as Unsigned Integer(32);
 Subscript is written as Unsigned Integer(16);
 Text is written as String(256);
 Transaction Phase is written as String restricted to {'assert', 'commit'};
+Version Number is written as String(32);
+Version Pattern is written as String(64);
 X is written as Signed Integer(32);
 Y is written as Signed Integer(32);
 
@@ -161,9 +163,10 @@ Instance plays Role Value,
 
 Set Constraint is a kind of Constraint;
 
-Step is identified by Guid where
-	Step has one Guid,
-	Guid is of at most one Step;
+Step is identified by Query and Ordinal where
+    Query includes at least one Step,
+    Step is in one Query,
+    Step has one Ordinal position;
 Step falls under at most one Alternative Set,
 	Alternative Set covers at least one Step;
 Step specifies one Fact Type,
@@ -180,6 +183,12 @@ Topic is identified by topic-Name where
 	topic-Name is of at most one Topic;
 Concept belongs to at most one Topic,
 	Topic contains Concept;
+
+Import is where
+    Topic imports precursor- Topic;
+Import has at most one role- Name (as Import Role);
+Import has one file-Name;
+Import has at most one Version Pattern;
 
 Unit is identified by Concept where
 	Unit is an instance of one Concept;
@@ -223,6 +232,8 @@ Variable has at most one role-Name,
 
 Vocabulary is identified by Name where
 	Vocabulary is called one Name;
+Vocabulary is transform;
+Vocabulary has at most one Version Number;
 Vocabulary contains Constraint,
 	Constraint belongs to at most one Vocabulary;
 Vocabulary includes Unit,
@@ -358,12 +369,15 @@ Value Type Parameter Restriction is where
 	Value Type Parameter applies to Value Type;
 Value Type Parameter Restriction has one Value;
 
-/* Compositions */
+/*
+ * Compositions
+ */
 Composition is identified by Guid where
 	Composition has one Guid,
 	Guid is of at most one Composition;
 Composition is called one Name,
 	Name is of at most one Composition;
+Composition is of one compositor- Name composition;
 
 Component is identified by Guid where
 	Component has one Guid,
@@ -404,10 +418,9 @@ forward-Absorption is matched by at most one reverse-Absorption,
 	reverse-Absorption is reverse of at most one forward-Absorption;
 Absorption flattens;
 
-/*
 some Absorption traverses from some parent- Role(1) and that Role(1) is played by some Object Type
 	only if that Absorption is a kind of Component(2) that contains some Component(3) that is a Mapping that represents that Object Type;
-*/
+
 some Absorption traverses to some child- Role(1) and that Role(1) is played by some Object Type
 	only if that Absorption is a kind of Mapping that represents that Object Type;
 
@@ -415,11 +428,9 @@ Full Absorption is where
 	Composition fully absorbs Object Type;
 Full Absorption applies to one Absorption,
 	Absorption creates at most one Full Absorption;
-/*
 some Object Type is involved in some Full Absorption that applies to some Absorption that is a kind of Mapping
 	if and only if
 	that Mapping represents that Object Type;
-*/
 
 /*
  * Composition constraint categories
@@ -431,7 +442,7 @@ Leaf Constraint is where
 Local Constraint is where
 	Composite contains local-Constraint,
 	local-Constraint connects leaves of Composite;
- 
+
 Spanning Constraint is where
 	Composite has spanning-Constraint,
 	Constraint spans Composite;
@@ -461,6 +472,7 @@ Composite has at most one primary-Index,
 	Index is primary for at most one Composite;
 Index is primary for Composite
 	only if Index is unique;
+
 Composite has primary Index
 	only if Composite is reached through Access Path that is an Index;
 
@@ -496,6 +508,61 @@ Nesting has at most one key-Name;
 Absorption is nested under index Role in Ordinal position
 	if and only if
 	that Absorption uses some Nesting Mode;
+
+/*
+ * Transformations
+ */
+each Expression Type is written as String restricted to {'Literal', 'Role', 'Unary', 'Binary', 'Ternary'};
+each Literal String is written as String;
+each Operator is written as String restricted to {
+    'and', 'or', 'not',
+    '=', '!=', 'count', 'max', 'min', 'total', 'avg', '<', '<=', '=>', '>',
+    '?', '+', '-', '*', '/', '0-', '1/'
+};
+
+each Expression is identified by Guid where
+	Expression has one Guid,
+	Guid is of at most one Expression;
+
+Expression has one Expression Type;
+Expression has at most one Literal String;
+Expression has at most one Operator;
+Expression has at most one first- operand Expression;
+Expression has at most one second- operand Expression;
+Expression has at most one third- operand Expression;
+
+Expression Object Ref is where
+    Expression in Ordinal position maps to one Object Type,
+    Object Type is in Expression in one Ordinal place;
+
+Expression Object Ref has at most one leading- Adjective;
+Expression Object Ref has at most one trailing- Adjective;
+
+each Transform Matching is identified by Guid where
+	Transform Matching has one Guid,
+	Guid is of at most one Transform Matching;
+
+Transform Target Ref is where
+    Transform Matching in Ordinal position maps to one Object Type,
+    Object Type is in Transform Matching in one Ordinal place;
+
+Transform Target Ref has at most one leading- Adjective;
+Transform Target Ref has at most one trailing- Adjective;
+
+each Simple Matching is a kind of Transform Matching;
+Simple Matching maps from at most one Expression;
+
+each Compound Matching is a kind of Transform Matching;
+Compound Matching maps from at most one source- Object Type;
+Compound Matching maps from at most one source- Query;
+
+Compound Matching consists of Transform Matching,
+    Transform Matching is a part of at most one Compound Matching;
+
+each Transform Rule is independent identified by Concept where
+    Transform Rule is an instance of one Concept;
+Transform Rule implements one Compound Matching,
+    Compound Matching is implemented by at most one Transform Rule;
 
 /*
  * Diagrams
@@ -582,7 +649,9 @@ either Value Constraint Shape is for Object Type Shape or Value Constraint Shape
 /*
  * Constraints:
  */
+
 either Component(1) belongs to Component(2) or Component(1) is a Mapping that projects some Composite but not both;
+
 for each Component exactly one of these holds:
 	Component is a Mapping,
 	Component is an Indicator,
@@ -639,12 +708,10 @@ Step specifies Fact Type that contains Role
 Variable is for Object Type that plays Role
 	if and only if
 	Variable is restricted by Role of Step;
-/*
 some Absorption traverses from some parent Role that is played by some Object Type
 	only if that Absorption contains some Component that is a Mapping(2) that represents that Object Type;
 some Absorption traverses to some child Role that is played by some Object Type
 	only if that Absorption is a kind of Mapping that represents that Object Type;
-*/
 Presence Constraint is preferred identifier
 	only if Presence Constraint has max Frequency;
 Value Type has Scale

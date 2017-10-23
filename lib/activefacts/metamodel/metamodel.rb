@@ -34,6 +34,7 @@ module ActiveFacts
     class Composition
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Composition has Guid, see Guid#composition
+      has_one         :compositor_name, mandatory: true, class: Name  # Composition is a compositor-Name composition, see Name#all_composition_as_compositor_name
       one_to_one      :name, mandatory: true              # Composition is called Name, see Name#composition
     end
 
@@ -83,9 +84,15 @@ module ActiveFacts
       value_type      length: 20
     end
 
+    class VersionNumber < String
+      value_type      length: 32
+    end
+
     class Vocabulary
       identified_by   :name
       one_to_one      :name, mandatory: true              # Vocabulary is called Name, see Name#vocabulary
+      maybe           :is_transform                       # Is Transform
+      has_one         :version_number                     # Vocabulary has semantic Version Number, see VersionNumber#all_vocabulary
     end
 
     class ObjectType
@@ -140,9 +147,15 @@ module ActiveFacts
       has_one         :topic                              # Concept belongs to Topic, see Topic#all_concept
     end
 
+    class Query
+      identified_by   :concept
+      one_to_one      :concept, mandatory: true           # Query is an instance of Concept, see Concept#query
+    end
+
     class FactType
       identified_by   :concept
       one_to_one      :concept, mandatory: true           # Fact Type is an instance of Concept, see Concept#fact_type
+      one_to_one      :query, counterpart: :derived_fact_type  # derived-Fact Type is projected from Query, see Query#derived_fact_type
     end
 
     class LinkFactType < FactType
@@ -220,12 +233,6 @@ module ActiveFacts
       one_to_one      :value_type                         # Value Constraint constrains Value Type, see ValueType#value_constraint
     end
 
-    class Query
-      identified_by   :concept
-      one_to_one      :concept, mandatory: true           # Query is an instance of Concept, see Concept#query
-      has_one         :derived_fact_type, class: FactType  # Query projects Derived Fact Type, see FactType#all_query_as_derived_fact_type
-    end
-
     class AlternativeSet
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Alternative Set has Guid, see Guid#alternative_set
@@ -233,8 +240,9 @@ module ActiveFacts
     end
 
     class Step
-      identified_by   :guid
-      one_to_one      :guid, mandatory: true              # Step has Guid, see Guid#step
+      identified_by   :query, :ordinal
+      has_one         :query, mandatory: true             # Step is in Query, see Query#all_step
+      has_one         :ordinal, mandatory: true           # Step has Ordinal position, see Ordinal#all_step
       maybe           :is_disallowed                      # Is Disallowed
       maybe           :is_optional                        # Is Optional
       has_one         :fact_type, mandatory: true         # Step specifies Fact Type, see FactType#all_step
@@ -378,6 +386,23 @@ module ActiveFacts
       has_one         :parent_component_shape, class: ComponentShape  # Component Shape is contained in parent-Component Shape, see ComponentShape#all_component_shape_as_parent_component_shape
     end
 
+    class TransformMatching
+      identified_by   :guid
+      one_to_one      :guid, mandatory: true              # Transform Matching has Guid, see Guid#transform_matching
+      has_one         :compound_matching                  # Transform Matching is a part of Compound Matching, see CompoundMatching#all_transform_matching
+    end
+
+    class TransformRule
+      identified_by   :concept
+      one_to_one      :concept, mandatory: true           # Transform Rule is an instance of Concept, see Concept#transform_rule
+    end
+
+    class CompoundMatching < TransformMatching
+      has_one         :source_object_type, class: ObjectType  # Compound Matching maps from source-Object Type, see ObjectType#all_compound_matching_as_source_object_type
+      has_one         :source_query, class: Query         # Compound Matching maps from source-Query, see Query#all_compound_matching_as_source_query
+      one_to_one      :transform_rule                     # Compound Matching is implemented by Transform Rule, see TransformRule#compound_matching
+    end
+
     class ConceptAnnotation
       identified_by   :concept, :mapping_annotation
       has_one         :concept, mandatory: true           # Concept Annotation involves Concept, see Concept#all_concept_annotation
@@ -448,6 +473,38 @@ module ActiveFacts
       has_one         :implicitly_objectified_fact_type, class: FactType  # Entity Type implicitly objectifies implicitly- objectified Fact Type, see FactType#all_entity_type_as_implicitly_objectified_fact_type
     end
 
+    class ExpressionType < String
+      value_type
+    end
+
+    class LiteralString < String
+      value_type
+    end
+
+    class Operator < String
+      value_type
+    end
+
+    class Expression
+      identified_by   :guid
+      one_to_one      :guid, mandatory: true              # Expression has Guid, see Guid#expression
+      has_one         :expression_type, mandatory: true   # Expression has Expression Type, see ExpressionType#all_expression
+      has_one         :first_operand_expression, class: Expression  # Expression has first- operand Expression, see Expression#all_expression_as_first_operand_expression
+      has_one         :literal_string                     # Expression has Literal String, see LiteralString#all_expression
+      has_one         :operator                           # Expression has Operator, see Operator#all_expression
+      has_one         :second_operand_expression, class: Expression  # Expression has second- operand Expression, see Expression#all_expression_as_second_operand_expression
+      has_one         :third_operand_expression, class: Expression  # Expression has third- operand Expression, see Expression#all_expression_as_third_operand_expression
+    end
+
+    class ExpressionObjectRef
+      identified_by   :expression, :ordinal
+      has_one         :expression, mandatory: true        # Expression Object Ref involves Expression, see Expression#all_expression_object_ref
+      has_one         :ordinal, mandatory: true           # Expression Object Ref involves Ordinal, see Ordinal#all_expression_object_ref
+      has_one         :object_type, mandatory: true       # Expression Object Ref involves Object Type, see ObjectType#all_expression_object_ref
+      has_one         :leading_adjective, class: Adjective  # Expression Object Ref has leading-Adjective, see Adjective#all_expression_object_ref_as_leading_adjective
+      has_one         :trailing_adjective, class: Adjective  # Expression Object Ref has trailing-Adjective, see Adjective#all_expression_object_ref_as_trailing_adjective
+    end
+
     class Instance
       identified_by   :concept
       one_to_one      :concept, mandatory: true           # Instance is an instance of Concept, see Concept#instance
@@ -502,6 +559,19 @@ module ActiveFacts
       has_one         :ordinal, mandatory: true           # Foreign Key Field involves Ordinal, see Ordinal#all_foreign_key_field
       has_one         :component, mandatory: true         # Foreign Key Field involves Component, see Component#all_foreign_key_field
       has_one         :value                              # Foreign Key Field is discriminated by Value, see Value#all_foreign_key_field
+    end
+
+    class VersionPattern < String
+      value_type      length: 64
+    end
+
+    class Import
+      identified_by   :topic, :precursor_topic
+      has_one         :topic, mandatory: true             # Import involves Topic, see Topic#all_import
+      has_one         :precursor_topic, mandatory: true, class: Topic  # Import involves precursor-Topic, see Topic#all_import_as_precursor_topic
+      has_one         :file_name, mandatory: true, class: Name  # Import has file-Name, see Name#all_import_as_file_name
+      has_one         :import_role, class: Name           # Import has Import Role, see Name#all_import_as_import_role
+      has_one         :version_pattern                    # Import has semantic Version Pattern, see VersionPattern#all_import
     end
 
     class IndexField
@@ -650,6 +720,10 @@ module ActiveFacts
       maybe           :is_mandatory                       # Is Mandatory
     end
 
+    class SimpleMatching < TransformMatching
+      has_one         :expression                         # Simple Matching maps from Expression, see Expression#all_simple_matching
+    end
+
     class SpanningConstraint
       identified_by   :composite, :spanning_constraint
       has_one         :composite, mandatory: true         # Spanning Constraint involves Composite, see Composite#all_spanning_constraint
@@ -666,6 +740,15 @@ module ActiveFacts
 
     class TemporalMapping < Mapping
       has_one         :value_type, mandatory: true        # Temporal Mapping records time using Value Type, see ValueType#all_temporal_mapping
+    end
+
+    class TransformTargetRef
+      identified_by   :transform_matching, :ordinal
+      has_one         :transform_matching, mandatory: true  # Transform Target Ref involves Transform Matching, see TransformMatching#all_transform_target_ref
+      has_one         :ordinal, mandatory: true           # Transform Target Ref involves Ordinal, see Ordinal#all_transform_target_ref
+      has_one         :object_type, mandatory: true       # Transform Target Ref involves Object Type, see ObjectType#all_transform_target_ref
+      has_one         :leading_adjective, class: Adjective  # Transform Target Ref has leading-Adjective, see Adjective#all_transform_target_ref_as_leading_adjective
+      has_one         :trailing_adjective, class: Adjective  # Transform Target Ref has trailing-Adjective, see Adjective#all_transform_target_ref_as_trailing_adjective
     end
 
     class TypeInheritance < FactType

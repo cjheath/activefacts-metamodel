@@ -81,6 +81,7 @@ module ActiveFacts
         when context_note; "ContextNote#{context_note.verbalise}"
         when unit; "Unit #{unit.describe}"
         when population; "Population: #{population.name}"
+        when transform_rule; "Transform Rule: #{transform_rule.describe}"
         else
           raise "ROGUE CONCEPT OF NO TYPE"
         end
@@ -98,6 +99,7 @@ module ActiveFacts
         when context_note; context_note
         when unit; unit
         when population; population
+        when transform_rule; transform_rule
         else
           raise "ROGUE CONCEPT OF NO TYPE"
         end
@@ -1236,10 +1238,6 @@ module ActiveFacts
         end
       end
 
-      def all_step
-        all_variable.map{|var| var.all_step.to_a}.flatten.uniq
-      end
-
       # Check all parts of this query for validity
       def validate
         show
@@ -2140,8 +2138,47 @@ module ActiveFacts
       end
 
       def comment
-        return 'surrogate key' unless parent
-        ((c = parent.comment) != '' ? c : parent.name + ' surrogate key')
+        if parent && (c = parent.comment) != ''
+          return c
+        end
+        if fkf = all_foreign_key_field.single
+          return fkf.foreign_key.composite.mapping.name + ' surrogate key'
+        end
+        (parent ? parent.name + ' ' : '') + 'surrogate key'
+      end
+    end
+
+    #
+    # Transform Rules
+    #
+
+    class TransformRule
+      def describe
+        compound_matching.describe
+      end
+    end
+
+    class CompoundMatching
+      def describe
+        targ = all_transform_target_ref.map do |tr|
+          (tr.leading_adjective ? tr.leading_adjective + ' ' : '') +
+            tr.object_type.name + (tr.trailing_adjective ? ' ' + tr.trailing_adjective : '')
+        end * ' . '
+        src = (sot = source_object_type) ? sot.name : 'Query'
+
+        "#{targ} <== #{src} {" + all_transform_matching.map{|tm| tm.describe}.sort * ', ' + '}'
+      end
+    end
+
+    class SimpleMatching
+      def describe
+        targ = all_transform_target_ref.map do |tr|
+          (tr.leading_adjective ? tr.leading_adjective + ' ' : '') +
+            tr.object_type.name + (tr.trailing_adjective ? ' ' + tr.trailing_adjective : '')
+        end * ' . '
+        src = expression ? ((et = expression.expression_type) ? et : 'Expr') : ''
+
+        "#{targ} <-- #{src}"
       end
     end
 
