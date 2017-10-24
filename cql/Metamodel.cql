@@ -187,7 +187,7 @@ Concept belongs to at most one Topic,
 Import is where
     Topic imports precursor- Topic;
 Import has at most one role- Name (as Import Role);
-Import has one file-Name;
+Import has at most one file-Name;
 Import has at most one Version Pattern;
 
 Unit is identified by Concept where
@@ -377,7 +377,7 @@ Composition is identified by Guid where
 	Guid is of at most one Composition;
 Composition is called one Name,
 	Name is of at most one Composition;
-Composition is of one compositor- Name composition;
+Composition is by one compositor- Name;
 
 Component is identified by Guid where
 	Component has one Guid,
@@ -428,9 +428,11 @@ Full Absorption is where
 	Composition fully absorbs Object Type;
 Full Absorption applies to one Absorption,
 	Absorption creates at most one Full Absorption;
+/*
 some Object Type is involved in some Full Absorption that applies to some Absorption that is a kind of Mapping
 	if and only if
 	that Mapping represents that Object Type;
+*/
 
 /*
  * Composition constraint categories
@@ -533,7 +535,7 @@ Expression has at most one third- operand Expression;
 
 Expression Object Ref is where
     Expression in Ordinal position maps to one Object Type,
-    Object Type is in Expression in one Ordinal place;
+    Object Type is in Expression in one Ordinal position;
 
 Expression Object Ref has at most one leading- Adjective;
 Expression Object Ref has at most one trailing- Adjective;
@@ -544,7 +546,7 @@ each Transform Matching is identified by Guid where
 
 Transform Target Ref is where
     Transform Matching in Ordinal position maps to one Object Type,
-    Object Type is in Transform Matching in one Ordinal place;
+    Object Type is in Transform Matching in one Ordinal position;
 
 Transform Target Ref has at most one leading- Adjective;
 Transform Target Ref has at most one trailing- Adjective;
@@ -557,11 +559,11 @@ Compound Matching maps from at most one source- Object Type;
 Compound Matching maps from at most one source- Query;
 
 Compound Matching consists of Transform Matching,
-    Transform Matching is a part of at most one Compound Matching;
+    Transform Matching is part of at most one Compound Matching;
 
 each Transform Rule is independent identified by Concept where
     Transform Rule is an instance of one Concept;
-Transform Rule implements one Compound Matching,
+Transform Rule implements at most one Compound Matching,
     Compound Matching is implemented by at most one Transform Rule;
 
 /*
@@ -708,10 +710,12 @@ Step specifies Fact Type that contains Role
 Variable is for Object Type that plays Role
 	if and only if
 	Variable is restricted by Role of Step;
+/*
 some Absorption traverses from some parent Role that is played by some Object Type
 	only if that Absorption contains some Component that is a Mapping(2) that represents that Object Type;
 some Absorption traverses to some child Role that is played by some Object Type
 	only if that Absorption is a kind of Mapping that represents that Object Type;
+*/
 Presence Constraint is preferred identifier
 	only if Presence Constraint has max Frequency;
 Value Type has Scale

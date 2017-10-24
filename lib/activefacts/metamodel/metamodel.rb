@@ -34,7 +34,7 @@ module ActiveFacts
     class Composition
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Composition has Guid, see Guid#composition
-      has_one         :compositor_name, mandatory: true, class: Name  # Composition is a compositor-Name composition, see Name#all_composition_as_compositor_name
+      has_one         :compositor_name, mandatory: true, class: Name  # Composition is by compositor-Name, see Name#all_composition_as_compositor_name
       one_to_one      :name, mandatory: true              # Composition is called Name, see Name#composition
     end
 
@@ -92,7 +92,7 @@ module ActiveFacts
       identified_by   :name
       one_to_one      :name, mandatory: true              # Vocabulary is called Name, see Name#vocabulary
       maybe           :is_transform                       # Is Transform
-      has_one         :version_number                     # Vocabulary has semantic Version Number, see VersionNumber#all_vocabulary
+      has_one         :version_number                     # Vocabulary has Version Number, see VersionNumber#all_vocabulary
     end
 
     class ObjectType
@@ -389,7 +389,7 @@ module ActiveFacts
     class TransformMatching
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Transform Matching has Guid, see Guid#transform_matching
-      has_one         :compound_matching                  # Transform Matching is a part of Compound Matching, see CompoundMatching#all_transform_matching
+      has_one         :compound_matching                  # Transform Matching is part of Compound Matching, see CompoundMatching#all_transform_matching
     end
 
     class TransformRule
@@ -569,9 +569,9 @@ module ActiveFacts
       identified_by   :topic, :precursor_topic
       has_one         :topic, mandatory: true             # Import involves Topic, see Topic#all_import
       has_one         :precursor_topic, mandatory: true, class: Topic  # Import involves precursor-Topic, see Topic#all_import_as_precursor_topic
-      has_one         :file_name, mandatory: true, class: Name  # Import has file-Name, see Name#all_import_as_file_name
+      has_one         :file_name, class: Name             # Import has file-Name, see Name#all_import_as_file_name
       has_one         :import_role, class: Name           # Import has Import Role, see Name#all_import_as_import_role
-      has_one         :version_pattern                    # Import has semantic Version Pattern, see VersionPattern#all_import
+      has_one         :version_pattern                    # Import has Version Pattern, see VersionPattern#all_import
     end
 
     class IndexField
