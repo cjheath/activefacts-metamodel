@@ -860,8 +860,7 @@ module ActiveFacts
             l_adj = "#{role_ref.leading_adjective}".sub(/(\b-\b|.\b|.\Z)/, '\1-').sub(/\b--\b/,'-- ').sub(/- /,'-  ')
             l_adj = nil if l_adj == ""
             # Double the space to compensate for space removed below
-            # REVISIT: hyphenated trailing adjectives are not correctly represented here
-            t_adj = "#{role_ref.trailing_adjective}".sub(/(\b.|\A.)/, '-\1').sub(/ -/,'  -')
+            t_adj = "#{role_ref.trailing_adjective}".sub(/\w+$/,' -\0').sub(/--\w*$/, ' \0')
             t_adj = nil if t_adj == ""
 
             expanded.gsub!(/\{#{i}\}/) do
