@@ -25,7 +25,9 @@ This gem provides the core representations for the Fact Modeling tools of Active
   spec.add_development_dependency "rspec", "~> 3.3"
 
   spec.add_development_dependency "activefacts-compositions", ">= 1.9.6"  # Needed for schema_compositor to emit Ruby from CQL
-  spec.add_development_dependency "activefacts", "~> 1", ">= 1.8"	  # Needed to emit CQL from ORM (and check it from CQL)
+  spec.add_development_dependency "activefacts-orm", ">= 1.9.0"  # Needed to load the ORM file during validation
+  spec.add_development_dependency "activefacts-cql", "~> 1", ">= 1.9"
+  spec.add_development_dependency "activefacts", "~> 1", ">= 1.8"
 
   spec.add_runtime_dependency "activefacts-api", "~> 1", ">= 1.9.5"
 end

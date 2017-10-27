@@ -23,12 +23,17 @@ module ActiveFacts
       has_one         :name                               # Access Path is called Name, see Name#all_access_path
     end
 
-    class Guid < ::Guid
-      value_type
-    end
-
     class Name < String
       value_type      length: 64
+    end
+
+    class CompositeGroup
+      identified_by   :name
+      one_to_one      :name, mandatory: true              # Composite Group has Name, see Name#composite_group
+    end
+
+    class Guid < ::Guid
+      value_type
     end
 
     class Composition
@@ -72,6 +77,7 @@ module ActiveFacts
       identified_by   :mapping
       one_to_one      :mapping, mandatory: true           # Composite consists of Mapping, see Mapping#composite
       has_one         :composition, mandatory: true       # Composite belongs to Composition, see Composition#all_composite
+      has_one         :composite_group                    # Composite belongs to Composite Group, see CompositeGroup#all_composite
       one_to_one      :natural_index, class: Index        # Composite has natural-Index, see Index#composite_as_natural_index
       one_to_one      :primary_index, class: Index        # Composite has primary-Index, see Index#composite_as_primary_index
     end

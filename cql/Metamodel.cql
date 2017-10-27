@@ -186,7 +186,7 @@ Concept belongs to at most one Topic,
 
 Import is where
     Topic imports precursor- Topic;
-Import has at most one role- Name (as Import Role);
+Import has at most one role-Name (as Import Role);
 Import has at most one file-Name;
 Import has at most one Version Pattern;
 
@@ -407,6 +407,9 @@ Composite is identified by Mapping where
 	Composite consists of one Mapping;
 Composition contains Composite,
 	Composite belongs to one Composition;
+
+each Composite Group is identified by Name;
+Composite belongs to at most one Composite Group;
 
 Temporal Mapping is a kind of Mapping;
 Temporal Mapping records time using one Value Type;
