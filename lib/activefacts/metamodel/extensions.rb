@@ -478,7 +478,12 @@ module ActiveFacts
       attr_reader :injected_surrogate_role
 
       def is_separate
+        # Independent object types and Entity Types marked separate
         is_independent or concept.all_concept_annotation.detect{|ca| ca.mapping_annotation == 'separate'}
+      end
+
+      def is_partitioned
+        false
       end
 
       def is_static
@@ -533,11 +538,16 @@ module ActiveFacts
       end
 
       def assimilation
-        ti = identifying_type_inheritance and ti.assimilation
+        ti = all_type_inheritance_as_subtype.map(&:assimilation).compact[0]
       end
 
       def is_separate
+        # Independent Object Types, Entity Types marked separate and TypeInheritance marked not absorbed
         super || !['absorbed', nil].include?(assimilation)
+      end
+
+      def is_partitioned
+        assimilation == 'partitioned'
       end
 
       def preferred_identifier
