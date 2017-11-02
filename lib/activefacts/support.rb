@@ -106,8 +106,8 @@ class String
       end
     end
 
-    def snakecase
-      snakewords.join('_')
+    def snakecase joiner = '_'
+      snakewords.join(joiner)
     end
 
     def to_a
