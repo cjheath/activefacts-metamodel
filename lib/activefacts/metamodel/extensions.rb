@@ -66,6 +66,10 @@ module ActiveFacts
         @constellation.ValueType[[identifying_role_values, name]] or
           check_valid_nonexistent_object_type_name name
       end
+
+      def object_type_lookup name
+        @constellation.ObjectType[[identifying_role_values, name]]
+      end
     end
 
     class Concept
@@ -615,6 +619,7 @@ module ActiveFacts
               trace :pi, "PI roles must be played by one of #{all_supertypes.map(&:name)*", "}" if all_supertypes.size > 1
               all_role.each{|role|
                   next unless role.is_unique || fact_type
+                  next if role.fact_type.is_a?(TypeInheritance) && !role.fact_type.provides_identification
                   ftroles = Array(role.fact_type.all_role)
 
                   # Skip roles in ternary and higher fact types, they're objectified
