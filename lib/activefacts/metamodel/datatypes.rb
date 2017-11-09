@@ -234,11 +234,21 @@ module ActiveFacts
               value_constraint = narrow_value_constraint(value_constraint, vt.value_constraint)
             end
           end while stype = vt.supertype
+          auto_assign =
+            if is_auto_assigned
+              if in_primary_index and !in_foreign_key
+                {auto_assign: is_auto_assigned}     # It's auto-assigned here
+              else
+                {auto_assign: nil}                  # It's auto-assigned elsewhere
+              end
+            else
+              {}                                    # It's not auto-assigned
+          end
 
           [ vt.name,
             (length ? {length: length} : {}).
             merge!(scale ? {scale: scale} : {}).
-            merge!(is_auto_assigned ? { auto_assign: (in_primary_index and !in_foreign_key)} : {}).
+            merge!(auto_assign).
             merge!({mandatory: path_mandatory}).
             merge!(value_constraint ? {value_constraint: value_constraint} : {})
           ]
