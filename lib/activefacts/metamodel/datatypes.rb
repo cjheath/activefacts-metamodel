@@ -70,7 +70,9 @@ module ActiveFacts
         end
 
         def choose_integer_type min, max
-          integer_ranges.detect{|type_name, vmin, vmax, bits| min >= vmin && max <= vmax}
+          integer_ranges.
+            select{|type_name, vmin, vmax| min >= vmin && max <= vmax}.
+            sort_by{|type_name, vmin, vmax| vmax-vmin}[0]   # Choose the smallest range
         end
 
         def boolean_type
