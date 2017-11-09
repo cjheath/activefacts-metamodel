@@ -196,12 +196,10 @@ module ActiveFacts
 
         when SurrogateKey
           [ context.surrogate_type,
-            if in_primary_index and !in_foreign_key
-              {auto_assign: "commit"}
-            else
-              {}
-            end.
-            merge!({mandatory: path_mandatory})
+            {
+              auto_assign: ((in_primary_index && !in_foreign_key) ? "commit" : nil),
+              mandatory: path_mandatory
+            }
           ]
 
         when ValidFrom
@@ -240,7 +238,7 @@ module ActiveFacts
           [ vt.name,
             (length ? {length: length} : {}).
             merge!(scale ? {scale: scale} : {}).
-            merge!({ auto_assign: (in_primary_index and !in_foreign_key and is_auto_assigned) }).
+            merge!(is_auto_assigned ? { auto_assign: (in_primary_index and !in_foreign_key)} : {}).
             merge!({mandatory: path_mandatory}).
             merge!(value_constraint ? {value_constraint: value_constraint} : {})
           ]

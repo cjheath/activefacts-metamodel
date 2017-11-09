@@ -89,7 +89,7 @@ class String
       count = 0
       map do |word|
         if (count += 1) == 1
-          word
+          word.downcase   # The camel has his head down
         else
           word[0].upcase+word[1..-1].downcase
         end
@@ -108,6 +108,16 @@ class String
 
     def snakecase joiner = '_'
       snakewords.join(joiner)
+    end
+
+    def shoutwords
+      map do |word|
+        word.upcase
+      end
+    end
+
+    def shoutcase joiner = '_'
+      shoutwords.join(joiner)
     end
 
     def to_a
