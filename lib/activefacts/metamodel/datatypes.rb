@@ -80,9 +80,6 @@ module ActiveFacts
 
         def surrogate_type
         end
-
-        def valid_from_type
-        end
       end
 
       class DefaultContext < Context
@@ -122,10 +119,6 @@ module ActiveFacts
 
         def surrogate_type
           'BIGINT'
-        end
-
-        def valid_from_type
-          'TIMESTAMP'
         end
       end
 
@@ -205,7 +198,7 @@ module ActiveFacts
           ]
 
         when ValidFrom
-          context.valid_from_type
+          object_type.name
 
         when ValueField, Absorption
           # Walk up the entity type identifiers (must be single-part) to a value type:
