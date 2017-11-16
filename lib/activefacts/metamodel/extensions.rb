@@ -1735,6 +1735,10 @@ module ActiveFacts
           nil
         end
       end
+
+      def is_partitioned_here
+        false # Must be an absorption to be partitioned here
+      end
     end
 
     class Nesting
@@ -1783,6 +1787,10 @@ module ActiveFacts
 
       def is_subtype_absorption
         is_type_inheritance && parent_role.fact_type.supertype == object_type
+      end
+
+      def is_partitioned_here
+        (ft = child_role.fact_type).is_a?(TypeInheritance) && ft.assimilation == 'partitioned'
       end
 
       def is_preferred_direction
