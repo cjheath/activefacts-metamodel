@@ -1967,6 +1967,8 @@ module ActiveFacts
           when SurrogateKey
             if is_identifying
               [RANK_SURROGATE]  # an injected PK
+            elsif injection_annotation
+              [RANK_INJECTION, name]
             else
               [RANK_MANDATORY, name]    # an FK
             end
@@ -1984,7 +1986,11 @@ module ActiveFacts
             [RANK_DISCRIMINATOR, name || child_role.name]
 
           when ValueField
-            [RANK_IDENT]
+            if injection_annotation
+              [RANK_INJECTION, name]
+            else
+              [RANK_IDENT]
+            end
 
           when Absorption
             if is_type_inheritance
@@ -2000,6 +2006,8 @@ module ActiveFacts
               end
             elsif (p = parent_entity_type) and (position = p.rank_in_preferred_identifier(child_role.base_role))
               [RANK_IDENT, position]
+            elsif injection_annotation
+              [RANK_INJECTION, name]
             else
               if parent_role.is_unique
                 [parent_role.is_mandatory ? RANK_MANDATORY : RANK_NON_MANDATORY, name || child_role.name]
@@ -2012,11 +2020,11 @@ module ActiveFacts
             [RANK_SCOPING, name || object_type.name]
 
           when ValidFrom
-            [ RANK_INJECTION, name ]
+            [RANK_INJECTION, name]
 
           when Mapping
             # This should not happen; a Composite is the only bare Mapping and we don't rank them
-            [ RANK_MANDATORY, name ]
+            [RANK_MANDATORY, name]
 
           else
             raise "unexpected #{self.class.basename} in Component#rank_key"
@@ -2110,7 +2118,7 @@ module ActiveFacts
       end
 
       def fork_to_new_parent parent
-        @constellation.fork self, guid: :new, parent: parent
+        @constellation.fork self, guid: :new, parent: parent, injection_annotation: nil
       end
     end
 
@@ -2135,7 +2143,7 @@ module ActiveFacts
 
       def fork_to_new_parent parent
         # When we fork from a ValueField, we want to use the name of the ValueType, not the ValueField name
-        @constellation.fork self, guid: :new, parent: parent, name: object_type.name
+        @constellation.fork self, guid: :new, parent: parent, name: object_type.name, injection_annotation: nil
       end
     end
 
