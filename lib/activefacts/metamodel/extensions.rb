@@ -1721,7 +1721,7 @@ module ActiveFacts
       end
 
       def path_mandatory
-        true
+        !parent || parent.path_mandatory
       end
 
       def is_auto_assigned
@@ -1986,9 +1986,6 @@ module ActiveFacts
           when ValueField
             [RANK_IDENT]
 
-          when Injection
-            [RANK_INJECTION, name]            # REVISIT: Injection not fully elaborated. A different sub-key for ranking may be needed
-
           when Absorption
             if is_type_inheritance
               # We are traversing a type inheritance fact type. Is this object_type the subtype or supertype?
@@ -2014,8 +2011,12 @@ module ActiveFacts
           when Scoping
             [RANK_SCOPING, name || object_type.name]
 
+          when ValidFrom
+            [ RANK_INJECTION, name ]
+
           when Mapping
-            [ name ]
+            # This should not happen; a Composite is the only bare Mapping and we don't rank them
+            [ RANK_MANDATORY, name ]
 
           else
             raise "unexpected #{self.class.basename} in Component#rank_key"
@@ -2114,12 +2115,6 @@ module ActiveFacts
     end
 
     class Scoping
-      def path_mandatory
-        parent.path_mandatory
-      end
-    end
-
-    class Injection
       def path_mandatory
         parent.path_mandatory
       end

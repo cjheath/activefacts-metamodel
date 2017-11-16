@@ -104,9 +104,6 @@ module ActiveFacts
             when ValidFrom
               # Nothing to check here
 
-            when Injection
-              report.call(member, "REVISIT: Unexpected and unchecked Injection")
-
             when Mapping
               report.call(member, "A child Component should not be a bare Mapping")
 

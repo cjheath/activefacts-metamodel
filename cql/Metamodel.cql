@@ -401,6 +401,7 @@ Discriminated Role is where
 Mapping is a kind of Component;
 Mapping represents one Object Type;
 Mapping uses at most one native- type Name;
+Mapping has at most one injection-Annotation;
 
 Composite is identified by Mapping where
 	Mapping projects at most one Composite,
@@ -410,9 +411,6 @@ Composition contains Composite,
 
 each Composite Group is identified by Name;
 Composite belongs to at most one Composite Group;
-
-Temporal Mapping is a kind of Mapping;
-Temporal Mapping records time using one Value Type;
 
 Absorption is a kind of Mapping;
 Absorption traverses to one child-Role;
@@ -453,10 +451,9 @@ Spanning Constraint is where
 	Constraint spans Composite;
 
 Scoping is a kind of Mapping;
-Injection is a kind of Mapping;
-Value Field is a kind of Injection;
-Surrogate Key is a kind of Injection;
-Valid From is a kind of Injection;
+Value Field is a kind of Mapping;
+Surrogate Key is a kind of Mapping;
+Valid From is a kind of Mapping;
 
 /* Access Paths */
 Access Path is identified by Guid where
@@ -679,10 +676,12 @@ for each Constraint exactly one of these holds:
 	Constraint is a Value Constraint;
 either Domain Object Type is a Value Type or Domain Object Type is an Entity Type but not both;
 for each Mapping exactly one of these holds:
-	Mapping is an Absorption,
-	Mapping is an Injection,
+	Mapping projects Composite,
 	Mapping is a Scoping,
-	Mapping projects Composite;
+	Mapping is an Absorption,
+	Mapping is a Value Field,
+	Mapping is a Surrogate Key,
+	Mapping is a Valid From;
 for each Role Sequence exactly one of these holds:
 	Role Sequence is for Reading,
 	Presence Constraint covers Role Sequence,

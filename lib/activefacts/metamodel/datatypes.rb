@@ -248,8 +248,6 @@ module ActiveFacts
             merge!(value_constraint ? {value_constraint: value_constraint} : {})
           ]
 
-        when Injection
-          object_type.name
         else
           raise "Can't make a column from #{component}"
         end

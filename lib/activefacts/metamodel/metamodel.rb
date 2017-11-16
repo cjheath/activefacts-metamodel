@@ -13,6 +13,7 @@ module ActiveFacts
 
     class Mapping < Component
       has_one         :object_type, mandatory: true       # Mapping represents Object Type, see ObjectType#all_mapping
+      has_one         :injection_annotation, class: "Annotation"  # Mapping has injection-Annotation, see Annotation#all_mapping_as_injection_annotation
       has_one         :native_type_name, class: "Name"    # Mapping uses native- type Name, see Name#all_mapping_as_native_type_name
     end
 
@@ -594,9 +595,6 @@ module ActiveFacts
       has_one         :true_value, class: Value           # Indicator uses true-Value, see Value#all_indicator_as_true_value
     end
 
-    class Injection < Mapping
-    end
-
     class LeafConstraint
       identified_by   :component, :leaf_constraint
       has_one         :component, mandatory: true         # Leaf Constraint involves Component, see Component#all_leaf_constraint
@@ -741,11 +739,7 @@ module ActiveFacts
       has_one         :superset_role_sequence, mandatory: true, class: RoleSequence  # Subset Constraint covers superset-Role Sequence, see RoleSequence#all_subset_constraint_as_superset_role_sequence
     end
 
-    class SurrogateKey < Injection
-    end
-
-    class TemporalMapping < Mapping
-      has_one         :value_type, mandatory: true        # Temporal Mapping records time using Value Type, see ValueType#all_temporal_mapping
+    class SurrogateKey < Mapping
     end
 
     class TransformTargetRef
@@ -765,10 +759,10 @@ module ActiveFacts
       has_one         :assimilation                       # Type Inheritance uses Assimilation, see Assimilation#all_type_inheritance
     end
 
-    class ValidFrom < Injection
+    class ValidFrom < Mapping
     end
 
-    class ValueField < Injection
+    class ValueField < Mapping
     end
 
     class ValueTypeParameter
