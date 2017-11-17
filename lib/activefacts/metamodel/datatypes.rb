@@ -63,6 +63,10 @@ module ActiveFacts
       # A DataType Context class should refine this class.
       # The default context might work for you.
       class Context
+        def initialize options = {}
+          raise "Unused options in DataType::Context: #{options.inspect}" unless options.empty?
+        end
+
         def integer_ranges
         end
 
