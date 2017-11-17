@@ -6,6 +6,7 @@ module ActiveFacts
       identified_by   :guid
       one_to_one      :guid, mandatory: true              # Component has Guid, see Guid#component
       maybe           :has_absolute_name                  # Has Absolute Name
+      has_one         :injection_annotation, class: "Annotation"  # Component has injection-Annotation, see Annotation#all_component_as_injection_annotation
       has_one         :name                               # Component projects Name, see Name#all_component
       has_one         :ordinal                            # Component has Ordinal rank, see Ordinal#all_component
       has_one         :parent, class: Component, counterpart: :member  # Member belongs to Parent, see Component#all_member
@@ -13,7 +14,6 @@ module ActiveFacts
 
     class Mapping < Component
       has_one         :object_type, mandatory: true       # Mapping represents Object Type, see ObjectType#all_mapping
-      has_one         :injection_annotation, class: "Annotation"  # Mapping has injection-Annotation, see Annotation#all_mapping_as_injection_annotation
       has_one         :native_type_name, class: "Name"    # Mapping uses native- type Name, see Name#all_mapping_as_native_type_name
     end
 

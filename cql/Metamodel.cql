@@ -387,6 +387,7 @@ Component (as Member) belongs to at most one Component (as Parent) [acyclic, str
 Component projects at most one Name;
 Component has at most one Ordinal rank;
 Component has absolute name;
+Component has at most one injection-Annotation;
 
 Indicator is a kind of Component;
 Indicator indicates one Role played;
@@ -401,7 +402,6 @@ Discriminated Role is where
 Mapping is a kind of Component;
 Mapping represents one Object Type;
 Mapping uses at most one native- type Name;
-Mapping has at most one injection-Annotation;
 
 Composite is identified by Mapping where
 	Mapping projects at most one Composite,
