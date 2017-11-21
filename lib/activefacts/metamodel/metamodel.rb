@@ -773,10 +773,10 @@ module ActiveFacts
     end
 
     class ValueTypeParameterRestriction
-      identified_by   :value_type, :value_type_parameter
+      identified_by   :value_type, :value_type_parameter, :value
       has_one         :value_type, mandatory: true        # Value Type Parameter Restriction involves Value Type, see ValueType#all_value_type_parameter_restriction
       has_one         :value_type_parameter, mandatory: true  # Value Type Parameter Restriction involves Value Type Parameter, see ValueTypeParameter#all_value_type_parameter_restriction
-      has_one         :value, mandatory: true             # Value Type Parameter Restriction has Value, see Value#all_value_type_parameter_restriction
+      has_one         :value, mandatory: true             # Value Type Parameter Restriction involves Value, see Value#all_value_type_parameter_restriction
     end
   end
 end

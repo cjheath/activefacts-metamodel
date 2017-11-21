@@ -365,9 +365,8 @@ Value Type Parameter is where
 Value Type Parameter requires value of one parameter-Value Type;
 
 Value Type Parameter Restriction is where
-	Value Type receives Value Type Parameter,
-	Value Type Parameter applies to Value Type;
-Value Type Parameter Restriction has one Value;
+	Value Type allows Value Type Parameter to have Value;
+
 
 /*
  * Compositions

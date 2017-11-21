@@ -535,6 +535,12 @@ module ActiveFacts
       end
     end
 
+    class ValueTypeParameter
+      def describe
+        "ValueType '#{value_type.name}' Parameter '#{name}' is of type '#{parameter_value_type.name}'"
+      end
+    end
+
     class EntityType
       def identification_is_inherited
         preferred_identifier and
