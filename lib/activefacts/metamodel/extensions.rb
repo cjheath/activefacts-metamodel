@@ -1013,7 +1013,7 @@ module ActiveFacts
 
     class AllowedRange
       def to_s(infinity = true)
-        value_range.to_s
+        value_range.to_s infinity
       end
     end
 

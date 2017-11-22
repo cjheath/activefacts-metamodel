@@ -19290,10 +19290,11 @@ XSD ComplexType</orm:Text>
 				</orm:ReferencedBy>
 			</orm:ModelNote>
 			<orm:ModelNote id="_519F86D3-A4F4-41CE-9F4B-F1A476C22426">
-				<orm:Text>Nesting supports specific kinds of denormalised structures such as SQL repeated attributes, Set (no nesting role),
-Array (one small integer key role) and HSTORE (one or more key roles) composite data types.</orm:Text>
+				<orm:Text>Nesting supports specific kinds of denormalised structures such as SQL
+repeated attributes, Set (no nesting role), Array (one small integer key
+role) and HSTORE (one or more key roles) composite data types.</orm:Text>
 				<orm:ReferencedBy>
-					<orm:ObjectType ref="_583079A2-FCCF-4B48-8E67-5193D9A5F427" />
+					<orm:FactType ref="_8F3C309D-30FC-406F-99E4-00847A4C3112" />
 				</orm:ReferencedBy>
 			</orm:ModelNote>
 			<orm:ModelNote id="_B59BE65E-C01A-4178-969B-9299F04DD863">
@@ -22244,9 +22245,9 @@ other Object Types that are Fully Absorbed</orm:Text>
 	</ormDiagram:ORMDiagram>
 	<ormDiagram:ORMDiagram id="_251E6292-1F7B-41DD-AF83-4D6D3733AFBC" IsCompleteView="true" Name="Nesting" BaseFontName="Tahoma" BaseFontSize="0.0972222238779068">
 		<ormDiagram:Shapes>
-			<ormDiagram:FactTypeShape id="_9A795DAA-17E6-48B3-929A-A95182100E46" IsExpanded="true" AbsoluteBounds="3.6782222186280196, 1.1535508384203594, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_9A795DAA-17E6-48B3-929A-A95182100E46" IsExpanded="true" AbsoluteBounds="2.906325552696289, 1.1535508384203594, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_F7E045A9-FED4-43C7-BD1B-4EDC28D204C0" IsExpanded="true" AbsoluteBounds="3.6782222186280196, 1.4621912407150552, 0.23026981949806213, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_F7E045A9-FED4-43C7-BD1B-4EDC28D204C0" IsExpanded="true" AbsoluteBounds="2.906325552696289, 1.4621912407150552, 0.23026981949806213, 0.12950302660465241">
 						<ormDiagram:Subject ref="_084515E1-433A-4B79-ADA4-220359AF7181" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -22256,12 +22257,12 @@ other Object Types that are Fully Absorbed</orm:Text>
 					<ormDiagram:Role ref="_6F4289FB-F681-49E7-AE52-307D4E89B92D" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:FactTypeShape id="_A4F0171A-1134-4D37-9186-BDA324B12476" IsExpanded="true" AbsoluteBounds="2.1480410259759997, 1.8396346048358891, 0.6738888889923691, 0.30588888899236916">
+			<ormDiagram:FactTypeShape id="_A4F0171A-1134-4D37-9186-BDA324B12476" IsExpanded="true" AbsoluteBounds="1.3761443600442691, 1.8396346048358891, 0.6738888889923691, 0.30588888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_9A099A23-DCBB-404E-8E51-C60F2D3C451E" IsExpanded="true" AbsoluteBounds="1.8871299746444659, 2.1832842087169784, 1.4981937408447266, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_9A099A23-DCBB-404E-8E51-C60F2D3C451E" IsExpanded="true" AbsoluteBounds="1.1152333087127353, 2.1832842087169784, 1.4981937408447266, 0.12950302660465241">
 						<ormDiagram:Subject ref="_CBDE86EE-A121-4312-8F4E-146B62633CFB" />
 					</ormDiagram:ReadingShape>
-					<ormDiagram:ObjectifiedFactTypeNameShape id="_9F5CCE3F-9E39-4565-AE83-27FA5718DE43" IsExpanded="true" AbsoluteBounds="2.1480410259759997, 1.6453800649289105, 0.44460493326187134, 0.12950302660465241">
+					<ormDiagram:ObjectifiedFactTypeNameShape id="_9F5CCE3F-9E39-4565-AE83-27FA5718DE43" IsExpanded="true" AbsoluteBounds="1.1968978316527845, 1.6453800649289105, 0.44460493326187134, 0.12950302660465241">
 						<ormDiagram:Subject ref="_583079A2-FCCF-4B48-8E67-5193D9A5F427" />
 					</ormDiagram:ObjectifiedFactTypeNameShape>
 				</ormDiagram:RelativeShapes>
@@ -22272,20 +22273,20 @@ other Object Types that are Fully Absorbed</orm:Text>
 					<ormDiagram:Role ref="_3ECA0267-A4E1-4210-B6A7-40F9F5364470" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_2A81E6F6-197F-4F8B-8A94-6136CAC9E03E" IsExpanded="true" AbsoluteBounds="3.8752569175688087, 1.9128275360297478, 0.84259968519210815, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_2A81E6F6-197F-4F8B-8A94-6136CAC9E03E" IsExpanded="true" AbsoluteBounds="3.1033602516370782, 1.9128275360297478, 0.84259968519210815, 0.22950302660465241">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ValueConstraintShape id="_843FE453-330D-42E9-8195-3A2A4F083793" IsExpanded="true" AbsoluteBounds="3.9231479863300311, 2.1701926200201278, 1.5149987936019898, 0.12950302660465241">
+					<ormDiagram:ValueConstraintShape id="_843FE453-330D-42E9-8195-3A2A4F083793" IsExpanded="true" AbsoluteBounds="3.1512513203983006, 2.1701926200201278, 1.5149987936019898, 0.12950302660465241">
 						<ormDiagram:Subject ref="_E8FEEEEE-7745-4028-93DC-3AF8B9410873" />
 					</ormDiagram:ValueConstraintShape>
 				</ormDiagram:RelativeShapes>
 				<ormDiagram:Subject ref="_D26C9629-CD3D-4D1D-A67D-4A2BBA474EA8" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_5783CED1-17CC-4C04-858C-660E05B4185C" IsExpanded="true" AbsoluteBounds="1.3909368659647159, 1.1957437696142179, 0.44445383071899414, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_5783CED1-17CC-4C04-858C-660E05B4185C" IsExpanded="true" AbsoluteBounds="0.61904020003298532, 1.1957437696142179, 0.44445383071899414, 0.22950302660465241">
 				<ormDiagram:Subject ref="_25D2C6A4-DE21-447E-BB72-3EF90026E125" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:FactTypeShape id="_C2E4728B-F42F-4342-ABDA-CE54F7F5A2C6" IsExpanded="true" AbsoluteBounds="2.0722741443434995, 1.1535508384203581, 0.38388888899236917, 0.24388888899236916">
+			<ormDiagram:FactTypeShape id="_C2E4728B-F42F-4342-ABDA-CE54F7F5A2C6" IsExpanded="true" AbsoluteBounds="1.300377478411769, 1.1535508384203581, 0.38388888899236917, 0.24388888899236916">
 				<ormDiagram:RelativeShapes>
-					<ormDiagram:ReadingShape id="_F5B190F9-0996-42F1-AF68-1E5AF869AD25" IsExpanded="true" AbsoluteBounds="1.9373201522754648, 1.4441973751059827, 0.45558311343193053, 0.12950302660465241">
+					<ormDiagram:ReadingShape id="_F5B190F9-0996-42F1-AF68-1E5AF869AD25" IsExpanded="true" AbsoluteBounds="1.1654234863437343, 1.4441973751059827, 0.45558311343193053, 0.12950302660465241">
 						<ormDiagram:Subject ref="_2F6A444C-6935-4A45-A2DA-AD4E9DC7ADFA" />
 					</ormDiagram:ReadingShape>
 				</ormDiagram:RelativeShapes>
@@ -22295,19 +22296,19 @@ other Object Types that are Fully Absorbed</orm:Text>
 					<ormDiagram:Role ref="_E2E061D9-1236-4EBE-8C67-F8CC143D35C0" />
 				</ormDiagram:RoleDisplayOrder>
 			</ormDiagram:FactTypeShape>
-			<ormDiagram:ObjectTypeShape id="_9B384C08-5155-408D-9198-98A05BAA2526" IsExpanded="true" AbsoluteBounds="3.036232434623618, 0.5, 0.70184587955474853, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_9B384C08-5155-408D-9198-98A05BAA2526" IsExpanded="true" AbsoluteBounds="2.2643357686918875, 0.5, 0.70184587955474853, 0.22950302660465241">
 				<ormDiagram:Subject ref="_C4DE2415-F2F5-42AD-906B-50039DAE1DDF" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_94B9231C-516A-45C7-BD82-4165FFD12333" IsExpanded="true" AbsoluteBounds="3.1269035566977452, 1.9128275360297478, 0.52050363540649414, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_94B9231C-516A-45C7-BD82-4165FFD12333" IsExpanded="true" AbsoluteBounds="2.3550068907660147, 1.9128275360297478, 0.52050363540649414, 0.22950302660465241">
 				<ormDiagram:Subject ref="_4674DAF9-EFB8-4C15-A06F-F75328A04FA0" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ObjectTypeShape id="_3F6B7ECA-59C3-4180-8B8B-CB5DDA14AA86" IsExpanded="true" AbsoluteBounds="1.4248554553182773, 1.9128275360297478, 0.37661665201187133, 0.22950302660465241">
+			<ormDiagram:ObjectTypeShape id="_3F6B7ECA-59C3-4180-8B8B-CB5DDA14AA86" IsExpanded="true" AbsoluteBounds="0.65295878938654672, 1.9128275360297478, 0.37661665201187133, 0.22950302660465241">
 				<ormDiagram:Subject ref="_ABCDC9B2-822F-4E84-83D4-3732C029BB1B" />
 			</ormDiagram:ObjectTypeShape>
-			<ormDiagram:ExternalConstraintShape id="_624BC58E-2C91-48BE-A9D0-3D60BF6156FA" IsExpanded="true" AbsoluteBounds="3.1376896060735469, 1.2304952829165441, 0.16, 0.16">
+			<ormDiagram:ExternalConstraintShape id="_624BC58E-2C91-48BE-A9D0-3D60BF6156FA" IsExpanded="true" AbsoluteBounds="2.3657929401418163, 1.2304952829165441, 0.16, 0.16">
 				<ormDiagram:Subject ref="_BBBECAC9-D1F7-44FA-B35A-7FD880625809" />
 			</ormDiagram:ExternalConstraintShape>
-			<ormDiagram:ModelNoteShape id="_7246B52E-A3DD-4A4C-9DBF-3A8EF076E0E8" IsExpanded="true" AbsoluteBounds="0.5, 2.7145476737777043, 5.0554503555297847, 0.2588533217906952">
+			<ormDiagram:ModelNoteShape id="_7246B52E-A3DD-4A4C-9DBF-3A8EF076E0E8" IsExpanded="true" AbsoluteBounds="0.5, 2.36798182376754, 3.1798876876831059, 0.37620357227325441">
 				<ormDiagram:Subject ref="_519F86D3-A4F4-41CE-9F4B-F1A476C22426" />
 			</ormDiagram:ModelNoteShape>
 		</ormDiagram:Shapes>
@@ -23245,26 +23246,26 @@ other Object Types that are Fully Absorbed</orm:Text>
 		<ormDiagram:Subject ref="_E99B1F8C-EF79-4A4B-8EBC-66FFD234E616" />
 	</ormDiagram:ORMDiagram>
 	<diagramDisplay:DiagramDisplay id="_36114BE7-E5F8-4043-B0F7-86F614309DA9" SaveDiagramPosition="true">
-		<diagramDisplay:Diagram id="_2BBFBCD4-5B03-4041-BDF3-C3D20F82230E" ref="_DA90097C-5E98-485C-B45D-0ADDC8EF660B" CenterPoint="4.8737238201426925, 3.2980086000965585" ZoomFactor="1.13704979" />
+		<diagramDisplay:Diagram id="_2BBFBCD4-5B03-4041-BDF3-C3D20F82230E" ref="_DA90097C-5E98-485C-B45D-0ADDC8EF660B" CenterPoint="4.2380206165767387, 2.8678334999391466" ZoomFactor="1.30760729" />
 		<diagramDisplay:Diagram id="_7E20A53F-39E5-43A6-8590-3512BD33D0FE" ref="_165CE823-A7DC-42AA-B7FF-8B85CC2E884C" CenterPoint="4.2380206165767387, 2.8678334999391466" ZoomFactor="1.30760729" />
 		<diagramDisplay:Diagram id="_91C59B24-B619-4264-82BB-C5F0C17F0962" ref="_F37D50E6-A512-482F-A8D4-70334B31CAF2" CenterPoint="4.2380206165767387, 2.8678334999391466" ZoomFactor="1.30760729" />
 		<diagramDisplay:Diagram id="_F680603C-B795-49C1-8665-FF62A2C42E30" ref="_107EEF4C-2438-41D6-96FC-64110DC7F234" CenterPoint="3.6852355378719985, 2.4937684090863148" ZoomFactor="1.5037483" />
 		<diagramDisplay:Diagram id="_8A7EB9D9-9782-4B98-BEB8-4925A92F418E" ref="_E6507DF3-A512-482F-A8D4-70334B31CAF2" CenterPoint="4.1902961864865373, 2.8355387728104389" ZoomFactor="1.3225" />
-		<diagramDisplay:Diagram id="_1BF33124-B049-4A79-8EEA-23EACFF57ADD" ref="_42D757AB-38DD-4061-8929-7BAEB5912A36" CenterPoint="4.2380206165767387, 3.0112251749361039" ZoomFactor="1.30760729" IsActive="true" />
-		<diagramDisplay:Diagram id="_9FD5F577-0352-412D-A2F3-708E9F81C997" ref="_89024882-AAC6-4033-9E04-41B22DA86FC4" CenterPoint="4.1902961864865373, 2.9773157114509607" ZoomFactor="1.3225" />
+		<diagramDisplay:Diagram id="_1BF33124-B049-4A79-8EEA-23EACFF57ADD" ref="_42D757AB-38DD-4061-8929-7BAEB5912A36" CenterPoint="3.6852355378719985, 2.4937684090863148" ZoomFactor="1.5037483" />
+		<diagramDisplay:Diagram id="_9FD5F577-0352-412D-A2F3-708E9F81C997" ref="_89024882-AAC6-4033-9E04-41B22DA86FC4" CenterPoint="4.1902961864865373, 2.8355387728104389" ZoomFactor="1.3225" />
 		<diagramDisplay:Diagram id="_A0714009-A428-4874-9506-9E54199C6261" ref="_59B9C1E4-B910-47AF-9659-F9D0F7DB420F" CenterPoint="4.8737238201426925, 3.2980086000965585" ZoomFactor="1.13704979" />
-		<diagramDisplay:Diagram id="_B1F54A7E-3930-4803-B9CA-8762146921BF" ref="_E67D50F3-A512-482F-A8D4-70334B31CAF2" CenterPoint="3.6852355378719985, 2.4937684090863148" ZoomFactor="1.5037483" />
-		<diagramDisplay:Diagram id="_D9EAA91F-2766-43C2-A029-2A9C308B0E77" ref="_ABD75742-38DD-4061-8929-7BAEB5912A36" CenterPoint="3.643735842896465, 2.4656859087269312" ZoomFactor="1.520875" />
-		<diagramDisplay:Diagram id="_82A4D73D-7B13-4881-A51F-8CAB1D52E40B" ref="_40EBB5F3-C265-444F-8FB0-E8240F9F2278" CenterPoint="4.1902961864865373, 2.8355387728104389" ZoomFactor="1.3225" />
-		<diagramDisplay:Diagram id="_2D90736A-0B96-49C0-A224-995D1259160E" ref="_190E178C-2240-4FB2-BC97-C46F01F5DE17" CenterPoint="4.2380206165767387, 2.9753772561868645" ZoomFactor="1.30760729" />
-		<diagramDisplay:Diagram id="_00220533-A5F0-4E1A-89A0-D0521AC8CE59" ref="_2706DE82-62CD-4A4F-A20E-75AA00E5E88B" CenterPoint="4.9251180490486792, 3.3397299552524644" ZoomFactor="1.12518454" />
-		<diagramDisplay:Diagram id="_E745488C-C4C7-46B7-8FCD-5C8BD3A522E9" ref="_F7A434CB-37F7-40B8-9746-B67D50FDBB57" CenterPoint="3.6852355378719985, 2.4937684090863148" ZoomFactor="1.5037483" />
-		<diagramDisplay:Diagram id="_03D31231-0C69-4E09-B967-EFD03B8ABCBE" ref="_83DE8C3A-D510-4CD4-AACF-AE58C45602CA" CenterPoint="3.6852355378719985, 2.4989637599385781" ZoomFactor="1.5037483" />
-		<diagramDisplay:Diagram id="_860AA1B6-5F86-44C4-8FA9-32EAD332BC6D" ref="_251E6292-1F7B-41DD-AF83-4D6D3733AFBC" CenterPoint="4.8188406796145928, 3.3491848520441647" ZoomFactor="1.15" />
+		<diagramDisplay:Diagram id="_B1F54A7E-3930-4803-B9CA-8762146921BF" ref="_E67D50F3-A512-482F-A8D4-70334B31CAF2" CenterPoint="4.3225319090829455, 2.4937684090863148" ZoomFactor="1.5037483" />
+		<diagramDisplay:Diagram id="_D9EAA91F-2766-43C2-A029-2A9C308B0E77" ref="_ABD75742-38DD-4061-8929-7BAEB5912A36" CenterPoint="4.2738555751266807, 2.4656859087269312" ZoomFactor="1.520875" />
+		<diagramDisplay:Diagram id="_82A4D73D-7B13-4881-A51F-8CAB1D52E40B" ref="_40EBB5F3-C265-444F-8FB0-E8240F9F2278" CenterPoint="4.9149338728714271, 2.8355387728104389" ZoomFactor="1.3225" />
+		<diagramDisplay:Diagram id="_2D90736A-0B96-49C0-A224-995D1259160E" ref="_190E178C-2240-4FB2-BC97-C46F01F5DE17" CenterPoint="4.97091139989452, 2.9753772561868645" ZoomFactor="1.30760729" />
+		<diagramDisplay:Diagram id="_00220533-A5F0-4E1A-89A0-D0521AC8CE59" ref="_2706DE82-62CD-4A4F-A20E-75AA00E5E88B" CenterPoint="5.0233305099376828, 2.8980752941948169" ZoomFactor="1.29396224" />
+		<diagramDisplay:Diagram id="_E745488C-C4C7-46B7-8FCD-5C8BD3A522E9" ref="_F7A434CB-37F7-40B8-9746-B67D50FDBB57" CenterPoint="4.3225319090829455, 2.4937684090863148" ZoomFactor="1.5037483" />
+		<diagramDisplay:Diagram id="_03D31231-0C69-4E09-B967-EFD03B8ABCBE" ref="_83DE8C3A-D510-4CD4-AACF-AE58C45602CA" CenterPoint="4.3225319090829455, 2.4937684090863148" ZoomFactor="1.5037483" />
+		<diagramDisplay:Diagram id="_860AA1B6-5F86-44C4-8FA9-32EAD332BC6D" ref="_251E6292-1F7B-41DD-AF83-4D6D3733AFBC" CenterPoint="3.643735842896465, 2.4656859087269312" ZoomFactor="1.520875" />
 		<diagramDisplay:Diagram id="_E73C2EDC-1E6F-478D-845E-49355C2AAD3C" ref="_0E498292-D8A4-44B2-9E98-38569598F68A" CenterPoint="4.2380206165767387, 2.9455039905624987" ZoomFactor="1.30760729" />
 		<diagramDisplay:Diagram id="_57E7F408-FBE8-4009-82EC-A3E88F0DA20A" ref="_86C40B76-3BD0-48A2-82AE-0249005503FC" CenterPoint="4.3865253674430269, 2.968325436615582" ZoomFactor="1.26333857" />
 		<diagramDisplay:Diagram id="_05371502-2ACB-43D7-8AE7-E8A19C0B2B13" ref="_6AEDDB43-BD63-487D-94C9-6E1E01CF1237" CenterPoint="3.6852355378719985, 2.6652149872109989" ZoomFactor="1.5037483" />
-		<diagramDisplay:Diagram id="_1854C3B7-8951-4DDA-A108-D0840211527C" ref="_0D720FDD-394C-419C-A1F7-1996BE2DBE23" CenterPoint="3.643735842896465, 2.4656859087269312" ZoomFactor="1.520875" />
+		<diagramDisplay:Diagram id="_1854C3B7-8951-4DDA-A108-D0840211527C" ref="_0D720FDD-394C-419C-A1F7-1996BE2DBE23" CenterPoint="3.643735842896465, 2.4656859087269312" ZoomFactor="1.520875" IsActive="true" />
 	</diagramDisplay:DiagramDisplay>
 	<oial:model id="_2864B7FA-6FBE-4B7F-B519-EA46B095A655" name="Metamodel">
 		<oial:informationTypeFormats>
