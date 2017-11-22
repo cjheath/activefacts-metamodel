@@ -1013,11 +1013,17 @@ module ActiveFacts
 
     class AllowedRange
       def to_s(infinity = true)
-        min = value_range.minimum_bound
-        max = value_range.maximum_bound
+        value_range.to_s
+      end
+    end
+
+    class ValueRange
+      def to_s(infinity = true)
+        min = minimum_bound
+        max = maximum_bound
         # Open-ended string ranges will fail in Ruby
 
-        if min = value_range.minimum_bound
+        if min = minimum_bound
           min = min.value
           if min.is_literal_string
             min_literal = min.literal.inspect.gsub(/\A"|"\Z/,"'")   # Escape string characters
@@ -1027,7 +1033,7 @@ module ActiveFacts
         else
           min_literal = infinity ? "-Infinity" : ""
         end
-        if max = value_range.maximum_bound
+        if max = maximum_bound
           max = max.value
           if max.is_literal_string
             max_literal = max.literal.inspect.gsub(/\A"|"\Z/,"'")   # Escape string characters
@@ -1040,6 +1046,30 @@ module ActiveFacts
 
         min_literal +
           (min_literal != (max&&max_literal) ? (".." + max_literal) : "")
+      end
+
+      def inspect
+        to_s
+      end
+
+      def includes? range
+        if ValueRange === range
+          range.minimum_bound >= minimum_bound && range.maximum_bound <= maximum_bound
+        else
+          range >= minimum_bound && range <= maximum_bound
+        end
+      end
+    end
+
+    class Bound
+      def <=(other)
+        # trace :values, "is #{value} <= #{other.value}? #{(is_inclusive ? value <= other.value : value < other.value) ? "yes" : "no"}"
+        is_inclusive ? value <= other.value : value < other.value
+      end
+
+      def >=(other)
+        # trace :values, "is #{value} >= #{other.value}? #{(is_inclusive ? value >= other.value : value > other.value) ? "yes" : "no"}"
+        is_inclusive ? value >= other.value : value > other.value
       end
     end
 
@@ -1060,6 +1090,28 @@ module ActiveFacts
 
       def inspect
         to_s
+      end
+
+      def <=(other)
+        myval = is_literal_string ? literal : eval(literal)
+        otherval = other.is_literal_string ? other.literal : eval(other.literal)
+        myval <= otherval rescue nil
+      end
+
+      def >=(other)
+        myval = is_literal_string ? literal : eval(literal)
+        otherval = other.is_literal_string ? other.literal : eval(other.literal)
+        myval >= otherval rescue nil  # E.g. compare String with Fixnum
+      end
+
+      def <(other)
+        v = self >= other
+        v == nil ? v : !v
+      end
+
+      def >(other)
+        v = self >= other
+        v == nil ? v : !v
       end
     end
 
