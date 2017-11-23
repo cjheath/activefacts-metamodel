@@ -28,6 +28,7 @@ Offset is written as Decimal;
 Ordinal is written as Unsigned Integer(16);
 Pronoun is written as String(20) restricted to {'feminine', 'masculine', 'neuter', 'personal'};
 Regular Expression is written as String;
+Restriction Style is written as String restricted to {'ascending', 'descending', 'fixed'};
 Ring Type is written as String;
 Rotation Setting is written as String restricted to {'left', 'right'};
 Scale is written as Unsigned Integer(32);
@@ -362,6 +363,7 @@ Value Type is subtype of at most one super-Value Type (as Supertype) [acyclic, t
 Value Type Parameter is where
 	Value Type has parameter called Name,
 	Name identifies parameter of Value Type;
+Value Type Parameter has at most one Restriction Style;
 Value Type Parameter requires value of one parameter-Value Type;
 
 Value Type Parameter Restriction is where

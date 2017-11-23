@@ -663,6 +663,10 @@ module ActiveFacts
       one_to_one      :role_ref                           # Play projects Role Ref, see RoleRef#play
     end
 
+    class RestrictionStyle < String
+      value_type
+    end
+
     class RingType < String
       value_type
     end
@@ -770,6 +774,7 @@ module ActiveFacts
       has_one         :value_type, mandatory: true        # Value Type Parameter involves Value Type, see ValueType#all_value_type_parameter
       has_one         :name, mandatory: true              # Value Type Parameter involves Name, see Name#all_value_type_parameter
       has_one         :parameter_value_type, mandatory: true, class: ValueType  # Value Type Parameter requires value of parameter-Value Type, see ValueType#all_value_type_parameter_as_parameter_value_type
+      has_one         :restriction_style                  # Value Type Parameter has Restriction Style, see RestrictionStyle#all_value_type_parameter
     end
 
     class ValueTypeParameterRestriction
