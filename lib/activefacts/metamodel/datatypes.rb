@@ -184,6 +184,11 @@ module ActiveFacts
         primary_index.all_index_field.detect{|ixf| ixf.component == self}
       end
 
+      def in_natural_index
+        natural_index = root.natural_index and
+        natural_index.all_index_field.detect{|ixf| ixf.component == self}
+      end
+
       def in_foreign_key
         all_foreign_key_field.detect{|fkf| fkf.foreign_key.source_composite == root}
       end
@@ -196,7 +201,7 @@ module ActiveFacts
         when SurrogateKey
           [ context.surrogate_type,
             {
-              auto_assign: ((in_primary_index && !in_foreign_key) ? "commit" : nil),
+              auto_assign: (!in_foreign_key ? "commit" : nil),
               mandatory: path_mandatory
             }
           ]
