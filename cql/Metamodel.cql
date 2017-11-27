@@ -453,7 +453,7 @@ Spanning Constraint is where
 
 Scoping is a kind of Mapping;
 Value Field is a kind of Mapping;
-Surrogate Key is a kind of Mapping;
+Surrogate Key is a kind of Component;
 Valid From is a kind of Mapping;
 
 /* Access Paths */
@@ -658,7 +658,8 @@ either Component(1) belongs to Component(2) or Component(1) is a Mapping that pr
 for each Component exactly one of these holds:
 	Component is a Mapping,
 	Component is an Indicator,
-	Component is a Discriminator;
+	Component is a Discriminator,
+	Component is a Surrogate Key;
 for each Concept exactly one of these holds:
 	Object Type is an instance of Concept,
 	Fact Type is an instance of Concept,
@@ -681,7 +682,6 @@ for each Mapping exactly one of these holds:
 	Mapping is a Scoping,
 	Mapping is an Absorption,
 	Mapping is a Value Field,
-	Mapping is a Surrogate Key,
 	Mapping is a Valid From;
 for each Role Sequence exactly one of these holds:
 	Role Sequence is for Reading,

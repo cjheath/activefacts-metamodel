@@ -1700,12 +1700,14 @@ module ActiveFacts
           'Non-unique index'
         when composite_as_primary_index
           'Primary index'
+        when composite_as_natural_index
+          'Natural index'
         else
           'Unique index'
         end +
         (name ? " #{name.inspect}" : '') +
         " to #{composite.mapping.name}" +
-        (presence_constraint ? " over #{presence_constraint.describe}" : '')
+        '('+all_index_field.map(&:component).map(&:name)*', '+')'
       end
     end
 
@@ -2028,7 +2030,7 @@ module ActiveFacts
             elsif injection_annotation
               [RANK_INJECTION, name]
             else
-              [RANK_MANDATORY, name]    # an FK
+              [RANK_FOREIGN, name]    # an FK
             end
 
           when Indicator
@@ -2228,6 +2230,14 @@ module ActiveFacts
           return fkf.foreign_key.composite.mapping.name + ' surrogate key'
         end
         (parent ? parent.name + ' ' : '') + 'surrogate key'
+      end
+
+      def inspect
+        "#{self.class.basename} (#{rank_kind})#{parent ? " in #{parent.name}" :''} of #{name && name != '' ? name : '<anonymous>'}"
+      end
+
+      def show_trace
+        trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}"
       end
     end
 

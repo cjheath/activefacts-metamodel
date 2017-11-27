@@ -45,7 +45,7 @@ module ActiveFacts
         all_access_path.each do |access_path|
           report.call(access_path, "Must contain at least one IndexField") unless access_path.all_index_field.size > 0
           access_path.all_index_field.each do |index_field|
-            report.call(access_path, "#{index_field.inspect} must be an Indicator or played by a ValueType") unless index_field.component.is_a?(Indicator) || index_field.component.object_type.is_a?(ValueType)
+            report.call(access_path, "#{index_field.inspect} must be an Indicator or played by a ValueType") unless !index_field.component.is_a?(Mapping) || index_field.component.object_type.is_a?(ValueType)
             report.call(access_path, "#{index_field.inspect} must be within its composite") unless index_field.component.root == self
           end
           if ForeignKey === access_path

@@ -743,7 +743,7 @@ module ActiveFacts
       has_one         :superset_role_sequence, mandatory: true, class: RoleSequence  # Subset Constraint covers superset-Role Sequence, see RoleSequence#all_subset_constraint_as_superset_role_sequence
     end
 
-    class SurrogateKey < Mapping
+    class SurrogateKey < Component
     end
 
     class TransformTargetRef
