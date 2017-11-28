@@ -1707,7 +1707,7 @@ module ActiveFacts
         end +
         (name ? " #{name.inspect}" : '') +
         " to #{composite.mapping.name}" +
-        '('+all_index_field.map(&:component).map(&:name)*', '+')'
+        (presence_constraint ? "#{presence_constraint.role_sequence.describe}" : '')
       end
     end
 

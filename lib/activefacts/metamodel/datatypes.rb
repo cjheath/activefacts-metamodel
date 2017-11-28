@@ -25,7 +25,7 @@ module ActiveFacts
         TYPE_Boolean =>
           %w{ bit },
         TYPE_Integer =>
-          %w{ auto_counter int tiny_int small_int big_int unsigned unsigned_int unsigned_integer signed_int signed_integer},
+          %w{ auto_counter int tiny_int small_int big_int long_integer unsigned unsigned_int unsigned_integer signed_int signed_integer},
         TYPE_Real =>
           %w{ float double },
         TYPE_Decimal =>
@@ -47,7 +47,7 @@ module ActiveFacts
         TYPE_Timestamp =>
           %w{ time_stamp auto_time_stamp },
         TYPE_Binary =>
-          %w{ guid picture_raw_data variable_length_raw_data },
+          %w{ binary blob guid picture_raw_data variable_length_raw_data },
       }
       TypeParameters = {
         TYPE_Integer => [:length],            # Length is the number of bits
@@ -73,7 +73,7 @@ module ActiveFacts
         def default_length data_type, type_name
         end
 
-        def choose_integer_type min, max
+        def choose_integer_range min, max
           integer_ranges.
             select{|type_name, vmin, vmax| min >= vmin && max <= vmax}.
             sort_by{|type_name, vmin, vmax| vmax-vmin}[0]   # Choose the smallest range
@@ -107,7 +107,7 @@ module ActiveFacts
             when /([a-z ]|\b)Small([a-z ]|\b)/i,
               /([a-z ]|\b)Short([a-z ]|\b)/i
               16
-            when /([a-z ]|\b)Big([a-z ]|\b)/i
+            when /([a-z ]|\b)(Big|Long)([a-z ]|\b)/i
               64
             else
               32
@@ -126,12 +126,13 @@ module ActiveFacts
         end
       end
 
-      def self.normalise type_name
+      def self.intrinsic_type type_name
         data_type, = type_mapping.detect{|t, names| names.detect{|n| n === type_name}}
         data_type
       end
 
-      def self.normalise_int_length type_name, length = nil, value_constraint = nil, context = DefaultContext.new
+      # Integers are available in multiple sizes. Choose the most appropriate one.
+      def self.choose_integer type_name, length = nil, value_constraint = nil, context = DefaultContext.new
         int_length = length || context.default_length(TYPE_Integer, type_name)
         if int_length
           if value_constraint
@@ -149,14 +150,18 @@ module ActiveFacts
           int_max = unsigned ? 2**(int_length-1) - 1 : 2**(int_length-1)-1
           max = int_max if !max || length && int_max < max
         end
-        best = context.choose_integer_type(min, max)
+        best = context.choose_integer_range(min, max)
         unless best || length
           # Use the largest available integer size
           best = context.integer_ranges.last
         end
 
         # Use a context-defined integer size if one suits, otherwise the requested size:
-        best && [best[0], best[3]] || [ 'int', length ]
+        if best
+          best[0]
+        else
+          nil   # No integer seems suitable
+        end
       end
 
     private
@@ -199,12 +204,12 @@ module ActiveFacts
           context.boolean_type
 
         when SurrogateKey
-          [ context.surrogate_type,
-            {
-              auto_assign: (!in_foreign_key ? "commit" : nil),
-              mandatory: path_mandatory
-            }
-          ]
+          type_name, options = *context.surrogate_type
+          options ||= {}
+          # Flag but disable auto-assignment for a surrogate that's an FK (assigned elsewhere)
+          options[:auto_assign] = (in_foreign_key ? nil : 'commit')
+          options[:mandatory] = path_mandatory
+          [ type_name, options ]
 
         when ValidFrom
           object_type.name
@@ -272,7 +277,7 @@ end
 
 if $0 == __FILE__
   D = ActiveFacts::Metamodel::DataType
-  D.normalise('Auto Timestamp')
+  D.intrinsic_type('Auto Timestamp')
 
   class ModContext < D::DefaultContext
     def integer_ranges
@@ -284,5 +289,5 @@ if $0 == __FILE__
     end
   end
   puts "Normalising a tiny"
-  p D.normalise_int_length('tiny', nil, nil, ModContext.new)
+  p D.choose_integer('tiny', nil, nil, ModContext.new)
 end
