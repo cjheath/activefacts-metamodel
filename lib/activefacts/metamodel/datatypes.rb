@@ -207,7 +207,8 @@ module ActiveFacts
           type_name, options = *context.surrogate_type
           options ||= {}
           # Flag but disable auto-assignment for a surrogate that's an FK (assigned elsewhere)
-          options[:auto_assign] = (in_foreign_key ? nil : 'commit')
+          options[:auto_assign] ||= 'commit'
+          options[:auto_assign] = nil if in_foreign_key
           options[:mandatory] = path_mandatory
           [ type_name, options ]
 
