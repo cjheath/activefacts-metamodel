@@ -533,6 +533,10 @@ module ActiveFacts
         end
         nil
       end
+
+      def all_value_type_parameter_transitive
+        supertypes_transitive.flat_map{|st| st.all_value_type_parameter.to_a}
+      end
     end
 
     class ValueTypeParameter
@@ -1052,24 +1056,34 @@ module ActiveFacts
         to_s
       end
 
+      # Note the mismatched return types here:
+      def effective_maximum
+        maximum_bound ? maximum_bound.value : Infinity
+      end
+
+      def effective_minimum
+        minimum_bound ? minimum_bound.value : -Infinity
+      end
+
       def includes? range
         if ValueRange === range
-          range.minimum_bound >= minimum_bound && range.maximum_bound <= maximum_bound
+          range.effective_minimum >= effective_minimum && range.effective_maximum <= effective_maximum
+        # elsif Bound === range   # REVISIT: use self.includes?(range.value) with is_literal_string, etc
         else
-          range >= minimum_bound && range <= maximum_bound
+          range >= effective_minimum && range <= effective_maximum
         end
       end
     end
 
     class Bound
       def <=(other)
-        # trace :values, "is #{value} <= #{other.value}? #{(is_inclusive ? value <= other.value : value < other.value) ? "yes" : "no"}"
-        is_inclusive ? value <= other.value : value < other.value
+        return true if other == Infinity
+        is_inclusive ? value <= other : value < other
       end
 
       def >=(other)
-        # trace :values, "is #{value} >= #{other.value}? #{(is_inclusive ? value >= other.value : value > other.value) ? "yes" : "no"}"
-        is_inclusive ? value >= other.value : value > other.value
+        return true if other == -Infinity
+        is_inclusive ? value >= other : value > other
       end
     end
 
@@ -1093,12 +1107,14 @@ module ActiveFacts
       end
 
       def <=(other)
+        return true if other == Infinity
         myval = is_literal_string ? literal : eval(literal)
         otherval = other.is_literal_string ? other.literal : eval(other.literal)
         myval <= otherval rescue nil
       end
 
       def >=(other)
+        return true if other == -Infinity
         myval = is_literal_string ? literal : eval(literal)
         otherval = other.is_literal_string ? other.literal : eval(other.literal)
         myval >= otherval rescue nil  # E.g. compare String with Fixnum
