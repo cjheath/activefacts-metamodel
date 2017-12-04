@@ -537,11 +537,28 @@ module ActiveFacts
       def all_value_type_parameter_transitive
         supertypes_transitive.flat_map{|st| st.all_value_type_parameter.to_a}
       end
+
+      def applicable_parameter_restrictions parameter_name, include_base_type = false
+        vtp = all_value_type_parameter_transitive.detect{|vtp| vtp.name == parameter_name }
+        return [] if !vtp || vtp.value_type == self
+        vtpr = all_value_type_parameter_restriction.select{|vtpr| vtpr.value_type_parameter == vtp }
+        if vtpr.empty?
+          supertype.applicable_parameter_restrictions parameter_name
+        else
+          vtpr
+        end
+      end
     end
 
     class ValueTypeParameter
       def describe
         "ValueType '#{value_type.name}' Parameter '#{name}' is of type '#{parameter_value_type.name}'"
+      end
+    end
+
+    class ValueTypeParameterRestriction
+      def inspect
+        value_range.inspect
       end
     end
 
@@ -1106,18 +1123,26 @@ module ActiveFacts
         to_s
       end
 
+      def effective_value
+        is_literal_string ? literal : eval(literal)
+      end
+
+      def ==(other)
+        effective_value == (Value === other ? other.effective_value : other)
+      end
+
+      def !=(other)
+        !(self == other)
+      end
+
       def <=(other)
         return true if other == Infinity
-        myval = is_literal_string ? literal : eval(literal)
-        otherval = other.is_literal_string ? other.literal : eval(other.literal)
-        myval <= otherval rescue nil
+        effective_value <= other.effective_value rescue nil
       end
 
       def >=(other)
         return true if other == -Infinity
-        myval = is_literal_string ? literal : eval(literal)
-        otherval = other.is_literal_string ? other.literal : eval(other.literal)
-        myval >= otherval rescue nil  # E.g. compare String with Fixnum
+        effective_value >= other.effective_value rescue nil
       end
 
       def <(other)
