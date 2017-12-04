@@ -146,5 +146,10 @@ class String
       map{|w| w =~ /^[^_[:alpha:]]/ ? '_'+w : w}
     )
   end
+
+  def unindent
+    indent = self.split("\n").select {|line| !line.strip.empty? }.map {|line| line.index(/[^\s]/) }.compact.min || 0
+    self.gsub(/^[[:blank:]]{#{indent}}/, '')
+  end
 end
 
