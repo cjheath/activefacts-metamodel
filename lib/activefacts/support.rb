@@ -125,7 +125,7 @@ class String
     end
 
     def +(words)
-      Words.new(self + Array(words))
+      Words.new(super)
     end
   end
 
