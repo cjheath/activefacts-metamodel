@@ -1702,7 +1702,7 @@ module ActiveFacts
       def all_indices_by_rank
         all_access_path.
         reject{|ap| ap.is_a?(ActiveFacts::Metamodel::ForeignKey)}.
-        sort_by{|ap| ap.all_index_field.to_a.flat_map{|ixf| ixf.component.rank_path}.compact }
+        sort_by{|ap| ap.all_index_field.to_a.flat_map{|ixf| (c = ixf.component) ? c.rank_path : 0}.compact }
       end
 
       def all_foreign_key_as_target_composite
@@ -1763,7 +1763,8 @@ module ActiveFacts
 
     class IndexField
       def inspect
-        "IndexField part #{ordinal} in #{component.root.mapping.name} references #{component.inspect}" +
+        c_name = component ? component.root.mapping.name : "WARNING: IndexField without Component"
+        "IndexField part #{ordinal} in #{c_name} references #{component.inspect}" +
         (value ? " discriminated by #{value.inspect}" : '')
       end
     end
@@ -1784,6 +1785,10 @@ module ActiveFacts
       def show_trace
         trace :composition, "#{ordinal ? "#{ordinal}: " : ''}#{inspect}" do
           yield if block_given?
+          if m = all_member.detect{|m| !m.ordinal}
+            trace :composition, "WARNING: show_trace needed to re_rank #{name} because of unranked #{m.inspect}"
+            re_rank
+          end
           all_member.sort_by{|member| [member.ordinal, member.name]}.each do |member|
             member.show_trace
           end
