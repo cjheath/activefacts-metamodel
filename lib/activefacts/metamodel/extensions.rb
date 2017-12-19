@@ -1864,11 +1864,11 @@ module ActiveFacts
         "#{super}#{full_absorption ? ' (full)' : ''
         } in #{inspect_reading}#{
           # If we have a related forward absorption, we're by definition a reverse absorption
-          if forward_absorption
+          if forward_mapping
             ' (reverse)'
            else
               # If we have a related reverse absorption, we're by definition a forward absorption
-              reverse_absorption ? ' (forward)' : ''
+              reverse_mapping ? ' (forward)' : ''
           end
         }"
       end
@@ -1952,15 +1952,15 @@ module ActiveFacts
       end
 
       def flip!
-        raise "REVISIT: Need to flip FullAbsorption on #{inspect}" if full_absorption or reverse_absorption && reverse_absorption.full_absorption or forward_absorption && forward_absorption.full_absorption
-        if (other = forward_absorption)
+        raise "REVISIT: Need to flip FullAbsorption on #{inspect}" if full_absorption or reverse_mapping && reverse_mapping.full_absorption or forward_mapping && forward_mapping.full_absorption
+        if (other = forward_mapping)
           # We point at them - make them point at us instead
-          self.forward_absorption = nil
-          self.reverse_absorption = other
-        elsif (other = reverse_absorption)
+          self.forward_mapping = nil
+          self.reverse_mapping = other
+        elsif (other = reverse_mapping)
           # They point at us - make us point at them instead
-          self.reverse_absorption = nil
-          self.forward_absorption = other
+          self.reverse_mapping = nil
+          self.forward_mapping = other
         else
           raise "Absorption cannot be flipped as it has no reverse"
         end

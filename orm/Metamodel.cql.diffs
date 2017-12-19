@@ -1,5 +1,5 @@
-*** Metamodel.orm.cql.orig	2017-11-27 18:55:21.000000000 +1100
---- Metamodel.orm.cql	2017-11-27 18:55:21.000000000 +1100
+*** Metamodel.orm.cql.orig	2017-12-19 11:24:34.000000000 +1100
+--- Metamodel.orm.cql	2017-12-19 11:24:34.000000000 +1100
 ***************
 *** 20,22 ****
   Frequency is written as Unsigned Integer(32);
@@ -10,18 +10,18 @@
 ! Guid is written as Guid auto-assigned at assert;
   Implication Rule Name is written as String;
 ***************
-*** 542,545 ****
+*** 551,554 ****
   
 - Data Type is a kind of Object Type;
 - 
   Domain Object Type is a kind of Object Type;
---- 542,543 ----
+--- 551,552 ----
 ***************
-*** 597,599 ****
+*** 606,608 ****
   either Access Path is an Index or Access Path is a Foreign Key but not both;
 ! either Component(1) belongs to Component(2) or Component(1) is a Mapping that projects Composite but not both;
   for each Component exactly one of these holds:
---- 595,597 ----
+--- 604,606 ----
   either Access Path is an Index or Access Path is a Foreign Key but not both;
 ! either Component belongs to Component or Component(1) is a Mapping that projects Composite but not both;
   for each Component exactly one of these holds:

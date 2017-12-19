@@ -15,6 +15,7 @@ module ActiveFacts
     class Mapping < Component
       has_one         :object_type, mandatory: true       # Mapping represents Object Type, see ObjectType#all_mapping
       has_one         :native_type_name, class: "Name"    # Mapping uses native- type Name, see Name#all_mapping_as_native_type_name
+      one_to_one      :reverse_mapping, class: Mapping, counterpart: :forward_mapping  # forward-Mapping is matched by reverse-Mapping, see Mapping#forward_mapping
     end
 
     class AccessPath
@@ -301,7 +302,6 @@ module ActiveFacts
       one_to_one      :foreign_key                        # Absorption gives rise to Foreign Key, see ForeignKey#absorption
       one_to_one      :full_absorption                    # Absorption creates Full Absorption, see FullAbsorption#absorption
       has_one         :nesting_mode                       # Absorption uses Nesting Mode, see NestingMode#all_absorption
-      one_to_one      :reverse_absorption, class: Absorption, counterpart: :forward_absorption  # forward-Absorption is matched by reverse-Absorption, see Absorption#forward_absorption
     end
 
     class Adjective < String

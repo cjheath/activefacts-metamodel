@@ -412,6 +412,8 @@ either Injection is a Surrogate Key
 Mapping is a kind of Component;
 Mapping represents one Object Type;
 Mapping uses at most one native- type Name;
+forward-Mapping is matched by at most one reverse-Mapping,
+	reverse-Mapping is reverse of at most one forward-Mapping;
 
 Composite is identified by Mapping where
 	Mapping projects at most one Composite,
@@ -425,8 +427,6 @@ Composite belongs to at most one Composite Group;
 Absorption is a kind of Mapping;
 Absorption traverses to one child-Role;
 Absorption traverses from one parent-Role;
-forward-Absorption is matched by at most one reverse-Absorption,
-	reverse-Absorption is reverse of at most one forward-Absorption;
 Absorption flattens;
 
 some Absorption traverses from some parent- Role(1) and that Role(1) is played by some Object Type
@@ -685,12 +685,6 @@ for each Constraint exactly one of these holds:
 	Constraint is a Ring Constraint,
 	Constraint is a Value Constraint;
 either Domain Object Type is a Value Type or Domain Object Type is an Entity Type but not both;
-for each Mapping exactly one of these holds:
-	Mapping projects Composite,
-	Mapping is a Scoping,
-	Mapping is an Absorption,
-	Mapping is a Value Field,
-	Mapping is a Valid From;
 for each Role Sequence exactly one of these holds:
 	Role Sequence is for Reading,
 	Presence Constraint covers Role Sequence,

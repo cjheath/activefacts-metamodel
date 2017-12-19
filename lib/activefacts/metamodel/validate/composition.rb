@@ -127,7 +127,7 @@ module ActiveFacts
 
     class Absorption
       def validate_reverse &report
-        reverse = forward_absorption || reverse_absorption
+        reverse = forward_mapping || reverse_mapping
         return unless reverse
         report.call(self, "Opposite absorption's child role #{reverse.child_role.name} should match parent role #{parent_role.name}") unless reverse.child_role == parent_role
         report.call(self, "Opposite absorption's parent role #{reverse.parent_role.name} should match child role #{child_role.name}") unless reverse.parent_role == child_role
