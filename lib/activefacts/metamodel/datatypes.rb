@@ -212,10 +212,7 @@ module ActiveFacts
           options[:mandatory] = path_mandatory
           [ type_name, options ]
 
-        when ValidFrom
-          object_type.name
-
-        when ValueField, Absorption
+        when ValidFrom, ValueField, Mapping
           # Walk up the entity type identifiers (must be single-part) to a value type:
           vt = self.object_type
           while vt.is_a?(EntityType)

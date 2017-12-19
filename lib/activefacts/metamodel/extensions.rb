@@ -2129,8 +2129,8 @@ module ActiveFacts
             [RANK_INJECTION, name]
 
           when Mapping
-            # This should not happen; a Composite is the only bare Mapping and we don't rank them
-            [RANK_MANDATORY, name]
+            # bare Mappings are always injected
+            [RANK_INJECTION, name]
 
           else
             raise "unexpected #{self.class.basename} in Component#rank_key"
