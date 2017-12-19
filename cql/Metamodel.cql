@@ -437,8 +437,8 @@ some Absorption traverses to some child- Role(1) and that Role(1) is played by s
 
 Full Absorption is where
 	Composition fully absorbs Object Type;
-Full Absorption applies to one Absorption,
-	Absorption creates at most one Full Absorption;
+Full Absorption applies to one Mapping,
+	Mapping creates at most one Full Absorption;
 /*
 some Object Type is involved in some Full Absorption that applies to some Absorption that is a kind of Mapping
 	if and only if

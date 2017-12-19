@@ -1,5 +1,5 @@
-*** Metamodel.orm.cql.orig	2017-12-19 11:24:34.000000000 +1100
---- Metamodel.orm.cql	2017-12-19 11:24:34.000000000 +1100
+*** Metamodel.orm.cql.orig	2017-12-19 15:32:31.000000000 +1100
+--- Metamodel.orm.cql	2017-12-19 15:36:30.000000000 +1100
 ***************
 *** 20,22 ****
   Frequency is written as Unsigned Integer(32);
@@ -17,14 +17,18 @@
   Domain Object Type is a kind of Object Type;
 --- 551,552 ----
 ***************
-*** 606,608 ****
+*** 606,610 ****
   either Access Path is an Index or Access Path is a Foreign Key but not both;
 ! either Component(1) belongs to Component(2) or Component(1) is a Mapping that projects Composite but not both;
   for each Component exactly one of these holds:
---- 604,606 ----
+! 	Component is a Mapping,
+  	Component is an Indicator,
+--- 604,608 ----
   either Access Path is an Index or Access Path is a Foreign Key but not both;
 ! either Component belongs to Component or Component(1) is a Mapping that projects Composite but not both;
   for each Component exactly one of these holds:
+! 	Component is a Mapping that projects Composite,
+  	Component is an Indicator,
 ***************
 *** 653,657 ****
   either Value Constraint constrains Value Type or Value Constraint applies to Role but not both;
@@ -44,9 +48,9 @@
 ***************
 *** 662,669 ****
   	Absorption uses Nesting Mode;
-- Object Type is involved in Full Absorption that applies to Absorption that is a kind of Mapping(2)
+- Object Type is involved in Full Absorption that applies to Mapping
 - 	if and only if
-- 	Mapping(1) represents Object Type;
+- 	Mapping represents Object Type;
 - Query projects derived Fact Type that contains Role
 - 	if and only if
 - 	Query includes Variable that projects Role;

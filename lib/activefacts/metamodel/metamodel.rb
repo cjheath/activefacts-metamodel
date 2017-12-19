@@ -14,6 +14,7 @@ module ActiveFacts
 
     class Mapping < Component
       has_one         :object_type, mandatory: true       # Mapping represents Object Type, see ObjectType#all_mapping
+      one_to_one      :full_absorption                    # Mapping creates Full Absorption, see FullAbsorption#mapping
       has_one         :native_type_name, class: "Name"    # Mapping uses native- type Name, see Name#all_mapping_as_native_type_name
       one_to_one      :reverse_mapping, class: Mapping, counterpart: :forward_mapping  # forward-Mapping is matched by reverse-Mapping, see Mapping#forward_mapping
     end
@@ -88,6 +89,23 @@ module ActiveFacts
       has_one         :source_composite, mandatory: true, class: Composite  # Foreign Key traverses from source-Composite, see Composite#all_foreign_key_as_source_composite
     end
 
+    class NestingMode < String
+      value_type
+    end
+
+    class Description < String
+      value_type
+    end
+
+    class ImplicationRuleName < String
+      value_type
+    end
+
+    class ImplicationRule
+      identified_by   :implication_rule_name
+      one_to_one      :implication_rule_name, mandatory: true  # Implication Rule has Implication Rule Name, see ImplicationRuleName#implication_rule
+    end
+
     class Pronoun < String
       value_type      length: 20
     end
@@ -108,29 +126,6 @@ module ActiveFacts
       has_one         :vocabulary, mandatory: true        # Object Type belongs to Vocabulary, see Vocabulary#all_object_type
       has_one         :name, mandatory: true              # Object Type is called Name, see Name#all_object_type
       has_one         :pronoun                            # Object Type uses Pronoun, see Pronoun#all_object_type
-    end
-
-    class FullAbsorption
-      identified_by   :composition, :object_type
-      has_one         :composition, mandatory: true       # Full Absorption involves Composition, see Composition#all_full_absorption
-      has_one         :object_type, mandatory: true       # Full Absorption involves Object Type, see ObjectType#all_full_absorption
-    end
-
-    class NestingMode < String
-      value_type
-    end
-
-    class Description < String
-      value_type
-    end
-
-    class ImplicationRuleName < String
-      value_type
-    end
-
-    class ImplicationRule
-      identified_by   :implication_rule_name
-      one_to_one      :implication_rule_name, mandatory: true  # Implication Rule has Implication Rule Name, see ImplicationRuleName#implication_rule
     end
 
     class Population
@@ -300,7 +295,6 @@ module ActiveFacts
       has_one         :child_role, mandatory: true, class: Role  # Absorption traverses to child-Role, see Role#all_absorption_as_child_role
       has_one         :parent_role, mandatory: true, class: Role  # Absorption traverses from parent-Role, see Role#all_absorption_as_parent_role
       one_to_one      :foreign_key                        # Absorption gives rise to Foreign Key, see ForeignKey#absorption
-      one_to_one      :full_absorption                    # Absorption creates Full Absorption, see FullAbsorption#absorption
       has_one         :nesting_mode                       # Absorption uses Nesting Mode, see NestingMode#all_absorption
     end
 
@@ -581,6 +575,12 @@ module ActiveFacts
       has_one         :ordinal, mandatory: true           # Foreign Key Field involves Ordinal, see Ordinal#all_foreign_key_field
       has_one         :component, mandatory: true         # Foreign Key Field involves Component, see Component#all_foreign_key_field
       has_one         :value                              # Foreign Key Field is discriminated by Value, see Value#all_foreign_key_field
+    end
+
+    class FullAbsorption
+      identified_by   :composition, :object_type
+      has_one         :composition, mandatory: true       # Full Absorption involves Composition, see Composition#all_full_absorption
+      has_one         :object_type, mandatory: true       # Full Absorption involves Object Type, see ObjectType#all_full_absorption
     end
 
     class VersionPattern < String
