@@ -91,7 +91,6 @@ module ActiveFacts
               report.call(member, "Object type #{member.object_type.name} should play the child role #{c.name}") unless member.object_type == c.object_type
               report.call(member, "Parent mapping object type #{object_type.name} should play the parent role #{p.name}") unless object_type == p.object_type
 
-              member.validate_reverse &report
               member.validate_nesting &report if member.all_nesting.size > 0
               member.validate_members &report
 
@@ -108,7 +107,7 @@ module ActiveFacts
               # Nothing to check here
 
             when Mapping
-              report.call(member, "A child Component should not be a bare Mapping")
+              member.validate_reverse &report
 
             when Indicator
               report.call(member, "Indicator requires a Role") unless member.role
@@ -123,16 +122,16 @@ module ActiveFacts
           end
         end
       end
-    end
 
-    class Absorption
       def validate_reverse &report
         reverse = forward_mapping || reverse_mapping
         return unless reverse
         report.call(self, "Opposite absorption's child role #{reverse.child_role.name} should match parent role #{parent_role.name}") unless reverse.child_role == parent_role
         report.call(self, "Opposite absorption's parent role #{reverse.parent_role.name} should match child role #{child_role.name}") unless reverse.parent_role == child_role
       end
+    end
 
+    class Absorption
       def validate_nesting &report
         report.call(self, "REVISIT: Unexpected and unchecked Nesting")
         report.call(self, "Nesting Mode must be specified") unless self.nesting_mode
