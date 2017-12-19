@@ -71,7 +71,7 @@ module ActiveFacts
 
     class Index < AccessPath
       maybe           :is_unique                          # Is Unique
-      has_one         :presence_constraint, mandatory: true  # Index derives from Presence Constraint, see PresenceConstraint#all_index
+      has_one         :presence_constraint                # Index derives from Presence Constraint, see PresenceConstraint#all_index
     end
 
     class Composite
@@ -379,6 +379,21 @@ module ActiveFacts
 
     class Assimilation < String
       value_type
+    end
+
+    class Injection < Component
+    end
+
+    class ComputedValue < Injection
+    end
+
+    class HashValue < ComputedValue
+    end
+
+    class ComponentHash
+      identified_by   :hash_value, :component
+      has_one         :hash_value, mandatory: true        # Component Hash involves Hash Value, see HashValue#all_component_hash
+      has_one         :component, mandatory: true         # Component Hash involves Component, see Component#all_component_hash
     end
 
     class Shape
@@ -743,7 +758,7 @@ module ActiveFacts
       has_one         :superset_role_sequence, mandatory: true, class: RoleSequence  # Subset Constraint covers superset-Role Sequence, see RoleSequence#all_subset_constraint_as_superset_role_sequence
     end
 
-    class SurrogateKey < Component
+    class SurrogateKey < Injection
     end
 
     class TransformTargetRef

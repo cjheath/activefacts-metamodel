@@ -400,6 +400,15 @@ Discriminated Role is where
 	Discriminator distinguishes Role using one Value,
 	Role is indicated by Value for Discriminator;
 
+Injection is a kind of Component;
+Surrogate Key is a kind of Injection;
+Computed Value is a kind of Injection;
+Hash Value is a kind of Computed Value;
+Component Hash is where
+	Hash Value covers at least one Component;
+either Injection is a Surrogate Key
+	or Injection is a Computed Value but not both;
+
 Mapping is a kind of Component;
 Mapping represents one Object Type;
 Mapping uses at most one native- type Name;
@@ -453,7 +462,6 @@ Spanning Constraint is where
 
 Scoping is a kind of Mapping;
 Value Field is a kind of Mapping;
-Surrogate Key is a kind of Component;
 Valid From is a kind of Mapping;
 
 /* Access Paths */
@@ -467,7 +475,7 @@ Access Path is to one Composite,
 /* Indices */
 Index is a kind of Access Path;
 Index is unique;
-Index derives from one Presence Constraint;
+Index derives from at most one Presence Constraint;
 Composite has at most one natural-Index,
 	Index is natural for at most one Composite;
 Composite has primary-Index;  // Avoid ambiguity; this is a new fact type
@@ -659,7 +667,7 @@ for each Component exactly one of these holds:
 	Component is a Mapping,
 	Component is an Indicator,
 	Component is a Discriminator,
-	Component is a Surrogate Key;
+	Component is an Injection;
 for each Concept exactly one of these holds:
 	Object Type is an instance of Concept,
 	Fact Type is an instance of Concept,
