@@ -1899,6 +1899,10 @@ module ActiveFacts
         (ft = child_role.fact_type).is_a?(TypeInheritance) && ft.assimilation == 'partitioned'
       end
 
+      def is_one_to_one
+        parent_role.is_unique and child_role.is_unique
+      end
+
       def is_preferred_direction
         return child_role.is_mirror_role if child_role.is_mirror_role != parent_role.is_mirror_role
 
