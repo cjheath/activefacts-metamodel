@@ -2142,7 +2142,11 @@ module ActiveFacts
 
           when Mapping
             # bare Mappings are always injected
-            [RANK_INJECTION, name]
+            if root.mapping.object_type == object_type
+              [RANK_IDENT, 0]
+            else
+              [RANK_INJECTION, name]
+            end
 
           else
             raise "unexpected #{self.class.basename} in Component#rank_key"
