@@ -1676,7 +1676,7 @@ module ActiveFacts
 
           inbound = all_access_path.
             select{|ap| ap.is_a?(ForeignKey)}.
-            sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_foreign_key_field.map(&:inspect)+fk.all_index_field.map(&:inspect) }
+            sort_by{|fk| [fk.source_composite.mapping.name, fk.mapping.inspect]+fk.all_foreign_key_field.map(&:inspect)+fk.all_index_field.map(&:inspect) }
           unless inbound.empty?
             trace :composition, "Foreign keys inbound" do
               inbound.each do |fk|
@@ -1687,7 +1687,7 @@ module ActiveFacts
 
           outbound =
             all_foreign_key_as_source_composite.
-            sort_by{|fk| [fk.source_composite.mapping.name, fk.absorption.inspect]+fk.all_index_field.map(&:inspect)+fk.all_foreign_key_field.map(&:inspect) }
+            sort_by{|fk| [fk.source_composite.mapping.name, fk.mapping.inspect]+fk.all_index_field.map(&:inspect)+fk.all_foreign_key_field.map(&:inspect) }
           unless outbound.empty?
             trace :composition, "Foreign keys outbound" do
               outbound.each do |fk|
@@ -1757,7 +1757,7 @@ module ActiveFacts
         "Foreign Key" +
         (name ? " #{name.inspect}" : '') +
         " from #{(sc = source_composite) ? sc.mapping.name : 'NO-SOURCE'} to #{composite.mapping.name}" +
-        (absorption ? " over #{absorption.inspect}" : '')
+        (mapping ? " over #{mapping.inspect}" : '')
       end
     end
 
@@ -1778,6 +1778,10 @@ module ActiveFacts
     end
 
     class Mapping
+      def inspect_reason
+        "#{parent.name} contains mapping of #{name}"
+      end
+
       def inspect
         "#{self.class.basename} (#{rank_kind})#{parent ? " in #{parent.name}" :''} of #{name && name != '' ? name : '<anonymous>'}"
       end
@@ -1793,6 +1797,10 @@ module ActiveFacts
             member.show_trace
           end
         end
+      end
+
+      def is_type_inheritance
+        false
       end
 
       # Recompute a contiguous member ranking fron zero, based on current membership:
@@ -1856,13 +1864,13 @@ module ActiveFacts
     end
 
     class Absorption
-      def inspect_reading
+      def inspect_reason
         parent_role.fact_type.reading_preferably_starting_with_role(parent_role).expand.inspect
       end
 
       def inspect
         "#{super}#{full_absorption ? ' (full)' : ''
-        } in #{inspect_reading}#{
+        } in #{inspect_reason}#{
           # If we have a related forward absorption, we're by definition a reverse absorption
           if forward_mapping
             ' (reverse)'

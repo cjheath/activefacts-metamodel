@@ -19,81 +19,15 @@ module ActiveFacts
       one_to_one      :reverse_mapping, class: Mapping, counterpart: :forward_mapping  # forward-Mapping is matched by reverse-Mapping, see Mapping#forward_mapping
     end
 
-    class AccessPath
-      identified_by   :guid
-      one_to_one      :guid, mandatory: true              # Access Path has Guid, see Guid#access_path
-      has_one         :composite, mandatory: true         # Access Path is to Composite, see Composite#all_access_path
-      has_one         :name                               # Access Path is called Name, see Name#all_access_path
-    end
-
-    class Name < String
-      value_type      length: 64
-    end
-
-    class CompositeGroup
-      identified_by   :name
-      one_to_one      :name, mandatory: true              # Composite Group has Name, see Name#composite_group
-    end
-
-    class Guid < ::Guid
-      value_type
-    end
-
-    class Composition
-      identified_by   :guid
-      one_to_one      :guid, mandatory: true              # Composition has Guid, see Guid#composition
-      has_one         :compositor_name, mandatory: true, class: Name  # Composition is by compositor-Name, see Name#all_composition_as_compositor_name
-      one_to_one      :name, mandatory: true              # Composition is called Name, see Name#composition
-    end
-
-    class Constraint
-      identified_by   :concept
-      one_to_one      :concept, mandatory: true           # Constraint is an instance of Concept, see Concept#constraint
-      has_one         :name                               # Constraint is called Name, see Name#all_constraint
-      has_one         :vocabulary                         # Constraint belongs to Vocabulary, see Vocabulary#all_constraint
-    end
-
-    class Frequency < UnsignedInteger
-      value_type      length: 32
-    end
-
-    class RoleSequence
-      identified_by   :guid
-      one_to_one      :guid, mandatory: true              # Role Sequence has Guid, see Guid#role_sequence
-      maybe           :has_unused_dependency_to_force_table_in_norma  # Has Unused Dependency To Force Table In Norma
-    end
-
-    class PresenceConstraint < Constraint
-      maybe           :is_mandatory                       # Is Mandatory
-      maybe           :is_preferred_identifier            # Is Preferred Identifier
-      has_one         :role_sequence, mandatory: true     # Presence Constraint covers Role Sequence, see RoleSequence#all_presence_constraint
-      has_one         :max_frequency, class: Frequency    # Presence Constraint has max-Frequency, see Frequency#all_presence_constraint_as_max_frequency
-      has_one         :min_frequency, class: Frequency    # Presence Constraint has min-Frequency, see Frequency#all_presence_constraint_as_min_frequency
-    end
-
-    class Index < AccessPath
-      maybe           :is_unique                          # Is Unique
-      has_one         :presence_constraint                # Index derives from Presence Constraint, see PresenceConstraint#all_index
-    end
-
-    class Composite
-      identified_by   :mapping
-      one_to_one      :mapping, mandatory: true           # Composite consists of Mapping, see Mapping#composite
-      has_one         :composition, mandatory: true       # Composite belongs to Composition, see Composition#all_composite
-      has_one         :composite_group                    # Composite belongs to Composite Group, see CompositeGroup#all_composite
-      one_to_one      :natural_index, class: Index        # Composite has natural-Index, see Index#composite_as_natural_index
-      one_to_one      :primary_index, class: Index        # Composite has primary-Index, see Index#composite_as_primary_index
-    end
-
-    class ForeignKey < AccessPath
-      has_one         :source_composite, mandatory: true, class: Composite  # Foreign Key traverses from source-Composite, see Composite#all_foreign_key_as_source_composite
-    end
-
     class NestingMode < String
       value_type
     end
 
     class Description < String
+      value_type
+    end
+
+    class Guid < ::Guid
       value_type
     end
 
@@ -104,6 +38,10 @@ module ActiveFacts
     class ImplicationRule
       identified_by   :implication_rule_name
       one_to_one      :implication_rule_name, mandatory: true  # Implication Rule has Implication Rule Name, see ImplicationRuleName#implication_rule
+    end
+
+    class Name < String
+      value_type      length: 64
     end
 
     class Pronoun < String
@@ -125,6 +63,7 @@ module ActiveFacts
       identified_by   :vocabulary, :name
       has_one         :vocabulary, mandatory: true        # Object Type belongs to Vocabulary, see Vocabulary#all_object_type
       has_one         :name, mandatory: true              # Object Type is called Name, see Name#all_object_type
+      one_to_one      :concept, mandatory: true           # Object Type is an instance of Concept, see Concept#object_type
       has_one         :pronoun                            # Object Type uses Pronoun, see Pronoun#all_object_type
     end
 
@@ -132,6 +71,7 @@ module ActiveFacts
       identified_by   :vocabulary, :name
       has_one         :vocabulary                         # Population belongs to Vocabulary, see Vocabulary#all_population
       has_one         :name, mandatory: true              # Population has Name, see Name#all_population
+      one_to_one      :concept, mandatory: true           # Population is an instance of Concept, see Concept#population
     end
 
     class Topic
@@ -162,10 +102,18 @@ module ActiveFacts
     end
 
     class LinkFactType < FactType
+      one_to_one      :implying_role, mandatory: true, class: "Role"  # Link Fact Type has implying-Role, see Role#link_fact_type_as_implying_role
     end
 
     class Ordinal < UnsignedInteger
       value_type      length: 16
+    end
+
+    class Constraint
+      identified_by   :concept
+      one_to_one      :concept, mandatory: true           # Constraint is an instance of Concept, see Concept#constraint
+      has_one         :name                               # Constraint is called Name, see Name#all_constraint
+      has_one         :vocabulary                         # Constraint belongs to Vocabulary, see Vocabulary#all_constraint
     end
 
     class RegularExpression < String
@@ -283,6 +231,7 @@ module ActiveFacts
       identified_by   :fact_type, :ordinal
       has_one         :fact_type, mandatory: true         # Role belongs to Fact Type, see FactType#all_role
       has_one         :ordinal, mandatory: true           # Role fills Ordinal, see Ordinal#all_role
+      one_to_one      :concept, mandatory: true           # Role is an instance of Concept, see Concept#role
       has_one         :object_type, mandatory: true       # Role is played by Object Type, see ObjectType#all_role
       one_to_one      :link_fact_type, counterpart: :implying_role  # implying-Role implies Link Fact Type, see LinkFactType#implying_role
       has_one         :role_name, class: Name             # Role has role-Name, see Name#all_role_as_role_name
@@ -294,8 +243,35 @@ module ActiveFacts
       maybe           :flattens                           # Flattens
       has_one         :child_role, mandatory: true, class: Role  # Absorption traverses to child-Role, see Role#all_absorption_as_child_role
       has_one         :parent_role, mandatory: true, class: Role  # Absorption traverses from parent-Role, see Role#all_absorption_as_parent_role
-      one_to_one      :foreign_key                        # Absorption gives rise to Foreign Key, see ForeignKey#absorption
       has_one         :nesting_mode                       # Absorption uses Nesting Mode, see NestingMode#all_absorption
+    end
+
+    class CompositeGroup
+      identified_by   :name
+      one_to_one      :name, mandatory: true              # Composite Group has Name, see Name#composite_group
+    end
+
+    class Composition
+      identified_by   :guid
+      one_to_one      :guid, mandatory: true              # Composition has Guid, see Guid#composition
+      has_one         :compositor_name, mandatory: true, class: Name  # Composition is by compositor-Name, see Name#all_composition_as_compositor_name
+      one_to_one      :name, mandatory: true              # Composition is called Name, see Name#composition
+    end
+
+    class Composite
+      identified_by   :mapping
+      one_to_one      :mapping, mandatory: true           # Composite consists of Mapping, see Mapping#composite
+      has_one         :composition, mandatory: true       # Composite belongs to Composition, see Composition#all_composite
+      has_one         :composite_group                    # Composite belongs to Composite Group, see CompositeGroup#all_composite
+      one_to_one      :natural_index, class: "Index"      # Composite has natural-Index, see Index#composite_as_natural_index
+      one_to_one      :primary_index, class: "Index"      # Composite has primary-Index, see Index#composite_as_primary_index
+    end
+
+    class AccessPath
+      identified_by   :guid
+      one_to_one      :guid, mandatory: true              # Access Path has Guid, see Guid#access_path
+      has_one         :composite, mandatory: true         # Access Path is to Composite, see Composite#all_access_path
+      has_one         :name                               # Access Path is called Name, see Name#all_access_path
     end
 
     class Adjective < String
@@ -538,6 +514,13 @@ module ActiveFacts
     end
 
     class ObjectifiedFactTypeNameShape < Shape
+      one_to_one      :fact_type_shape, mandatory: true   # Objectified Fact Type Name Shape is for Fact Type Shape, see FactTypeShape#objectified_fact_type_name_shape
+    end
+
+    class RoleSequence
+      identified_by   :guid
+      one_to_one      :guid, mandatory: true              # Role Sequence has Guid, see Guid#role_sequence
+      maybe           :has_unused_dependency_to_force_table_in_norma  # Has Unused Dependency To Force Table In Norma
     end
 
     class Text < String
@@ -554,6 +537,7 @@ module ActiveFacts
     end
 
     class ReadingShape < Shape
+      one_to_one      :fact_type_shape, mandatory: true   # Reading Shape is for Fact Type Shape, see FactTypeShape#reading_shape
       has_one         :reading, mandatory: true           # Reading Shape is for Reading, see Reading#all_reading_shape
     end
 
@@ -569,6 +553,11 @@ module ActiveFacts
       has_one         :rotation_setting                   # Fact Type Shape has Rotation Setting, see RotationSetting#all_fact_type_shape
     end
 
+    class ForeignKey < AccessPath
+      has_one         :source_composite, mandatory: true, class: Composite  # Foreign Key traverses from source-Composite, see Composite#all_foreign_key_as_source_composite
+      one_to_one      :mapping                            # Foreign Key derives from Mapping, see Mapping#foreign_key
+    end
+
     class ForeignKeyField
       identified_by   :foreign_key, :ordinal
       has_one         :foreign_key, mandatory: true       # Foreign Key Field involves Foreign Key, see ForeignKey#all_foreign_key_field
@@ -577,10 +566,15 @@ module ActiveFacts
       has_one         :value                              # Foreign Key Field is discriminated by Value, see Value#all_foreign_key_field
     end
 
+    class Frequency < UnsignedInteger
+      value_type      length: 32
+    end
+
     class FullAbsorption
       identified_by   :composition, :object_type
       has_one         :composition, mandatory: true       # Full Absorption involves Composition, see Composition#all_full_absorption
       has_one         :object_type, mandatory: true       # Full Absorption involves Object Type, see ObjectType#all_full_absorption
+      one_to_one      :mapping, mandatory: true           # Full Absorption applies to Mapping, see Mapping#full_absorption
     end
 
     class VersionPattern < String
@@ -594,6 +588,19 @@ module ActiveFacts
       has_one         :file_name, class: Name             # Import has file-Name, see Name#all_import_as_file_name
       has_one         :import_role, class: Name           # Import has Import Role, see Name#all_import_as_import_role
       has_one         :version_pattern                    # Import has Version Pattern, see VersionPattern#all_import
+    end
+
+    class PresenceConstraint < Constraint
+      maybe           :is_mandatory                       # Is Mandatory
+      maybe           :is_preferred_identifier            # Is Preferred Identifier
+      has_one         :role_sequence, mandatory: true     # Presence Constraint covers Role Sequence, see RoleSequence#all_presence_constraint
+      has_one         :max_frequency, class: Frequency    # Presence Constraint has max-Frequency, see Frequency#all_presence_constraint_as_max_frequency
+      has_one         :min_frequency, class: Frequency    # Presence Constraint has min-Frequency, see Frequency#all_presence_constraint_as_min_frequency
+    end
+
+    class Index < AccessPath
+      maybe           :is_unique                          # Is Unique
+      has_one         :presence_constraint                # Index derives from Presence Constraint, see PresenceConstraint#all_index
     end
 
     class IndexField
@@ -697,6 +704,7 @@ module ActiveFacts
     end
 
     class RoleNameShape < Shape
+      one_to_one      :role_display, mandatory: true      # Role Name Shape is for Role Display, see RoleDisplay#role_name_shape
     end
 
     class ValueConstraintShape < ConstraintShape
