@@ -2163,6 +2163,10 @@ module ActiveFacts
         ixfs.map(&:component)
       end
 
+      def is_in_primary
+        !!(root and p = root.primary_index and p.all_index_field.detect{|f| f.component == self})
+      end
+
       def parent_entity_type
         parent &&
           parent.object_type.is_a?(EntityType) &&
