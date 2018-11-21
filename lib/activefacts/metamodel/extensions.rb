@@ -117,6 +117,11 @@ module ActiveFacts
           body.all_value_type_parameter.map{|f| f.facet_value_type } +
           body.all_value_type_parameter_restriction.map{|vr| vr.value.unit}
         when ActiveFacts::Metamodel::EntityType
+          if body.fact_type
+            body.fact_type.all_role.map{|r| r.object_type}
+          else
+            []
+          end +
           # You can't define the preferred_identifier fact types until you define the entity type,
           # but the objects which play the identifying roles must be defined:
           body.preferred_identifier.role_sequence.all_role_ref.map {|rr| rr.role.object_type } +
