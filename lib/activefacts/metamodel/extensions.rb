@@ -1901,11 +1901,11 @@ module ActiveFacts
       end
 
       def is_supertype_absorption
-        is_type_inheritance && child_role.fact_type.supertype == object_type
+        is_type_inheritance && parent_role.fact_type.supertype == object_type
       end
 
       def is_subtype_absorption
-        is_type_inheritance && parent_role.fact_type.supertype == object_type
+        is_type_inheritance && parent_role.fact_type.subtype == object_type
       end
 
       def is_partitioned_here
@@ -2250,6 +2250,55 @@ module ActiveFacts
 
       def fork_to_new_parent parent
         @constellation.fork self, guid: :new, parent: parent, injection_annotation: nil
+      end
+
+      def exclusive_groups
+        # Find sets of optional members that are exclusive.
+        # Return a hash from the SetExclusionConstraint to an array of two things:
+        # - Is the exclusion mandatory
+        # - An array of Component members
+        member_roles =
+          all_member.map do |m|
+            case
+            when m.is_mandatory
+              nil
+            when Indicator === m
+              [m, m.role]
+            when Absorption === m
+              [m, m.parent_role]
+            else
+              nil
+            end
+          end.compact
+
+        groups = {}
+        member_roles.each_with_index do |(m, r), i|
+          # Get all SetComparisonRoles that cover any role sequence containing just this role
+          scrs = r.
+            all_role_ref.
+            map(&:role_sequence).
+            flat_map{|rs| rs.all_role_ref.size == 1 ? rs.all_set_comparison_roles.to_a : []}
+
+          # Now the SetExclusionConstraint(s) for these SetComparisonRoles
+          sxs = scrs.map(&:set_comparison_constraint).select{|sc| SetExclusionConstraint === sc}
+
+          # Test each SetExclusionConstraint to see if it covers only roles from the role of this member to the last
+          sxs.each do |sx|
+            next if groups[sx]  # Include this constraint only the first time is is found (with all roles)
+            all_role = sx.all_set_comparison_roles.map{|sxr| sxr.role_sequence.all_role_ref.single.role }
+            remaining_roles = member_roles[i..-1].map{|m,r2| r2}
+            exclusive_member_roles = remaining_roles & all_role
+            next if exclusive_member_roles.size < 2     # Not enough exclusive roles
+
+            mandatory = sx.is_mandatory
+            mandatory = false if exclusive_member_roles.size != all_role.size   # Not all the excluded roles are here
+
+            exclusive_members = member_roles.map{|m, r2| exclusive_member_roles.include?(r2) ? m : nil}.compact
+            groups[sx] = [mandatory, exclusive_members]
+          end
+
+        end
+        groups
       end
     end
 
