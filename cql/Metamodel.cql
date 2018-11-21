@@ -645,7 +645,9 @@ Component Shape is for at most one Component;
 parent- Component Shape contains Component Shape,
 	Component Shape is contained in at most one parent- Component Shape;
 
-either Constraint Shape is a Ring Constraint Shape or Constraint Shape is a Value Constraint Shape but not both;
+for each Constraint Shape at most one of these holds:
+	Constraint Shape is a Ring Constraint Shape,
+	Constraint Shape is a Value Constraint Shape;
 for each Shape exactly one of these holds:
 	Shape is an Object Type Shape,
 	Shape is a Fact Type Shape,
