@@ -436,6 +436,7 @@ module ActiveFacts
     end
 
     class Discriminator < Component
+      maybe           :is_mandatory                       # Is Mandatory
     end
 
     class DiscriminatedRole

@@ -396,6 +396,7 @@ Indicator uses at most one false-Value;
 Indicator uses at most one true-Value;
 
 Discriminator is a kind of Component;
+Discriminator is mandatory;
 Discriminated Role is where
 	Discriminator distinguishes Role using one Value,
 	Role is indicated by Value for Discriminator;

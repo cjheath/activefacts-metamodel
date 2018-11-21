@@ -1,5 +1,5 @@
-*** Metamodel.orm.cql.orig	2017-12-20 10:07:22.000000000 +1100
---- Metamodel.orm.cql	2017-12-20 10:08:11.000000000 +1100
+*** Metamodel.orm.cql.orig	2018-06-07 18:30:17.000000000 +1000
+--- Metamodel.orm.cql	2018-06-07 18:30:17.000000000 +1000
 ***************
 *** 20,22 ****
   Frequency is written as Unsigned Integer(32);
@@ -10,18 +10,18 @@
 ! Guid is written as Guid auto-assigned at assert;
   Implication Rule Name is written as String;
 ***************
-*** 551,554 ****
+*** 552,555 ****
   
 - Data Type is a kind of Object Type;
 - 
   Domain Object Type is a kind of Object Type;
---- 551,552 ----
+--- 552,553 ----
 ***************
-*** 608,610 ****
+*** 609,611 ****
   for each Component exactly one of these holds:
 ! 	Component is a Mapping that projects Composite,
   	Component is an Indicator,
---- 606,608 ----
+--- 607,609 ----
   for each Component exactly one of these holds:
 ! 	Component is a Mapping,
   	Component is an Indicator,
@@ -31,18 +31,18 @@
 - for each Mapping at most one of these holds:
 - 	Mapping(1) is an Absorption(2) and Absorption(1) flattens,
 - 	Mapping projects Composite;
-  for each Instance at most one of these holds:
+  for each Constraint Shape at most one of these holds:
 --- 651,652 ----
 ***************
-*** 659,660 ****
---- 654,658 ----
+*** 662,663 ****
+--- 657,661 ----
   	Instance objectifies Fact;
 + for each Mapping at most one of these holds:
 + 	Mapping is an Absorption that flattens,
 + 	Mapping projects Composite;
   Absorption is nested under index Role in Ordinal position
 ***************
-*** 662,669 ****
+*** 665,672 ****
   	Absorption uses Nesting Mode;
 - Object Type is involved in Full Absorption that applies to Mapping
 - 	if and only if
@@ -51,9 +51,9 @@
 - 	if and only if
 - 	Query includes Variable that projects Role;
   Role Value is of Instance that is of Object Type
---- 660,661 ----
+--- 663,664 ----
 ***************
-*** 680,691 ****
+*** 683,694 ****
   	Variable is restricted by Role of Step;
   Composite has primary Index
 ! 	only if Composite is reached through Access Path;
@@ -66,7 +66,7 @@
 - Absorption is a kind of Mapping(2) and Absorption traverses to child Role that is played by Object Type
 - 	only if Mapping(1) represents Object Type;
   Presence Constraint is preferred identifier
---- 672,681 ----
+--- 675,684 ----
   	Variable is restricted by Role of Step;
 + Absorption traverses from parent Parent Role(1) that is played by Object Type
 + 	only if Absorption is a kind of Component(2) and Component(3) belongs to Component(2) that is a Mapping that represents Object Type;
@@ -78,8 +78,8 @@
   	only if Index is unique;
   Presence Constraint is preferred identifier
 ***************
-*** 699,701 ****
+*** 702,704 ****
   either Agreement was reached by Agent or Agreement was on Date;
 - either Component projects Name or Absorption flattens;
   each Concept occurs at most one time in
---- 689,690 ----
+--- 692,693 ----
